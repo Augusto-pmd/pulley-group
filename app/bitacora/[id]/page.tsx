@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import ContextHeader from '@/components/ContextHeader';
 import DecisionDetail from '@/components/bitacora/DecisionDetail';
 import { mockDecisions } from '@/mock/data';
