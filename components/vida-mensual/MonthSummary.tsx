@@ -1,0 +1,143 @@
+'use client';
+
+import Card from '../Card';
+import CurrencyDisplay from '../CurrencyDisplay';
+import { formatPercentage } from '@/mock/data';
+import type { EventoMensual } from '@/mock/eventos';
+
+interface MonthSummaryProps {
+  eventos: EventoMensual[];
+}
+
+export default function MonthSummary({ eventos }: MonthSummaryProps) {
+  // Separar ingresos y egresos
+  const ingresos = eventos.filter((e) => e.tipo === 'ingreso');
+  const egresos = eventos.filter((e) => e.tipo === 'egreso');
+  
+  const totalIngresos = ingresos.reduce((sum, e) => sum + e.montoUsd, 0);
+  const totalEgresos = egresos.reduce((sum, e) => sum + e.montoUsd, 0);
+  const resultadoMes = totalIngresos - totalEgresos;
+
+  // Distribución por concepto (solo egresos para análisis)
+  const porConcepto = egresos.reduce((acc, e) => {
+    if (!acc[e.conceptoNombre]) {
+      acc[e.conceptoNombre] = { montoUsd: 0, count: 0 };
+    }
+    acc[e.conceptoNombre].montoUsd += e.montoUsd;
+    acc[e.conceptoNombre].count += 1;
+    return acc;
+  }, {} as Record<string, { montoUsd: number; count: number }>);
+
+  const conceptosOrdenados = Object.entries(porConcepto)
+    .map(([nombre, data]) => ({ nombre, ...data }))
+    .sort((a, b) => b.montoUsd - a.montoUsd)
+    .slice(0, 10); // Top 10
+
+  // Distribución por tipo (solo egresos)
+  const porTipo = {
+    fijo: egresos.filter((e) => e.categoria === 'fijo').reduce((sum, e) => sum + e.montoUsd, 0),
+    variable: egresos.filter((e) => e.categoria === 'variable').reduce((sum, e) => sum + e.montoUsd, 0),
+    extraordinario: egresos.filter((e) => e.categoria === 'extraordinario').reduce((sum, e) => sum + e.montoUsd, 0),
+  };
+
+  const totalEgresosParaPorcentaje = totalEgresos;
+  const porcentajesPorTipo = {
+    fijo: totalEgresosParaPorcentaje > 0 ? (porTipo.fijo / totalEgresosParaPorcentaje) * 100 : 0,
+    variable: totalEgresosParaPorcentaje > 0 ? (porTipo.variable / totalEgresosParaPorcentaje) * 100 : 0,
+    extraordinario: totalEgresosParaPorcentaje > 0 ? (porTipo.extraordinario / totalEgresosParaPorcentaje) * 100 : 0,
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {/* Resumen del Mes */}
+      <Card padding="normal">
+        <div className="mb-4">
+          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+            RESULTADO DEL MES
+          </div>
+          <CurrencyDisplay value={resultadoMes} size="large" showSecondary={false} />
+        </div>
+
+        {/* Ingresos y Egresos */}
+        <div className="pt-4 border-t border-gray-divider space-y-3">
+          <div>
+            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+              INGRESOS
+            </div>
+            <CurrencyDisplay value={totalIngresos} size="medium" showSecondary={false} />
+          </div>
+          <div>
+            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+              EGRESOS
+            </div>
+            <CurrencyDisplay value={totalEgresos} size="medium" showSecondary={false} />
+          </div>
+        </div>
+
+        {/* Distribución por Tipo */}
+        <div className="pt-4 border-t border-gray-divider">
+          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-3">
+            POR TIPO
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-body text-gray-text-secondary">Fijos</span>
+              <div className="flex items-center gap-3">
+                <CurrencyDisplay value={porTipo.fijo} size="regular" showSecondary={false} />
+                <span className="text-body-small text-gray-text-tertiary w-12 text-right">
+                  {formatPercentage(porcentajesPorTipo.fijo)}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-body text-gray-text-secondary">Variables</span>
+              <div className="flex items-center gap-3">
+                <CurrencyDisplay value={porTipo.variable} size="regular" showSecondary={false} />
+                <span className="text-body-small text-gray-text-tertiary w-12 text-right">
+                  {formatPercentage(porcentajesPorTipo.variable)}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-body text-gray-text-secondary">Extraordinarios</span>
+              <div className="flex items-center gap-3">
+                <CurrencyDisplay value={porTipo.extraordinario} size="regular" showSecondary={false} />
+                <span className="text-body-small text-gray-text-tertiary w-12 text-right">
+                  {formatPercentage(porcentajesPorTipo.extraordinario)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Top Conceptos */}
+      <Card padding="normal">
+        <div className="mb-4">
+          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+            POR CONCEPTO
+          </div>
+        </div>
+        <div className="space-y-2 max-h-[200px] overflow-y-auto">
+          {conceptosOrdenados.map((item) => {
+            const porcentaje = totalEgresosParaPorcentaje > 0 ? (item.montoUsd / totalEgresosParaPorcentaje) * 100 : 0;
+            return (
+              <div key={item.nombre} className="flex items-center justify-between">
+                <span className="text-body text-gray-text-secondary flex-1 truncate mr-2">
+                  {item.nombre}
+                </span>
+                <div className="flex items-center gap-3">
+                  <CurrencyDisplay value={item.montoUsd} size="regular" showSecondary={false} />
+                  <span className="text-body-small text-gray-text-tertiary w-12 text-right">
+                    {formatPercentage(porcentaje)}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
