@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import ContextHeader from '@/components/ContextHeader';
 import DecisionDetail from '@/components/bitacora/DecisionDetail';
-import { mockDecisions } from '@/mock/data';
+import { mockDecisions, getDecisionTypeLabel } from '@/mock/data';
 
 interface BitacoraDetailPageProps {
   params: {
@@ -34,7 +34,7 @@ export default function BitacoraDetailPage({ params }: BitacoraDetailPageProps) 
       <div className="mb-6">
         <ContextHeader
           module={{ label: 'Bitácora', href: '/bitacora' }}
-          entity={{ label: decision.title }}
+          entity={{ label: getDecisionTypeLabel(decision.type) }}
         />
       </div>
 
