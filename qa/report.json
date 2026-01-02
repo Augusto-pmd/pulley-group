@@ -1,0 +1,117 @@
+{
+  "timestamp": "2026-01-02T21:02:40.730Z",
+  "baseUrl": "https://pulley-group.vercel.app",
+  "tests": [
+    {
+      "name": "GET /api/concepts",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:41.129Z",
+      "endpoint": "/api/concepts",
+      "method": "GET",
+      "statusCode": 200,
+      "responseSize": 264,
+      "hasData": true
+    },
+    {
+      "name": "GET /api/months",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:41.356Z",
+      "endpoint": "/api/months",
+      "method": "GET",
+      "statusCode": 200,
+      "responseSize": 144
+    },
+    {
+      "name": "GET /api/months/2026/01",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:41.593Z",
+      "endpoint": "/api/months/2026/01",
+      "method": "GET",
+      "statusCode": 200,
+      "year": 2026,
+      "month": "01",
+      "responseSize": 569
+    },
+    {
+      "name": "POST /api/movements",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:42.484Z",
+      "endpoint": "/api/movements",
+      "method": "POST",
+      "statusCode": 201,
+      "requestData": {
+        "type": "ingreso",
+        "amountUSD": 1000,
+        "currencyOriginal": "USD",
+        "conceptId": "cmjx6qhdi00027sfgjd2fjqhp",
+        "date": "2026-01-02",
+        "monthId": "cmjx6e5lc001nq8f20y2ffj5n"
+      },
+      "responseSize": 239
+    },
+    {
+      "name": "GET /api/movements",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:42.757Z",
+      "endpoint": "/api/movements",
+      "method": "GET",
+      "statusCode": 200,
+      "responseSize": 1462,
+      "isArray": true
+    },
+    {
+      "name": "POST /api/investments",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:42.952Z",
+      "endpoint": "/api/investments",
+      "method": "POST",
+      "statusCode": 201,
+      "requestData": {
+        "name": "QA Test Investment",
+        "type": "financiera",
+        "targetAmountUSD": 10000,
+        "startDate": "2026-01-02"
+      },
+      "responseSize": 145
+    },
+    {
+      "name": "GET /api/investments",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:43.158Z",
+      "endpoint": "/api/investments",
+      "method": "GET",
+      "statusCode": 200,
+      "responseSize": 1104,
+      "isArray": true
+    },
+    {
+      "name": "POST /api/assets",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:43.341Z",
+      "endpoint": "/api/assets",
+      "method": "POST",
+      "statusCode": 201,
+      "requestData": {
+        "name": "QA Test Asset",
+        "type": "inmueble",
+        "valueUSD": 50000
+      },
+      "responseSize": 105
+    },
+    {
+      "name": "GET /api/assets",
+      "status": "PASS",
+      "timestamp": "2026-01-02T21:02:43.578Z",
+      "endpoint": "/api/assets",
+      "method": "GET",
+      "statusCode": 200,
+      "responseSize": 2069,
+      "isArray": true
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0
+  }
+}
