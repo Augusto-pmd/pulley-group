@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const months = await getPrisma().month.findMany({
+    const months = await prisma.month.findMany({
       orderBy: [
         { year: 'desc' },
         { month: 'desc' },
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Buscar si ya existe
-    const existing = await getPrisma().month.findFirst({
+    const existing = await prisma.month.findFirst({
       where: {
         year: parseInt(year),
         month: parseInt(month),
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Crear nuevo mes
-    const newMonth = await getPrisma().month.create({
+    const newMonth = await prisma.month.create({
       data: {
         year: parseInt(year),
         month: parseInt(month),

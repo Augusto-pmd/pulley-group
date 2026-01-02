@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
       : null;
 
     // Validar que conceptId existe
-    const concept = await getPrisma().concept.findUnique({
+    const concept = await prisma.concept.findUnique({
       where: { id: conceptId },
     });
 
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Validar que monthId existe
-    const month = await getPrisma().month.findUnique({
+    const month = await prisma.month.findUnique({
       where: { id: monthId },
     });
 
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
       monthId,
     });
 
-    const movement = await getPrisma().movement.create({
+    const movement = await prisma.movement.create({
       data: {
         type,
         amountUSD: normalizedAmountUSD,
@@ -173,7 +173,7 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      const monthRecord = await getPrisma().month.findFirst({
+      const monthRecord = await prisma.month.findFirst({
         where: {
           year: normalizedYear,
           month: normalizedMonth,
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const movements = await getPrisma().movement.findMany({
+    const movements = await prisma.movement.findMany({
       where,
       include: {
         concept: true,

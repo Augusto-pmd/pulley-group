@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const monthRecord = await getPrisma().month.findFirst({
+    const monthRecord = await prisma.month.findFirst({
       where: {
         year: parseInt(year),
         month: parseInt(month),
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const updatedMonth = await getPrisma().month.update({
+    const updatedMonth = await prisma.month.update({
       where: {
         id: monthRecord.id,
       },

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const investments = await getPrisma().investment.findMany({
+    const investments = await prisma.investment.findMany({
       include: {
         events: {
           orderBy: {
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     const normalizedTargetAmountUSD = normalizeNumber(targetAmountUSD);
     console.log('POST /api/investments - targetAmountUSD normalizado:', normalizedTargetAmountUSD, typeof normalizedTargetAmountUSD);
 
-    const investment = await getPrisma().investment.create({
+    const investment = await prisma.investment.create({
       data: {
         name,
         type,

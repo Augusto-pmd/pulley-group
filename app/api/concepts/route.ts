@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function GET(request: NextRequest) {
   try {
     // 1. Ejecutar prisma.concept.findMany() sin filtros
-    let concepts = await getPrisma().concept.findMany({
+    let concepts = await prisma.concept.findMany({
       orderBy: {
         name: 'asc',
       },
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       
       try {
         // Crear conceptos base con valores válidos del schema
-        await getPrisma().concept.createMany({
+        await prisma.concept.createMany({
           data: [
             { name: 'Ingreso', type: 'ingreso', nature: 'variable' },
             { name: 'Gasto', type: 'egreso', nature: 'variable' },
@@ -30,8 +30,8 @@ export async function GET(request: NextRequest) {
 
         console.log('[GET /api/concepts] Bootstrap: conceptos base creados');
 
-        // 3. Volver a ejecutar getPrisma().concept.findMany()
-        concepts = await getPrisma().concept.findMany({
+        // 3. Volver a ejecutar prisma.concept.findMany()
+        concepts = await prisma.concept.findMany({
           orderBy: {
             name: 'asc',
           },
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
           stack: bootstrapError.stack,
         });
         // Reintentar findMany para ver si hay conceptos después del error
-        concepts = await getPrisma().concept.findMany({
+        concepts = await prisma.concept.findMany({
           orderBy: {
             name: 'asc',
           },
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     const { name, type, nature } = body;
 
     // Verificar si el concepto ya existe
-    const existing = await getPrisma().concept.findFirst({
+    const existing = await prisma.concept.findFirst({
       where: {
         name: name,
         type: type,
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Crear nuevo concepto
-    const concept = await getPrisma().concept.create({
+    const concept = await prisma.concept.create({
       data: {
         name,
         type,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function GET(
     const { id } = params;
 
     // Verificar que el activo existe
-    const asset = await getPrisma().asset.findUnique({
+    const asset = await prisma.asset.findUnique({
       where: { id },
     });
 
@@ -23,7 +23,7 @@ export async function GET(
       );
     }
 
-    const liability = await getPrisma().liability.findUnique({
+    const liability = await prisma.liability.findUnique({
       where: { assetId: id },
     });
 
@@ -114,7 +114,7 @@ export async function POST(
     }
 
     // Verificar que el activo existe
-    const asset = await getPrisma().asset.findUnique({
+    const asset = await prisma.asset.findUnique({
       where: { id },
     });
 
@@ -126,7 +126,7 @@ export async function POST(
     }
 
     // Verificar que no existe ya un pasivo para este activo
-    const existingLiability = await getPrisma().liability.findUnique({
+    const existingLiability = await prisma.liability.findUnique({
       where: { assetId: id },
     });
 
@@ -152,7 +152,7 @@ export async function POST(
       monthlyInstallmentUSD: normalizedMonthlyInstallmentUSD,
     });
 
-    const liability = await getPrisma().liability.create({
+    const liability = await prisma.liability.create({
       data: {
         assetId: id,
         totalAmountUSD: normalizedTotalAmountUSD,
@@ -199,7 +199,7 @@ export async function PUT(
     } = body;
 
     // Verificar que el activo existe
-    const asset = await getPrisma().asset.findUnique({
+    const asset = await prisma.asset.findUnique({
       where: { id },
     });
 
@@ -230,7 +230,7 @@ export async function PUT(
 
     console.log(`PUT /api/assets/${id}/liability - Valores normalizados para update:`, updateData);
 
-    const liability = await getPrisma().liability.update({
+    const liability = await prisma.liability.update({
       where: { assetId: id },
       data: updateData,
     });

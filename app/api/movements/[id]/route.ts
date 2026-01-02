@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -88,7 +88,7 @@ export async function PUT(
 
     console.log(`PUT /api/movements/${id} - Datos a actualizar:`, updateData);
 
-    const movement = await getPrisma().movement.update({
+    const movement = await prisma.movement.update({
       where: { id },
       data: updateData,
       include: {
@@ -123,7 +123,7 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    await getPrisma().movement.delete({
+    await prisma.movement.delete({
       where: { id },
     });
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPrisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -38,7 +38,7 @@ export async function GET(
     }
 
     // UPSERT: crear si no existe, leer si existe
-    const monthRecord = await getPrisma().month.upsert({
+    const monthRecord = await prisma.month.upsert({
       where: {
         year_month: {
           year,
@@ -99,7 +99,7 @@ export async function PATCH(
     if (status === 'cerrado') {
       const closeDate = new Date().toISOString().split('T')[0];
       
-      const updated = await getPrisma().month.update({
+      const updated = await prisma.month.update({
         where: {
           year_month: {
             year,
