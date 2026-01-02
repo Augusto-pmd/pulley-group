@@ -40,16 +40,15 @@ export async function POST(request: NextRequest) {
     const { name, type, fiscalStatus } = body;
     console.log('[POST /api/assets] Campos extraídos:', { name, type, fiscalStatus });
 
-    // Validación de campos requeridos
-    if (!name || !type || !fiscalStatus) {
+    // Validación de campos requeridos (name y type son obligatorios)
+    if (!name || !type) {
       const missingFields = [];
       if (!name) missingFields.push('name');
       if (!type) missingFields.push('type');
-      if (!fiscalStatus) missingFields.push('fiscalStatus');
       
       console.log('[POST /api/assets] Error 400 - Campos faltantes:', missingFields);
       return NextResponse.json(
-        { error: 'name, type, and fiscalStatus are required', missingFields },
+        { error: 'name and type are required', missingFields },
         { status: 400 }
       );
     }
@@ -66,10 +65,13 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    if (!validFiscalStatuses.includes(fiscalStatus)) {
-      console.log('[POST /api/assets] Error 400 - FiscalStatus inválido:', fiscalStatus);
+    // fiscalStatus es opcional, usar default si no viene
+    const finalFiscalStatus = fiscalStatus || 'no_declarado';
+    
+    if (!validFiscalStatuses.includes(finalFiscalStatus)) {
+      console.log('[POST /api/assets] Error 400 - FiscalStatus inválido:', finalFiscalStatus);
       return NextResponse.json(
-        { error: `Invalid fiscalStatus. Must be one of: ${validFiscalStatuses.join(', ')}`, received: `${fiscalStatus}` },
+        { error: `Invalid fiscalStatus. Must be one of: ${validFiscalStatuses.join(', ')}`, received: `${finalFiscalStatus}` },
         { status: 400 }
       );
     }
@@ -79,7 +81,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         type,
-        fiscalStatus,
+        fiscalStatus: finalFiscalStatus,
       },
     });
 
