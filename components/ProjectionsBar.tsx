@@ -8,8 +8,8 @@ import { getPatrimonioNetoActivosUsd } from '@/mock/activos';
 import type { Scenario, Horizon } from '@/mock/data';
 
 export default function ProjectionsBar() {
-  const [scenario, setScenario] = useState<Scenario>(mockProjections.scenario);
-  const [horizon, setHorizon] = useState<Horizon>(mockProjections.horizon);
+  const [scenario, setScenario] = useState<Scenario>('base');
+  const [horizon, setHorizon] = useState<Horizon>(10);
   const [showDetails, setShowDetails] = useState(false);
 
   const scenarios: Scenario[] = ['conservador', 'base', 'optimista'];
@@ -26,25 +26,14 @@ export default function ProjectionsBar() {
     }
   }, []);
 
-  // Mock: valores según escenario y horizonte
-  // Los activos se suman al patrimonio base pero no se proyectan con rendimiento
+  // Proyecciones - solo desde datos reales
+  // Si no hay datos reales, mostrar cero
   const getProjectionValues = (scenario: Scenario, horizon: Horizon) => {
-    // Base de inversiones (mockProjections ya incluye solo inversiones, no activos)
-    const baseInversiones = mockProjections.nominal;
-    const baseInversionesReal = mockProjections.real;
-    
-    // Ajustes simples según escenario
-    const multiplier = scenario === 'conservador' ? 0.85 : scenario === 'optimista' ? 1.15 : 1.0;
-    const horizonMultiplier = horizon === 5 ? 0.6 : horizon === 20 ? 1.4 : 1.0;
-    
-    // Proyectar inversiones (con rendimiento)
-    const inversionesProyectadas = baseInversiones * multiplier * horizonMultiplier;
-    const inversionesProyectadasReal = baseInversionesReal * multiplier * horizonMultiplier;
-    
-    // Los activos se mantienen en su valor actual (no crecen, no se proyectan)
+    // Sin backend de proyecciones real, retornar cero
+    // Las proyecciones requieren datos reales de patrimonio, inversiones y supuestos configurados
     return {
-      nominal: Math.round(inversionesProyectadas + activos),
-      real: Math.round(inversionesProyectadasReal + activos),
+      nominal: 0,
+      real: 0,
     };
   };
 

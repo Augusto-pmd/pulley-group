@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import type { Scenario, Horizon } from '@/mock/data';
 import { mockScenarioProjections } from '@/mock/data';
 
@@ -10,6 +10,24 @@ interface IPCImpactProps {
 
 export default function IPCImpact({ scenario, horizon }: IPCImpactProps) {
   const projection = mockScenarioProjections[scenario][horizon];
+  
+  // Si no hay datos reales, mostrar estado vacío
+  if (projection.nominal === 0 && projection.real === 0) {
+    return (
+      <Card padding="large">
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black mb-1">IMPACTO DEL IPC</h3>
+          <p className="text-body text-gray-text-tertiary">
+            Cómo la inflación afecta el poder adquisitivo de tu patrimonio
+          </p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay proyecciones disponibles. Configure los supuestos en Settings.
+        </div>
+      </Card>
+    );
+  }
+  
   const difference = projection.nominal - projection.real;
 
   return (

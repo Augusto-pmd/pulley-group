@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Card from '../Card';
-import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatCurrency, formatPercentage } from '@/utils/number-format';
 import { mockEmmaFund } from '@/mock/data';
 import type { Horizon } from '@/mock/data';
 
@@ -9,15 +9,26 @@ interface EmmaBridgeProps {
 }
 
 export default function EmmaBridge({ horizon }: EmmaBridgeProps) {
-  // Mock: calcular contribución y proyección según horizonte
-  const getEmmaProjection = (h: Horizon) => {
-    if (h === 5) return mockEmmaFund.projection18 * 0.3;
-    if (h === 10) return mockEmmaFund.projection18 * 0.6;
-    return mockEmmaFund.projection25;
-  };
-
-  const contribution = getEmmaProjection(horizon);
-  const projection = getEmmaProjection(horizon);
+  // Si no hay datos reales del Fondo Emma, mostrar estado vacío
+  if (mockEmmaFund.currentCapital === 0 && mockEmmaFund.projection25 === 0) {
+    return (
+      <Card padding="large">
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black mb-1">FONDO EMMA</h3>
+          <p className="text-body text-gray-text-tertiary">
+            Contribución a las proyecciones de largo plazo
+          </p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay datos del Fondo Emma disponibles. Configure el Fondo Emma para ver su contribución a las proyecciones.
+        </div>
+      </Card>
+    );
+  }
+  
+  // Sin backend de proyecciones real, retornar cero
+  const contribution = 0;
+  const projection = 0;
 
   return (
     <Card padding="large">

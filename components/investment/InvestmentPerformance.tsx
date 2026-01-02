@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import type { Investment } from '@/mock/data';
 
 interface InvestmentPerformanceProps {
@@ -7,13 +7,25 @@ interface InvestmentPerformanceProps {
 }
 
 export default function InvestmentPerformance({ investment }: InvestmentPerformanceProps) {
-  // Mock: métricas de rendimiento
-  const annualizedNominal = investment.roiNominal * 0.8; // Mock
-  const annualizedReal = investment.roiReal * 0.8; // Mock
-  const monthlyVariation = 2.5; // Mock
-  const annualVariation = investment.roiNominal; // Mock
-  const bestMonth = { date: '03/2023', roi: 5.2 };
-  const worstMonth = { date: '09/2022', roi: -1.8 };
+  // Si no hay capital real, mostrar estado vacío
+  if (investment.capital === 0) {
+    return (
+      <Card>
+        <div className="text-center text-body text-gray-text-tertiary py-8">
+          No hay eventos registrados para calcular rendimiento. Registra aportes o retiros para ver métricas.
+        </div>
+      </Card>
+    );
+  }
+  
+  // Métricas de rendimiento - solo desde datos reales
+  // Sin backend de análisis temporal, todos los valores son 0 hasta que haya datos reales
+  const annualizedNominal = 0; // Requiere cálculo temporal real
+  const annualizedReal = 0; // Requiere IPC real
+  const monthlyVariation = 0; // Requiere eventos mensuales reales
+  const annualVariation = 0; // Requiere eventos anuales reales
+  const bestMonth = null; // Requiere análisis temporal real
+  const worstMonth = null; // Requiere análisis temporal real
 
   return (
     <Card>
@@ -77,21 +89,34 @@ export default function InvestmentPerformance({ investment }: InvestmentPerforma
         </div>
       </div>
 
-      {/* Mejor y Peor Mes */}
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <div className="text-body text-gray-text-tertiary mb-1">Mejor mes</div>
-          <div className="text-body text-gray-text-tertiary">
-            {bestMonth.date}: {formatPercentage(bestMonth.roi)}
-          </div>
+      {/* Mejor y Peor Mes - Solo si hay datos reales */}
+      {(bestMonth || worstMonth) && (
+        <div className="grid grid-cols-2 gap-6">
+          {bestMonth && (
+            <div>
+              <div className="text-body text-gray-text-tertiary mb-1">Mejor mes</div>
+              <div className="text-body text-gray-text-tertiary">
+                {bestMonth.date}: {formatPercentage(bestMonth.roi)}
+              </div>
+            </div>
+          )}
+          {worstMonth && (
+            <div>
+              <div className="text-body text-gray-text-tertiary mb-1">Peor mes</div>
+              <div className="text-body text-gray-text-tertiary">
+                {worstMonth.date}: {formatPercentage(worstMonth.roi)}
+              </div>
+            </div>
+          )}
         </div>
-        <div>
-          <div className="text-body text-gray-text-tertiary mb-1">Peor mes</div>
-          <div className="text-body text-gray-text-tertiary">
-            {worstMonth.date}: {formatPercentage(worstMonth.roi)}
-          </div>
+      )}
+      
+      {/* Mensaje si no hay métricas temporales */}
+      {!bestMonth && !worstMonth && (
+        <div className="mt-8 text-center text-body-small text-gray-text-tertiary">
+          Se requieren eventos de múltiples meses para calcular variaciones mensuales y mejores/peores meses.
         </div>
-      </div>
+      )}
     </Card>
   );
 }

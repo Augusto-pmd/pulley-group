@@ -1,28 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '@/components/Card';
 import FadeIn from '@/components/animations/FadeIn';
 import SlideTransition from '@/components/animations/SlideTransition';
 import CurrencyDisplay from '@/components/CurrencyDisplay';
-import { formatCurrency } from '@/mock/data';
-import { formatCurrencyUSD, formatCurrencyARS } from '@/mock/exchange-rates';
-import { formatNumberWithLocale } from '@/utils/number-format';
+import MovementEditModal from '@/components/MovementEditModal';
+import { formatCurrency, formatNumber } from '@/utils/number-format';
+import { getMovements, type ApiMovement } from '@/lib/api';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface ExpenseEventListProps {
   eventos: EventoMensual[];
   onToggleEstado: (id: string) => void;
   onEditMonto: (id: string, nuevoMonto: number) => void;
+  onUpdateEvent?: (evento: EventoMensual) => void;
+  onDeleteEvent?: (id: string) => void;
 }
 
 export default function ExpenseEventList({
   eventos,
   onToggleEstado,
   onEditMonto,
+  onUpdateEvent,
+  onDeleteEvent,
 }: ExpenseEventListProps) {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editMonto, setEditMonto] = useState<string>('');
+  const [editingMovement, setEditingMovement] = useState<ApiMovement | null>(null);
   const [justToggled, setJustToggled] = useState<string | null>(null);
 
   // Todos los totales en USD
@@ -30,23 +33,92 @@ export default function ExpenseEventList({
   const totalPagado = eventos.filter((e) => e.estado === 'pagado').reduce((sum, e) => sum + e.montoUsd, 0);
   const totalPendiente = eventos.filter((e) => e.estado === 'pendiente').reduce((sum, e) => sum + e.montoUsd, 0);
 
-  const handleStartEdit = (evento: EventoMensual) => {
-    setEditingId(evento.id);
-    setEditMonto(evento.monto.toString());
-  };
-
-  const handleSaveEdit = (id: string) => {
-    const nuevoMonto = parseFloat(editMonto);
-    if (!isNaN(nuevoMonto) && nuevoMonto > 0) {
-      onEditMonto(id, nuevoMonto);
+  const handleEditMovement = async (evento: EventoMensual) => {
+    // Cargar el movimiento completo desde la API para el modal
+    try {
+      // Obtener el mes del evento
+      const [year, month] = evento.mes.split('-').map(Number);
+      const movements = await getMovements(year, month);
+      const apiMovement = movements.find(m => m.id === evento.id);
+      if (apiMovement) {
+        setEditingMovement(apiMovement);
+      } else {
+        // Fallback: crear ApiMovement desde EventoMensual
+        setEditingMovement({
+          id: evento.id,
+          type: evento.tipo,
+          amountUSD: evento.montoUsd,
+          currencyOriginal: evento.monedaOriginal,
+          exchangeRate: evento.tipoCambioAplicado || null,
+          date: evento.fecha,
+          status: evento.estado,
+          conceptId: evento.conceptoId,
+          monthId: '',
+          concept: {
+            id: evento.conceptoId,
+            name: evento.conceptoNombre,
+            type: evento.tipo,
+            nature: evento.categoria,
+          },
+        } as ApiMovement);
+      }
+    } catch (error) {
+      console.error('Error loading movement for edit:', error);
+      // Fallback: usar datos del evento
+      setEditingMovement({
+        id: evento.id,
+        type: evento.tipo,
+        amountUSD: evento.montoUsd,
+        currencyOriginal: evento.monedaOriginal,
+        exchangeRate: evento.tipoCambioAplicado || null,
+        date: evento.fecha,
+        status: evento.estado,
+        conceptId: evento.conceptoId,
+        monthId: '',
+        concept: {
+          id: evento.conceptoId,
+          name: evento.conceptoNombre,
+          type: evento.tipo,
+          nature: evento.categoria,
+        },
+      } as ApiMovement);
     }
-    setEditingId(null);
-    setEditMonto('');
   };
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditMonto('');
+  const handleSaveMovement = async (updatedMovement: ApiMovement) => {
+    if (onUpdateEvent) {
+      // Convertir ApiMovement a EventoMensual
+      const eventoActualizado: EventoMensual = {
+        id: updatedMovement.id,
+        conceptoId: updatedMovement.conceptId,
+        conceptoNombre: updatedMovement.concept?.name || 'Concepto desconocido',
+        tipo: updatedMovement.type,
+        fecha: updatedMovement.date.split('T')[0],
+        mes: `${updatedMovement.date.split('T')[0].split('-')[0]}-${updatedMovement.date.split('T')[0].split('-')[1]}`,
+        monto: updatedMovement.currencyOriginal === 'ARS' 
+          ? updatedMovement.amountUSD * (updatedMovement.exchangeRate || 1)
+          : updatedMovement.amountUSD,
+        monedaOriginal: updatedMovement.currencyOriginal as 'ARS' | 'USD',
+        tipoCambioAplicado: updatedMovement.exchangeRate || undefined,
+        montoUsd: updatedMovement.amountUSD,
+        estado: (updatedMovement.status || 'pagado') as 'pagado' | 'pendiente',
+        categoria: updatedMovement.concept?.nature || 'variable',
+        fechaCreacion: updatedMovement.date.split('T')[0],
+      };
+      onUpdateEvent(eventoActualizado);
+    }
+    setEditingMovement(null);
+    // Refrescar página para actualizar todas las vistas
+    window.location.reload();
+  };
+
+  const handleDeleteMovement = (id: string) => {
+    if (onDeleteEvent) {
+      onDeleteEvent(id);
+    }
+    setEditingMovement(null);
+    // Refrescar página para actualizar todas las vistas
+    window.location.reload();
   };
 
   return (
@@ -55,10 +127,10 @@ export default function ExpenseEventList({
         <div>
           <h2 className="text-heading-2 text-gray-text-primary mb-2">EGRESOS</h2>
           <div className="flex items-center gap-6 text-body-small text-gray-text-tertiary">
-            <span>Total: {formatCurrencyUSD(total)}</span>
-            <span className="text-green-600">Pagado: {formatCurrencyUSD(totalPagado)}</span>
+            <span>Total: {formatCurrency(total)}</span>
+            <span className="text-green-600">Pagado: {formatCurrency(totalPagado)}</span>
             {totalPendiente > 0 && (
-              <span className="text-orange-warning">Pendiente: {formatCurrencyUSD(totalPendiente)}</span>
+              <span className="text-orange-warning">Pendiente: {formatCurrency(totalPendiente)}</span>
             )}
           </div>
         </div>
@@ -75,7 +147,8 @@ export default function ExpenseEventList({
             <FadeIn key={evento.id} delay={index * 30} duration={250}>
               <SlideTransition isVisible={true} direction="up" duration={250}>
                 <div
-                  className={`flex items-center justify-between p-4 rounded-lg transition-all duration-fast ${
+                  onClick={() => handleEditMovement(evento)}
+                  className={`flex items-center justify-between p-4 rounded-lg transition-all duration-fast cursor-pointer ${
                     evento.estado === 'pendiente'
                       ? 'bg-orange-50/30 hover:bg-orange-50/50 border border-orange-200/20'
                       : 'bg-white/30 hover:bg-white/50'
@@ -93,6 +166,7 @@ export default function ExpenseEventList({
                 <input
                   type="checkbox"
                   checked={evento.estado === 'pagado'}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={() => {
                     onToggleEstado(evento.id);
                     setJustToggled(evento.id);
@@ -128,68 +202,37 @@ export default function ExpenseEventList({
                     )}
                   </div>
                 </div>
-                {editingId === evento.id ? (
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="number"
-                      value={editMonto}
-                      onChange={(e) => setEditMonto(e.target.value)}
-                      className="w-24 px-2 py-1 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600"
-                      min="0"
-                      step="0.01"
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => handleSaveEdit(evento.id)}
-                      className="text-body text-blue-600 hover:text-blue-700 transition-colors duration-fast"
-                    >
-                      Guardar
-                    </button>
-                    <button
-                      onClick={handleCancelEdit}
-                      className="text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
-                    >
-                      Cancelar
-                    </button>
+                <div className="flex flex-col items-end">
+                  {/* Monto original */}
+                  <div className="number-medium text-gray-text-primary">
+                    {formatCurrency(evento.monto)}
                   </div>
-                ) : (
-                  <div className="flex flex-col items-end">
-                    {/* Monto original */}
-                    <div className="number-medium text-gray-text-primary">
-                      {evento.monedaOriginal === 'ARS' 
-                        ? formatCurrencyARS(evento.monto)
-                        : formatCurrencyUSD(evento.monto)
-                      }
-                    </div>
-                    {/* Información de conversión */}
-                    {evento.monedaOriginal === 'ARS' && evento.tipoCambioAplicado && (
-                      <div className="text-body-small text-gray-text-tertiary mt-0.5">
-                        TC: {formatNumberWithLocale(evento.tipoCambioAplicado)}
-                      </div>
-                    )}
-                    {/* Monto en USD */}
+                  {/* Información de conversión */}
+                  {evento.monedaOriginal === 'ARS' && evento.tipoCambioAplicado && (
                     <div className="text-body-small text-gray-text-tertiary mt-0.5">
-                      = {formatCurrencyUSD(evento.montoUsd)}
+                      TC: {formatNumber(evento.tipoCambioAplicado)}
                     </div>
+                  )}
+                  {/* Monto en USD */}
+                  <div className="text-body-small text-gray-text-tertiary mt-0.5">
+                    = {formatCurrency(evento.montoUsd)}
                   </div>
-                )}
-              </div>
-              {editingId !== evento.id && (
-                <div className="flex items-center gap-3 ml-4">
-                  <button
-                    onClick={() => handleStartEdit(evento)}
-                    className="text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
-                  >
-                    Editar monto
-                  </button>
                 </div>
-              )}
+              </div>
                 </div>
               </SlideTransition>
             </FadeIn>
           ))}
         </div>
       )}
+
+      {/* Modal universal de edición */}
+      <MovementEditModal
+        movement={editingMovement}
+        onClose={() => setEditingMovement(null)}
+        onSave={handleSaveMovement}
+        onDelete={handleDeleteMovement}
+      />
     </Card>
   );
 }

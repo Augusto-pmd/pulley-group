@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '@/components/Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 
 interface NetResultProps {
   netResult: number;

@@ -1,6 +1,6 @@
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import { getEmmaEvolutionWithTramos } from '@/mock/emma-tramos';
 
 export default function EmmaEvolution() {

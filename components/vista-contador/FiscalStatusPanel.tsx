@@ -2,8 +2,7 @@
 
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
-import { formatCurrencyARS } from '@/mock/exchange-rates';
+import { formatPercentage, formatCurrency } from '@/utils/number-format';
 import type { EstadoMonotributo, EstadoIIBB, EstadoBienesPersonales } from '@/mock/fiscal';
 
 interface FiscalStatusPanelProps {
@@ -68,10 +67,10 @@ export default function FiscalStatusPanel({
               INGRESOS 12 MESES
             </div>
             <div className="text-number-medium number-glass">
-              {formatCurrencyARS(estadoMonotributo.ingresosAcumulados12Meses)}
+              {formatCurrency(estadoMonotributo.ingresosAcumulados12Meses)}
             </div>
             <div className="text-body-small text-gray-text-tertiary mt-1">
-              Tope: {formatCurrencyARS(estadoMonotributo.topeIngresosAnuales)}
+              Tope: {formatCurrency(estadoMonotributo.topeIngresosAnuales)}
             </div>
           </div>
         </div>
@@ -173,10 +172,10 @@ export default function FiscalStatusPanel({
               BASE IMPONIBLE
             </div>
             <div className="text-number-medium number-glass">
-              {formatCurrencyARS(estadoBP.baseImponible)}
+              {formatCurrency(estadoBP.baseImponible)}
             </div>
             <div className="text-body-small text-gray-text-tertiary mt-1">
-              Mínimo no imponible: {formatCurrencyARS(estadoBP.minimoNoImponible)}
+              Mínimo no imponible: {formatCurrency(estadoBP.minimoNoImponible)}
             </div>
           </div>
           <div>
@@ -190,7 +189,7 @@ export default function FiscalStatusPanel({
             </div>
             {estadoBP.debePresentar && (
               <div className="text-body-small text-gray-text-tertiary mt-1">
-                Estimado: {formatCurrencyARS(estadoBP.montoEstimado)}
+                Estimado: {formatCurrency(estadoBP.montoEstimado)}
               </div>
             )}
           </div>
@@ -202,7 +201,7 @@ export default function FiscalStatusPanel({
               Debe presentar declaración de Bienes Personales
             </div>
             <div className="text-body text-gray-text-tertiary">
-              La base imponible supera el mínimo no imponible. Estimado a pagar: {formatCurrencyARS(estadoBP.montoEstimado)}
+              La base imponible supera el mínimo no imponible. Estimado a pagar: {formatCurrency(estadoBP.montoEstimado)}
             </div>
           </div>
         )}

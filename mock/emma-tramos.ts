@@ -63,27 +63,31 @@ export function getEmmaEvolutionWithTramos(): Array<{
     return evolution;
   }
 
-  // Año 0: aporte inicial
-  const initialContribution = 1000000;
+  // Año 0: usar capital inicial del primer tramo (debe ser dato real)
   const firstTramo = emmaTramosMock[0];
+  if (!firstTramo || firstTramo.capitalInicial === 0) {
+    return evolution; // Si no hay capital inicial real, no hay evolución
+  }
+
   evolution.push({
     year: 0,
-    capital: initialContribution,
+    capital: firstTramo.capitalInicial,
     variation: 0,
     tramoId: firstTramo?.id,
   });
 
-  let currentCapital = initialContribution;
+  let currentCapital = firstTramo.capitalInicial;
 
   // Procesar cada tramo
   for (const tramo of emmaTramosMock) {
     const startDate = new Date(tramo.fechaInicio);
     const endDate = tramo.fechaFin ? new Date(tramo.fechaFin) : new Date('2054-12-31'); // 30 años desde inicio
     
-    // Calcular años del tramo
-    const startYear = Math.floor((startDate.getTime() - new Date('2022-01-15').getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+    // Calcular años del tramo desde la fecha de inicio del primer tramo (dato real)
+    const firstTramoStartDate = new Date(emmaTramosMock[0].fechaInicio);
+    const startYear = Math.floor((startDate.getTime() - firstTramoStartDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
     const endYear = Math.min(
-      Math.floor((endDate.getTime() - new Date('2022-01-15').getTime()) / (365.25 * 24 * 60 * 60 * 1000)),
+      Math.floor((endDate.getTime() - firstTramoStartDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000)),
       30
     );
 

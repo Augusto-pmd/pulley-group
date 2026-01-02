@@ -80,6 +80,33 @@ export async function PUT(
     
     if (date !== undefined) {
       updateData.date = new Date(date);
+      
+      // Si cambió la fecha, actualizar el monthId también
+      const fechaDate = new Date(date);
+      const year = fechaDate.getFullYear();
+      const month = fechaDate.getMonth() + 1;
+      
+      // Buscar o crear el mes correspondiente
+      let monthRecord = await prisma.month.findFirst({
+        where: {
+          year,
+          month,
+        },
+      });
+      
+      if (!monthRecord) {
+        // Crear el mes si no existe
+        monthRecord = await prisma.month.create({
+          data: {
+            year,
+            month,
+            status: 'abierto',
+            openDate: new Date(),
+          },
+        });
+      }
+      
+      updateData.monthId = monthRecord.id;
     }
     
     if (conceptId !== undefined) {

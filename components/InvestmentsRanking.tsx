@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Card from './Card';
-import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatCurrency, formatPercentage } from '@/utils/number-format';
 import type { Investment } from '@/mock/data';
 
 interface InvestmentsRankingProps {
@@ -48,6 +48,23 @@ export default function InvestmentsRanking({ investments }: InvestmentsRankingPr
     const sign = value >= 0 ? '+' : '';
     return `${sign}${formatCurrency(value)}`;
   };
+
+  // Si no hay inversiones con capital real, mostrar estado vacío
+  if (!investments || investments.length === 0 || investments.every(inv => inv.capital === 0)) {
+    return (
+      <Card padding="normal" className="p-0">
+        <div className="px-6 py-6 border-b border-gray-divider">
+          <h3 className="text-heading-3 font-semibold text-black">RANKING DE INVERSIONES</h3>
+          <p className="text-body-small text-gray-text-tertiary mt-1">
+            Rendimiento último período interanual
+          </p>
+        </div>
+        <div className="px-6 py-12 text-center text-body text-gray-text-tertiary">
+          No hay inversiones con eventos reales registrados. Registra aportes o retiros para ver el ranking.
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card padding="normal" className="p-0">

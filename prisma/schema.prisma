@@ -139,3 +139,15 @@ model InvestmentEvent {
   date         DateTime
   note         String?
 }
+
+// Modelo Emma: Solo guarda supuestos (tasa, horizonte, frecuencia)
+// El dinero real viene de Movements con concepto "Aporte fondo Emma"
+model Emma {
+  id                    String   @id @default(cuid())
+  startDate             DateTime? // Fecha de inicio (opcional hasta que se inicie)
+  expectedRate          Float    // Tasa esperada anual (%)
+  horizon               Int      // Horizonte en años
+  contributionFrequency String   // 'mensual' | 'anual'
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

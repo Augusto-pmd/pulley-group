@@ -1,6 +1,6 @@
 import Card from './Card';
 import CurrencyDisplay from './CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import type { EmmaFund } from '@/mock/data';
 
 interface EmmaFundProps {
@@ -8,6 +8,21 @@ interface EmmaFundProps {
 }
 
 export default function EmmaFund({ data }: EmmaFundProps) {
+  // Si no hay datos reales, mostrar estado vacío
+  if (data.currentCapital === 0 && data.monthlyContribution === 0) {
+    return (
+      <Card>
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black">FONDO EMMA</h3>
+          <p className="text-body text-gray-text-tertiary mt-1">Objetivo a 18/25 años</p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay datos del Fondo Emma disponibles
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       {/* Header */}

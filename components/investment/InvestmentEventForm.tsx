@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import Card from '../Card';
 import { type Inversion } from '@/mock/inversiones';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { getInitialExchangeRate, formatCurrencyUSD, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, formatNumberWithLocale } from '@/utils/number-format';
+import { getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
+import { formatNumberWithSeparators, parseFormattedNumber, formatNumber, formatCurrency } from '@/utils/number-format';
 import { getInvestments, createInvestmentEvent, type ApiInvestment } from '@/lib/api';
 
 interface InvestmentEventFormProps {
@@ -217,7 +217,7 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
             />
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
               <div className="mt-1.5 text-body-small text-gray-text-tertiary">
-                ≈ {formatCurrencyUSD(montoUsdPreview)} (con TC {formatNumberWithLocale(tipoCambio)})
+                ≈ {formatCurrency(montoUsdPreview)} (con TC {formatNumber(tipoCambio)})
               </div>
             )}
           </div>

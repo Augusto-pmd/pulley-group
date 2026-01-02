@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import type { Flow } from '@/mock/data';
 
 interface FlowSummaryProps {
@@ -7,6 +7,17 @@ interface FlowSummaryProps {
 }
 
 export default function FlowSummary({ flows }: FlowSummaryProps) {
+  // Si no hay flujos reales, mostrar estado vacío
+  if (!flows || flows.length === 0) {
+    return (
+      <Card padding="large">
+        <div className="text-center text-body text-gray-text-tertiary">
+          No hay flujos de dinero registrados
+        </div>
+      </Card>
+    );
+  }
+
   const totals = {
     ingresos: flows.filter(f => f.type === 'ingreso').reduce((sum, f) => sum + f.amount, 0),
     gastos: flows.filter(f => f.type === 'gasto').reduce((sum, f) => sum + f.amount, 0),

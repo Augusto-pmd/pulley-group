@@ -52,21 +52,21 @@ export function convertUsdToArsCurrent(usdAmount: number): number {
   return usdAmount * rate;
 }
 
-// Helper: formatear moneda USD
+// Helper: formatear moneda USD (formato argentino unificado)
+// DEPRECATED: Usar formatCurrency de @/utils/number-format
+// Mantenido para compatibilidad temporal
 export function formatCurrencyUSD(value: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  return new Intl.NumberFormat('es-AR', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);
 }
 
-// Helper: formatear moneda ARS
+// Helper: formatear moneda ARS (formato argentino unificado)
+// DEPRECATED: Usar formatCurrency de @/utils/number-format
+// Mantenido para compatibilidad temporal
 export function formatCurrencyARS(value: number): string {
   return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(value);

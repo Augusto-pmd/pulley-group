@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatCurrency, formatPercentage } from '@/utils/number-format';
 import type { Investment } from '@/mock/data';
 
 interface InvestmentSummaryProps {
@@ -12,11 +12,25 @@ export default function InvestmentSummary({ investment }: InvestmentSummaryProps
     return `${sign}${formatCurrency(value)}`;
   };
 
-  // Mock: calcular valor actual
+  // Calcular valor actual desde datos reales
   const currentValue = investment.capital + investment.result;
+  
+  // Si no hay capital real, mostrar estado vacío
+  if (investment.capital === 0) {
+    return (
+      <Card padding="large">
+        <div className="text-center text-body text-gray-text-tertiary py-8">
+          No hay eventos registrados para esta inversión. Registra aportes o retiros para ver el resumen.
+        </div>
+      </Card>
+    );
+  }
+  
   const status = 'Activa';
-  const startDate = '15/03/2022';
-  const horizon = 'Mediano';
+  // Fecha de inicio debe venir de la API (startDate del investment)
+  // Por ahora, mostrar mensaje hasta que haya backend real
+  const startDate = 'No disponible';
+  const horizon = 'No definido';
 
   return (
     <Card padding="large">

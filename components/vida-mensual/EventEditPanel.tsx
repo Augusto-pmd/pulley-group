@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
-import { getInitialExchangeRate, formatCurrencyUSD, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumberWithLocale } from '@/utils/number-format';
+import { getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
+import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumber, formatCurrency } from '@/utils/number-format';
 import type { EventoMensual } from '@/types/vida-mensual';
 
 interface EventEditPanelProps {
@@ -213,7 +213,7 @@ export default function EventEditPanel({
                 />
                 {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
                   <div className="mt-1.5 text-body-small text-gray-text-tertiary">
-                    ≈ {formatCurrencyUSD(montoUsdPreview)} (con TC {formatNumberWithLocale(tipoCambio)})
+                    ≈ {formatCurrency(montoUsdPreview)} (con TC {formatNumber(tipoCambio)})
                   </div>
                 )}
               </div>

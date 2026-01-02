@@ -27,7 +27,7 @@ async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<
     events = await getInvestmentEvents(apiInvestment.id);
   }
 
-  // Calcular capital, result, ROI desde eventos
+  // Calcular capital, result, ROI SOLO desde eventos reales
   let capital = 0;
   let result = 0;
 
@@ -44,14 +44,13 @@ async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<
     }
   });
 
-  // Si no hay eventos, usar targetAmountUSD como capital inicial
-  if (events.length === 0) {
-    capital = apiInvestment.targetAmountUSD;
-  }
+  // NO usar targetAmountUSD como capital inicial - solo eventos reales
+  // Si no hay eventos, capital = 0
 
-  // Calcular ROI (simplificado: result / capital * 100)
+  // Calcular ROI solo si hay capital real
   const roiNominal = capital > 0 ? (result / capital) * 100 : 0;
-  const roiReal = roiNominal * 0.7; // Simplificado: asumir 30% de inflación
+  // ROI Real requiere IPC real, no supuestos - por ahora 0 hasta que haya backend de IPC
+  const roiReal = 0;
 
   return {
     id: apiInvestment.id,

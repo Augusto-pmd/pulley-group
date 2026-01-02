@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import type { MonthlyMovement, Concept, MovementType, MovementCategory } from '@/mock/data';
 
 interface MovementModalProps {

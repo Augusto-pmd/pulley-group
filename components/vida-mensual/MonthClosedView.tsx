@@ -3,7 +3,7 @@
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import ExpenseEventList from './ExpenseEventList';
-import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatCurrency, formatPercentage } from '@/utils/number-format';
 import { formatNumber } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Card from '../Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import type { Flow } from '@/mock/data';
 
 interface FlowListProps {

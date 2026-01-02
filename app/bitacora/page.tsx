@@ -15,6 +15,39 @@ export default function BitacoraPage() {
   const filteredDecisions = filter === 'all'
     ? mockDecisions
     : mockDecisions.filter((d) => d.type === filter);
+  
+  // Si no hay decisiones reales, mostrar mensaje
+  if (mockDecisions.length === 0) {
+    return (
+      <>
+        <div className="mb-6">
+          <ContextHeader
+            module={{ label: 'Dashboard', href: '/' }}
+            entity={{ label: 'Bitácora' }}
+          />
+        </div>
+        <div className="mb-8">
+          <ModuleHeader
+            title="Bitácora"
+            description="Memoria patrimonial de decisiones tomadas"
+            status={{
+              label: 'Total',
+              value: '0 decisiones',
+              color: 'info',
+            }}
+          />
+        </div>
+        <div className="text-center py-16">
+          <p className="text-body-large text-gray-text-primary mb-2">
+            No hay decisiones registradas
+          </p>
+          <p className="text-body text-gray-text-tertiary">
+            Registra decisiones patrimoniales importantes para mantener un historial de tu proceso de toma de decisiones.
+          </p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

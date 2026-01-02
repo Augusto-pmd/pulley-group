@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Card from '../Card';
-import { exchangeRatesMock, formatCurrencyUSD, formatCurrencyARS, getCurrentExchangeRate, type ExchangeRate } from '@/mock/exchange-rates';
+import { exchangeRatesMock, getCurrentExchangeRate, type ExchangeRate } from '@/mock/exchange-rates';
+import { formatCurrency } from '@/utils/number-format';
 import { formatNumber } from '@/utils/number-format';
 
 export default function ExchangeRatesTable() {

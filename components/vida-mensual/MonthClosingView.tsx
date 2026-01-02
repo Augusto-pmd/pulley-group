@@ -4,8 +4,8 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
 import FadeIn from '../animations/FadeIn';
-import { formatPercentage } from '@/mock/data';
-import { formatCurrencyUSD } from '@/mock/exchange-rates';
+import { formatPercentage } from '@/utils/number-format';
+import { formatCurrency } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface MonthClosingViewProps {
@@ -154,7 +154,7 @@ export default function MonthClosingView({
                     Atención: Hay eventos pendientes
                   </div>
                       <div className="text-body text-gray-text-tertiary">
-                        {eventosPendientes.length} eventos por un total de {formatCurrencyUSD(totalPendiente)} aún no están marcados como pagados.
+                        {eventosPendientes.length} eventos por un total de {formatCurrency(totalPendiente)} aún no están marcados como pagados.
                       </div>
                 </div>
               </div>

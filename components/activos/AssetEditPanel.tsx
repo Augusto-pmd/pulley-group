@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
-import { formatCurrencyUSD } from '@/mock/exchange-rates';
+import { formatCurrency } from '@/utils/number-format';
 import { 
   getPatrimonioNetoActivo,
   type Activo,
@@ -443,7 +443,7 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
                                 />
                               </div>
                               <div className="text-body-small text-gray-text-tertiary mt-1">
-                                Saldo: {formatCurrencyUSD(pago.saldoAnteriorUsd)} → {formatCurrencyUSD(pago.saldoNuevoUsd)}
+                                Saldo: {formatCurrency(pago.saldoAnteriorUsd)} → {formatCurrency(pago.saldoNuevoUsd)}
                               </div>
                             </div>
                           ))}

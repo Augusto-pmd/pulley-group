@@ -2,7 +2,7 @@
 
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import { getTramosHistoricos, type EmmaTramo } from '@/mock/emma-tramos';
 
 interface EmmaTramosHistoryProps {

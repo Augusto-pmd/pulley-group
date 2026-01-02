@@ -1,14 +1,12 @@
 'use client';
 
 import { 
-  formatCurrencyUSD, 
-  formatCurrencyARS, 
-  formatCurrencyDual, 
   convertArsToUsdCurrent, 
   convertUsdToArsCurrent,
   convertArsToUsd,
   convertUsdToArs
 } from '@/mock/exchange-rates';
+import { formatCurrency } from '@/utils/number-format';
 
 interface CurrencyDisplayProps {
   value: number; // Valor en USD (asumido por defecto, sistema USD-first)
@@ -76,7 +74,7 @@ export default function CurrencyDisplay({
             display: 'block',
             textAlign: 'left',
           }}>
-            {formatCurrencyUSD(usdValue)}
+            {formatCurrency(usdValue)}
           </div>
           <span className={`${usdIndicatorSizes[size]} font-normal tracking-tight`} style={{
             color: 'rgba(59, 130, 59, 0.55)', // Verde petróleo suave, más discreto
@@ -88,7 +86,7 @@ export default function CurrencyDisplay({
         </div>
         {/* Referencia secundaria ARS con indicador explícito */}
         <div className="text-body-small text-gray-text-tertiary mt-1.5 opacity-70 flex items-baseline gap-1">
-          {formatCurrencyARS(arsValue)}
+          {formatCurrency(arsValue)}
           <span className="text-caption">ars</span>
         </div>
       </div>
@@ -101,7 +99,7 @@ export default function CurrencyDisplay({
         display: 'block',
         textAlign: 'left',
       }}>
-        {formatCurrencyUSD(usdValue)}
+        {formatCurrency(usdValue)}
       </div>
       <span className={`${usdIndicatorSizes[size]} font-normal tracking-tight`} style={{
         color: 'rgba(59, 130, 59, 0.55)', // Verde petróleo suave, más discreto
@@ -167,7 +165,7 @@ export function CurrencyDisplaySigned(props: CurrencyDisplayProps) {
             textAlign: 'left',
           }}>
             <span className="text-gray-text-primary opacity-70">{sign}</span>
-            {formatCurrencyUSD(usdValue)}
+            {formatCurrency(usdValue)}
           </div>
           <span className={`${usdIndicatorSizes[size]} font-normal tracking-tight`} style={{
             color: 'rgba(59, 130, 59, 0.55)', // Verde petróleo suave, más discreto
@@ -179,7 +177,7 @@ export function CurrencyDisplaySigned(props: CurrencyDisplayProps) {
         </div>
         {/* Referencia secundaria ARS con indicador explícito */}
         <div className="text-body-small text-gray-text-tertiary mt-1.5 opacity-70 flex items-baseline gap-1">
-          {formatCurrencyARS(arsValue)}
+          {formatCurrency(arsValue)}
           <span className="text-caption">ars</span>
         </div>
       </div>
@@ -193,7 +191,7 @@ export function CurrencyDisplaySigned(props: CurrencyDisplayProps) {
         textAlign: 'left',
       }}>
         <span className="text-gray-text-primary opacity-70">{sign}</span>
-        {formatCurrencyUSD(usdValue)}
+        {formatCurrency(usdValue)}
       </div>
       <span className={`${usdIndicatorSizes[size]} font-normal tracking-tight`} style={{
         color: 'rgba(59, 130, 59, 0.55)', // Verde petróleo suave, más discreto

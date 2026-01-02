@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatCurrency, formatPercentage } from '@/utils/number-format';
 import type { Scenario, Horizon } from '@/mock/data';
 import { getTemporalEvolution } from '@/mock/data';
 
@@ -11,6 +11,23 @@ interface TemporalEvolutionProps {
 export default function TemporalEvolution({ scenario, horizon }: TemporalEvolutionProps) {
   const evolution = getTemporalEvolution(scenario, horizon);
   const scenarioLabel = scenario.charAt(0).toUpperCase() + scenario.slice(1);
+  
+  // Si no hay datos reales, mostrar estado vacío
+  if (!evolution || evolution.length === 0) {
+    return (
+      <Card padding="large">
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black mb-1">EVOLUCIÓN TEMPORAL</h3>
+          <p className="text-body text-gray-text-tertiary">
+            Escenario {scenarioLabel} - Horizonte {horizon} años
+          </p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay datos suficientes para generar proyecciones temporales. Configure los supuestos en Settings.
+        </div>
+      </Card>
+    );
+  }
 
   const formatSignedPercentage = (value: number) => {
     const sign = value >= 0 ? '+' : '';

@@ -11,13 +11,46 @@ import type { Flow } from '@/mock/data';
 export const dynamic = 'force-dynamic';
 
 export default function FlowsPage() {
-  // Mock: filtrar flujos (sin lógica real, solo estructura)
+  // Flujos reales - si no hay datos, mostrar estado vacío
   const ingresos = mockFlows.filter((f) => f.type === 'ingreso');
   const gastos = mockFlows.filter((f) => f.type === 'gasto');
   const aportes = mockFlows.filter((f) => f.type === 'aporte');
   const retiros = mockFlows.filter((f) => f.type === 'retiro');
 
   const totalFlows = mockFlows.length;
+  
+  // Si no hay flujos reales, mostrar mensaje
+  if (totalFlows === 0) {
+    return (
+      <>
+        <div className="mb-6">
+          <ContextHeader
+            module={{ label: 'Dashboard', href: '/' }}
+            entity={{ label: 'Flujos' }}
+          />
+        </div>
+        <div className="mb-8">
+          <ModuleHeader
+            title="Flujos"
+            description="Movimientos de dinero que entran y salen de tu patrimonio"
+            status={{
+              label: 'Total',
+              value: '0 movimientos',
+              color: 'info',
+            }}
+          />
+        </div>
+        <div className="text-center py-16">
+          <p className="text-body-large text-gray-text-primary mb-2">
+            No hay flujos de dinero registrados
+          </p>
+          <p className="text-body text-gray-text-tertiary">
+            Los flujos se generan automáticamente desde movimientos, inversiones y activos reales.
+          </p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

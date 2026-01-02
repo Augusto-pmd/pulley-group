@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatCurrency, formatPercentage } from '@/utils/number-format';
 import type { Scenario, Horizon } from '@/mock/data';
 import { mockScenarioProjections } from '@/mock/data';
 
@@ -10,6 +10,17 @@ interface ScenarioComparisonProps {
 export default function ScenarioComparison({ horizon }: ScenarioComparisonProps) {
   const scenarios: Scenario[] = ['conservador', 'base', 'optimista'];
   const baseProjection = mockScenarioProjections.base[horizon];
+  
+  // Si no hay datos reales, mostrar estado vacío
+  if (baseProjection.nominal === 0 && baseProjection.real === 0) {
+    return (
+      <Card padding="large">
+        <div className="text-center text-body text-gray-text-tertiary">
+          No hay proyecciones disponibles. Configure los supuestos en Settings para generar proyecciones.
+        </div>
+      </Card>
+    );
+  }
 
   const formatSignedPercentage = (value: number) => {
     const sign = value >= 0 ? '+' : '';

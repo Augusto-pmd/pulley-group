@@ -5,7 +5,9 @@ import QuickAddForm from './QuickAddForm';
 import MonthTable from './MonthTable';
 import EventEditPanel from './EventEditPanel';
 import MonthSummary from './MonthSummary';
+import MovementEditModal from '../MovementEditModal';
 import FadeIn from '../animations/FadeIn';
+import { getMovements, type ApiMovement } from '@/lib/api';
 import type { EventoMensual } from '@/types/vida-mensual';
 
 interface MonthOpenViewProps {
@@ -46,6 +48,8 @@ export default function MonthOpenView({
 
   // Estado para panel de edición
   const [selectedEvent, setSelectedEvent] = useState<EventoMensual | null>(null);
+  // Estado para modal de edición universal
+  const [editingMovement, setEditingMovement] = useState<ApiMovement | null>(null);
 
   const handleQuickAdd = (
     conceptoId: string, 
@@ -62,8 +66,55 @@ export default function MonthOpenView({
     onAddEvent(conceptoId, conceptoNombre, tipo, monto, categoria, estado, monedaOriginal, montoUsdFinal, tipoCambioAplicado);
   };
 
-  const handleSelectEvent = (evento: EventoMensual) => {
-    setSelectedEvent(evento);
+  const handleSelectEvent = async (evento: EventoMensual) => {
+    // Cargar el movimiento completo desde la API para el modal
+    try {
+      const [year, month] = evento.mes.split('-').map(Number);
+      const movements = await getMovements(year, month);
+      const apiMovement = movements.find(m => m.id === evento.id);
+      if (apiMovement) {
+        setEditingMovement(apiMovement);
+      } else {
+        // Fallback: crear ApiMovement desde EventoMensual
+        setEditingMovement({
+          id: evento.id,
+          type: evento.tipo,
+          amountUSD: evento.montoUsd,
+          currencyOriginal: evento.monedaOriginal,
+          exchangeRate: evento.tipoCambioAplicado || null,
+          date: evento.fecha,
+          status: evento.estado,
+          conceptId: evento.conceptoId,
+          monthId: '', // Se actualizará en el modal si es necesario
+          concept: {
+            id: evento.conceptoId,
+            name: evento.conceptoNombre,
+            type: evento.tipo,
+            nature: evento.categoria,
+          },
+        } as ApiMovement);
+      }
+    } catch (error) {
+      console.error('Error loading movement for edit:', error);
+      // Fallback: usar datos del evento
+      setEditingMovement({
+        id: evento.id,
+        type: evento.tipo,
+        amountUSD: evento.montoUsd,
+        currencyOriginal: evento.monedaOriginal,
+        exchangeRate: evento.tipoCambioAplicado || null,
+        date: evento.fecha,
+        status: evento.estado,
+        conceptId: evento.conceptoId,
+        monthId: '',
+        concept: {
+          id: evento.conceptoId,
+          name: evento.conceptoNombre,
+          type: evento.tipo,
+          nature: evento.categoria,
+        },
+      } as ApiMovement);
+    }
   };
 
   const handleClosePanel = () => {
@@ -73,6 +124,36 @@ export default function MonthOpenView({
   const handleSaveEvent = (eventoActualizado: EventoMensual) => {
     onUpdateEvent(eventoActualizado);
     setSelectedEvent(null);
+  };
+
+  const handleSaveMovement = async (updatedMovement: ApiMovement) => {
+    // Convertir ApiMovement a EventoMensual y actualizar
+    const eventoActualizado: EventoMensual = {
+      id: updatedMovement.id,
+      conceptoId: updatedMovement.conceptId,
+      conceptoNombre: updatedMovement.concept?.name || 'Concepto desconocido',
+      tipo: updatedMovement.type,
+      fecha: updatedMovement.date.split('T')[0],
+      mes: `${updatedMovement.date.split('T')[0].split('-')[0]}-${updatedMovement.date.split('T')[0].split('-')[1]}`,
+      monto: updatedMovement.currencyOriginal === 'ARS' 
+        ? updatedMovement.amountUSD * (updatedMovement.exchangeRate || 1)
+        : updatedMovement.amountUSD,
+      monedaOriginal: updatedMovement.currencyOriginal as 'ARS' | 'USD',
+      tipoCambioAplicado: updatedMovement.exchangeRate || undefined,
+      montoUsd: updatedMovement.amountUSD,
+      estado: (updatedMovement.status || 'pagado') as 'pagado' | 'pendiente',
+      categoria: updatedMovement.concept?.nature || 'variable',
+      fechaCreacion: updatedMovement.date.split('T')[0],
+    };
+    onUpdateEvent(eventoActualizado);
+    setEditingMovement(null);
+  };
+
+  const handleDeleteMovement = (id: string) => {
+    if (onDeleteEvent) {
+      onDeleteEvent(id);
+    }
+    setEditingMovement(null);
   };
 
   // Usar conceptos desde props (cargados desde API)
@@ -116,6 +197,14 @@ export default function MonthOpenView({
         onDelete={onDeleteEvent}
         onUpdateConcepto={handleUpdateConcepto}
         conceptos={conceptosList}
+      />
+
+      {/* Modal universal de edición */}
+      <MovementEditModal
+        movement={editingMovement}
+        onClose={() => setEditingMovement(null)}
+        onSave={handleSaveMovement}
+        onDelete={handleDeleteMovement}
       />
     </div>
   );

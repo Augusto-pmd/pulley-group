@@ -766,6 +766,213 @@ export async function getInvestment(id: string): Promise<ApiInvestment> {
   }
 }
 
+// ============================================
+// EMMA API
+// ============================================
+
+export interface ApiEmma {
+  id: string;
+  startDate: string | null;
+  expectedRate: number;
+  horizon: number;
+  contributionFrequency: 'mensual' | 'anual';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateEmmaData {
+  startDate?: string | null;
+  expectedRate: number;
+  horizon: number;
+  contributionFrequency: 'mensual' | 'anual';
+}
+
+/**
+ * Obtener configuración de Emma (supuestos)
+ */
+export async function getEmma(): Promise<ApiEmma | null> {
+  try {
+    const response = await fetch('/api/emma', {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    const data = await response.json();
+    return data; // Puede ser null si Emma no está iniciado
+  } catch (error: any) {
+    console.error('Error in getEmma:', error);
+    throw error;
+  }
+}
+
+/**
+ * Guardar configuración de Emma (solo supuestos)
+ */
+export async function saveEmma(data: CreateEmmaData): Promise<ApiEmma> {
+  try {
+    const response = await fetch('/api/emma', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error in saveEmma:', error);
+    throw error;
+  }
+}
+
+/**
+ * Obtener movimientos de Emma (filtrando por concepto "Aporte fondo Emma")
+ */
+export async function getEmmaMovements(): Promise<ApiMovement[]> {
+  try {
+    // Obtener todos los conceptos
+    const concepts = await getConcepts();
+    
+    // Buscar el concepto "Aporte fondo Emma"
+    const emmaConcept = concepts.find(c => c.name === 'Aporte fondo Emma');
+    
+    if (!emmaConcept) {
+      // Si no existe el concepto, retornar array vacío
+      return [];
+    }
+    
+    // Obtener todos los movimientos
+    const allMovements = await getMovements();
+    
+    // Filtrar movimientos del concepto Emma
+    return allMovements.filter(m => m.conceptId === emmaConcept.id);
+  } catch (error: any) {
+    console.error('Error in getEmmaMovements:', error);
+    return [];
+  }
+}
+
+/**
+ * Calcular estado de Emma desde movimientos reales
+ */
+export interface EmmaState {
+  currentCapital: number;
+  initialContribution: number;
+  monthlyContribution: number;
+  elapsedYears: number;
+  elapsedMonths: number;
+  startDate: string | null;
+  totalContributions: number;
+}
+
+export async function getEmmaState(): Promise<EmmaState> {
+  try {
+    const movements = await getEmmaMovements();
+    const emmaConfig = await getEmma();
+    
+    // Si no hay movimientos, retornar estado vacío
+    if (movements.length === 0) {
+      return {
+        currentCapital: 0,
+        initialContribution: 0,
+        monthlyContribution: 0,
+        elapsedYears: 0,
+        elapsedMonths: 0,
+        startDate: null,
+        totalContributions: 0,
+      };
+    }
+    
+    // Ordenar movimientos por fecha
+    const sortedMovements = [...movements].sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    
+    // Calcular capital acumulado (suma de todos los movimientos de tipo ingreso)
+    const currentCapital = sortedMovements
+      .filter(m => m.type === 'ingreso')
+      .reduce((sum, m) => sum + m.amountUSD, 0);
+    
+    // Aporte inicial es el primer movimiento
+    const initialContribution = sortedMovements.length > 0 && sortedMovements[0].type === 'ingreso'
+      ? sortedMovements[0].amountUSD
+      : 0;
+    
+    // Calcular aporte mensual promedio (excluyendo el inicial)
+    // Si hay más de un movimiento, calcular promedio de los movimientos posteriores al inicial
+    const monthlyMovements = sortedMovements.slice(1).filter(m => m.type === 'ingreso');
+    let monthlyContribution = 0;
+    
+    if (monthlyMovements.length > 0) {
+      // Sumar todos los aportes posteriores al inicial
+      const totalMonthly = monthlyMovements.reduce((sum, m) => sum + m.amountUSD, 0);
+      monthlyContribution = totalMonthly / monthlyMovements.length;
+    } else if (sortedMovements.length === 1 && sortedMovements[0].type === 'ingreso') {
+      // Si solo hay un movimiento (el inicial), el aporte mensual es 0
+      monthlyContribution = 0;
+    }
+    
+    // Calcular tiempo transcurrido
+    const startDate = sortedMovements[0].date;
+    const now = new Date();
+    const start = new Date(startDate);
+    const diffTime = now.getTime() - start.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const elapsedYears = Math.floor(diffDays / 365.25);
+    const elapsedMonths = Math.floor((diffDays % 365.25) / 30.44);
+    
+    // Total de aportes
+    const totalContributions = sortedMovements
+      .filter(m => m.type === 'ingreso')
+      .reduce((sum, m) => sum + m.amountUSD, 0);
+    
+    return {
+      currentCapital,
+      initialContribution,
+      monthlyContribution,
+      elapsedYears,
+      elapsedMonths,
+      startDate,
+      totalContributions,
+    };
+  } catch (error: any) {
+    console.error('Error in getEmmaState:', error);
+    return {
+      currentCapital: 0,
+      initialContribution: 0,
+      monthlyContribution: 0,
+      elapsedYears: 0,
+      elapsedMonths: 0,
+      startDate: null,
+      totalContributions: 0,
+    };
+  }
+}
+
 /**
  * Crear una nueva inversión
  */

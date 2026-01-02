@@ -123,3 +123,43 @@ export function formatNumber(
   }).format(value);
 }
 
+/**
+ * Helper unificado para formatear moneda en formato argentino
+ * FORMATO OBLIGATORIO: puntos para miles, coma para decimales
+ * Ejemplo: 1234567.89 → "1.234.567,89"
+ * 
+ * Este es el ÚNICO helper permitido para formatear valores monetarios en toda la aplicación.
+ * Reemplaza formatCurrencyUSD, formatCurrencyARS, formatCurrency de mock/data.ts
+ * 
+ * @param value - Valor numérico a formatear
+ * @param decimals - Cantidad de decimales (default: 0 para montos enteros)
+ * @returns String formateado según estándar argentino
+ */
+export function formatCurrency(
+  value: number,
+  decimals: number = 0
+): string {
+  return new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+/**
+ * Formatea un porcentaje en formato argentino
+ * Ejemplo: 15.5 → "15,5%"
+ * 
+ * @param value - Porcentaje numérico (ej: 15.5 para 15.5%)
+ * @param decimals - Cantidad de decimales (default: 1)
+ * @returns String formateado con símbolo %
+ */
+export function formatPercentage(
+  value: number,
+  decimals: number = 1
+): string {
+  return new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value) + '%';
+}
+

@@ -1,9 +1,26 @@
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import { mockEmmaMilestones } from '@/mock/data';
 
 export default function EmmaMilestones() {
+  // Si no hay datos reales, mostrar estado vacío
+  if (!mockEmmaMilestones || mockEmmaMilestones.length === 0) {
+    return (
+      <Card padding="large">
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black mb-1">PROYECCIÓN POR HITOS</h3>
+          <p className="text-body text-gray-text-tertiary">
+            Capital proyectado según interés compuesto
+          </p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay datos de proyección disponibles
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card padding="large">
       {/* Header de Card */}

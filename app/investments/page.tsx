@@ -33,7 +33,7 @@ function apiInvestmentToInversion(apiInvestment: ApiInvestment): Inversion {
 
 // Función para convertir ApiInvestment + eventos a Investment (para InvestmentCard)
 async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<Investment> {
-  // Calcular capital, result, ROI desde eventos
+  // Calcular capital, result, ROI SOLO desde eventos reales
   const events = apiInvestment.events || [];
   let capital = 0;
   let result = 0;
@@ -51,14 +51,13 @@ async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<
     }
   });
 
-  // Si no hay eventos, usar targetAmountUSD como capital inicial
-  if (events.length === 0) {
-    capital = apiInvestment.targetAmountUSD;
-  }
+  // NO usar targetAmountUSD como capital inicial - solo eventos reales
+  // Si no hay eventos, capital = 0
 
-  // Calcular ROI (simplificado: result / capital * 100)
+  // Calcular ROI solo si hay capital real
   const roiNominal = capital > 0 ? (result / capital) * 100 : 0;
-  const roiReal = roiNominal * 0.7; // Simplificado: asumir 30% de inflación
+  // ROI Real requiere IPC real, no supuestos - por ahora 0 hasta que haya backend de IPC
+  const roiReal = 0;
 
   return {
     id: apiInvestment.id,
@@ -309,9 +308,23 @@ export default function InvestmentsPage() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {investmentsForCard.map((investment) => (
-                <InvestmentCard key={investment.id} investment={investment} />
-              ))}
+              {investmentsForCard
+                .filter((investment) => investment.capital > 0) // Solo mostrar inversiones con capital real
+                .map((investment) => (
+                  <InvestmentCard key={investment.id} investment={investment} />
+                ))}
+              {investmentsForCard.filter((investment) => investment.capital === 0).length > 0 && (
+                <Card padding="large">
+                  <div className="text-center py-8">
+                    <p className="text-body text-gray-text-tertiary mb-2">
+                      {investmentsForCard.filter((investment) => investment.capital === 0).length} inversión(es) sin eventos registrados
+                    </p>
+                    <p className="text-body-small text-gray-text-disabled">
+                      Registra aportes o retiros para ver estas inversiones en el listado.
+                    </p>
+                  </div>
+                </Card>
+              )}
             </div>
           )}
         </>

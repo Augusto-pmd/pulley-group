@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface MonthSummaryToggleProps {

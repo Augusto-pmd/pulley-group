@@ -5,8 +5,8 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import FeedbackPulse from '../animations/FeedbackPulse';
 import { getConcepts } from '@/lib/api';
-import { convertArsToUsdCurrent, getCurrentExchangeRate, formatCurrencyUSD, getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumberWithLocale } from '@/utils/number-format';
+import { convertArsToUsdCurrent, getCurrentExchangeRate, getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
+import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumber, formatCurrency } from '@/utils/number-format';
 
 interface QuickAddFormProps {
   onAdd: (
@@ -321,9 +321,9 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
             {/* Feedback de tipo de cambio cuando moneda = ARS */}
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
               <div className="mt-1.5 text-body-small text-gray-text-tertiary">
-                ≈ <span className="font-medium text-gray-text-secondary">{formatCurrencyUSD(montoUsdPreview)}</span>
+                ≈ <span className="font-medium text-gray-text-secondary">{formatCurrency(montoUsdPreview)}</span>
                 {' '}
-                <span className="text-gray-text-disabled">(con TC {formatNumberWithLocale(tipoCambio)})</span>
+                <span className="text-gray-text-disabled">(con TC {formatNumber(tipoCambio)})</span>
               </div>
             )}
           </div>

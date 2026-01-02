@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import { mockEmmaMilestones } from '@/mock/data';
 import { mockPatrimonialState } from '@/mock/data';
 import type { Horizon } from '@/mock/data';
@@ -11,19 +11,27 @@ interface EmmaProjectionsBridgeProps {
 }
 
 export default function EmmaProjectionsBridge({ horizon }: EmmaProjectionsBridgeProps) {
-  // Mock: calcular contribución según horizonte
-  const getEmmaProjection = (h: Horizon) => {
-    if (h === 5) return mockEmmaMilestones[0].capital * 0.3; // 18 años * 0.3
-    if (h === 10) return mockEmmaMilestones[0].capital * 0.6; // 18 años * 0.6
-    return mockEmmaMilestones[1].capital; // 25 años
-  };
+  // Si no hay datos reales, mostrar estado vacío
+  if (!mockEmmaMilestones || mockEmmaMilestones.length === 0 || mockPatrimonialState.total === 0) {
+    return (
+      <Card padding="large">
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black mb-1">RELACIÓN CON PATRIMONIO GENERAL</h3>
+          <p className="text-body text-gray-text-tertiary">
+            Contribución a las proyecciones globales
+          </p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay datos de proyección disponibles
+        </div>
+      </Card>
+    );
+  }
 
-  const contribution = getEmmaProjection(horizon);
-  const projectedValue = getEmmaProjection(horizon);
-  
-  // Mock: calcular porcentaje del patrimonio proyectado
-  const totalProjected = mockPatrimonialState.total * 1.5; // Mock: patrimonio proyectado
-  const percentage = (projectedValue / totalProjected) * 100;
+  // Sin backend de proyecciones real, retornar cero
+  const contribution = 0;
+  const projectedValue = 0;
+  const percentage = 0;
 
   return (
     <Card padding="large">

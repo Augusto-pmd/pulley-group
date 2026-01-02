@@ -1,7 +1,7 @@
 'use client';
 
 import Card from '../Card';
-import { formatCurrencyARS } from '@/mock/exchange-rates';
+import { formatCurrency } from '@/utils/number-format';
 import type { ObligacionFiscal } from '@/mock/fiscal';
 
 interface FiscalObligationsProps {
@@ -128,7 +128,7 @@ export default function FiscalObligations({ obligaciones }: FiscalObligationsPro
                 {obligacion.montoEstimado && (
                   <div className="mt-2 pt-2 border-t border-gray-divider">
                     <div className="text-body-small text-gray-text-tertiary">
-                      Monto estimado: {formatCurrencyARS(obligacion.montoEstimado)}
+                      Monto estimado: {formatCurrency(obligacion.montoEstimado)}
                     </div>
                   </div>
                 )}

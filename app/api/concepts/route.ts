@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
             { name: 'Ingreso', type: 'ingreso', nature: 'variable' },
             { name: 'Gasto', type: 'egreso', nature: 'variable' },
             { name: 'Ahorro', type: 'ingreso', nature: 'variable' },
+            { name: 'Aporte fondo Emma', type: 'ingreso', nature: 'variable' },
           ],
           skipDuplicates: true, // La DB decide duplicados
         });

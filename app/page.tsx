@@ -153,39 +153,50 @@ export default function Dashboard() {
   }), []);
 
   // Transformar inversiones para InvestmentsRanking
+  // SOLO mostrar inversiones con eventos reales (capital > 0)
   const investmentsForRanking = useMemo(() => {
     try {
-      return investments.map((inv) => {
-        const events = inv.events || [];
-        let capital = 0;
-        let result = 0;
+      return investments
+        .map((inv) => {
+          const events = inv.events || [];
+          let capital = 0;
+          let result = 0;
 
-        events.forEach((event) => {
-          if (event.type === 'aporte') {
-            capital += event.amountUSD;
-            result += event.amountUSD;
-          } else if (event.type === 'retiro') {
-            capital -= event.amountUSD;
-            result -= event.amountUSD;
-          } else if (event.type === 'ajuste') {
-            result += event.amountUSD;
+          // SOLO calcular desde eventos reales
+          events.forEach((event) => {
+            if (event.type === 'aporte') {
+              capital += event.amountUSD;
+              result += event.amountUSD;
+            } else if (event.type === 'retiro') {
+              capital -= event.amountUSD;
+              result -= event.amountUSD;
+            } else if (event.type === 'ajuste') {
+              result += event.amountUSD;
+            }
+          });
+
+          // Si no hay capital real (sin eventos), no incluir en ranking
+          if (capital === 0) {
+            return null;
           }
-        });
 
-        const roiNominal = capital > 0 ? (result / capital) * 100 : 0;
-        const roiReal = roiNominal * 0.7; // Simplificado
+          // ROI solo se calcula si hay capital real
+          const roiNominal = capital > 0 ? (result / capital) * 100 : 0;
+          // ROI Real requiere IPC real, no supuestos - por ahora 0 hasta que haya backend de IPC
+          const roiReal = 0;
 
-        return {
-          id: inv.id,
-          name: inv.name || 'Sin nombre',
-          type: inv.type === 'financiera' ? 'Financiera' : 'Inmobiliaria',
-          capital,
-          result,
-          roiNominal,
-          roiReal,
-          status: 'active' as const,
-        };
-      });
+          return {
+            id: inv.id,
+            name: inv.name || 'Sin nombre',
+            type: inv.type === 'financiera' ? 'Financiera' : 'Inmobiliaria',
+            capital,
+            result,
+            roiNominal,
+            roiReal,
+            status: 'active' as const,
+          };
+        })
+        .filter((inv): inv is NonNullable<typeof inv> => inv !== null);
     } catch (error) {
       console.error('Error transforming investments:', error);
       return [];
@@ -199,6 +210,10 @@ export default function Dashboard() {
       </div>
     );
   }
+
+  // Si no hay datos reales, mostrar estado inicial limpio
+  const hasAnyData = totalPatrimony > 0 || monthlyResult !== 0 || annualResult !== 0 || 
+                     assets.length > 0 || investments.length > 0;
 
   try {
     return (

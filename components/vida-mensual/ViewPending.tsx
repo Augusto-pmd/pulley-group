@@ -2,7 +2,7 @@
 
 import Card from '@/components/Card';
 import ExpenseEventList from './ExpenseEventList';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface ViewPendingProps {

@@ -226,10 +226,13 @@ export default function VidaMensualPage() {
         conceptId: eventoActualizado.conceptoId,
       });
       
-      const eventoActualizadoAPI = apiMovementToEvento(updated);
-      setEventos(
-        eventos.map((e) => (e.id === eventoActualizado.id ? eventoActualizadoAPI : e))
-      );
+      // Recargar movimientos del mes para reflejar cambios (incluye cambio de mes si cambió la fecha)
+      const [year, month] = selectedMonth.split('-').map(Number);
+      const movements = await getMovements(year, month);
+      const eventosFromAPI = Array.isArray(movements)
+        ? movements.map(apiMovementToEvento)
+        : [];
+      setEventos(eventosFromAPI);
     } catch (error) {
       console.error('Error updating movement:', error);
       // Mantener estado local si falla

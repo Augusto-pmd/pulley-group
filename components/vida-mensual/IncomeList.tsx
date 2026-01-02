@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '@/components/Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import type { MonthlyMovement, Concept } from '@/mock/data';
 import MovementModal from './MovementModal';
 

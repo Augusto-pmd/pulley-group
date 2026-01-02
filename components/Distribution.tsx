@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import Card from './Card';
 import CurrencyDisplay from './CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import type { Distribution } from '@/mock/data';
 
 interface DistributionProps {

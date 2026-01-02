@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../Card';
-import { formatCurrencyARS } from '@/mock/exchange-rates';
+import { formatCurrency } from '@/utils/number-format';
 import { generarExportContador, type ExportContador } from '@/mock/fiscal';
 import { getMesesDisponibles } from '@/mock/eventos';
 
@@ -88,7 +88,7 @@ export default function FiscalExport() {
                   FACTURADOS
                 </div>
                 <div className="text-number-medium number-glass">
-                  {formatCurrencyARS(exportData.ingresos.facturados)}
+                  {formatCurrency(exportData.ingresos.facturados)}
                 </div>
               </div>
               <div className="p-4 rounded-lg bg-white/30 border border-gray-divider">
@@ -96,7 +96,7 @@ export default function FiscalExport() {
                   NO FACTURADOS
                 </div>
                 <div className="text-number-medium number-glass">
-                  {formatCurrencyARS(exportData.ingresos.noFacturados)}
+                  {formatCurrency(exportData.ingresos.noFacturados)}
                 </div>
               </div>
             </div>
@@ -111,7 +111,7 @@ export default function FiscalExport() {
                   DEDUCIBLES
                 </div>
                 <div className="text-number-medium number-glass">
-                  {formatCurrencyARS(exportData.gastos.deducibles)}
+                  {formatCurrency(exportData.gastos.deducibles)}
                 </div>
               </div>
               <div className="p-4 rounded-lg bg-white/30 border border-gray-divider">
@@ -119,7 +119,7 @@ export default function FiscalExport() {
                   NO DEDUCIBLES
                 </div>
                 <div className="text-number-medium number-glass">
-                  {formatCurrencyARS(exportData.gastos.noDeducibles)}
+                  {formatCurrency(exportData.gastos.noDeducibles)}
                 </div>
               </div>
             </div>
@@ -141,7 +141,7 @@ export default function FiscalExport() {
                       </div>
                       <div className="text-right">
                         <div className="text-body text-gray-text-primary">
-                          {formatCurrencyARS(activo.patrimonioNetoArs)}
+                          {formatCurrency(activo.patrimonioNetoArs)}
                         </div>
                         <div className="text-body-small text-gray-text-tertiary">
                           Patrimonio neto
@@ -150,7 +150,7 @@ export default function FiscalExport() {
                     </div>
                     {activo.pasivo && (
                       <div className="pt-2 border-t border-gray-divider text-body-small text-gray-text-tertiary">
-                        Saldo pendiente: {formatCurrencyARS(activo.pasivo.saldoPendienteArs)}
+                        Saldo pendiente: {formatCurrency(activo.pasivo.saldoPendienteArs)}
                       </div>
                     )}
                   </div>
@@ -180,7 +180,7 @@ export default function FiscalExport() {
                       </div>
                     </div>
                     <div className="text-body text-gray-text-primary">
-                      {formatCurrencyARS(mov.montoArs)}
+                      {formatCurrency(mov.montoArs)}
                     </div>
                   </div>
                 </div>

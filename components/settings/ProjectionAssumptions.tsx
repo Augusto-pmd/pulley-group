@@ -2,7 +2,7 @@
 
 import Card from '../Card';
 import { mockProjectionAssumptions } from '@/mock/data';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 
 export default function ProjectionAssumptions() {
   const scenarios = [

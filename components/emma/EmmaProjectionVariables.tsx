@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/mock/data';
+import { formatPercentage } from '@/utils/number-format';
 import { emmaEstadoActual, getTramoActual, type EmmaTramo } from '@/mock/emma-tramos';
 
 interface EmmaProjectionVariablesProps {
@@ -85,53 +85,62 @@ export default function EmmaProjectionVariables({
         <Card padding="large">
         <h3 className="text-heading-3 text-gray-text-primary mb-6">ESTADO ACTUAL</h3>
         
-        <div className="space-y-6">
-          <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-              CAPITAL ACUMULADO
-            </div>
-            <CurrencyDisplay 
-              value={emmaEstadoActual.capitalAcumulado} 
-              size="large" 
-              showSecondary={true}
-              originalCurrency="USD"
-            />
+        {/* Si no hay datos reales, mostrar estado vacío */}
+        {emmaEstadoActual.capitalAcumulado === 0 && emmaEstadoActual.aportesAcumulados === 0 ? (
+          <div className="text-center text-body text-gray-text-tertiary py-8">
+            No hay datos del Fondo Emma disponibles. Configure el fondo para comenzar.
           </div>
+        ) : (
+          <div className="space-y-6">
+            <div>
+              <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                CAPITAL ACUMULADO
+              </div>
+              <CurrencyDisplay 
+                value={emmaEstadoActual.capitalAcumulado} 
+                size="large" 
+                showSecondary={true}
+                originalCurrency="USD"
+              />
+            </div>
 
-          <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-              FECHA DE CORTE
+            <div>
+              <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                FECHA DE CORTE
+              </div>
+              <div className="text-body-large text-gray-text-primary">
+                {new Date(emmaEstadoActual.fechaCorte).toLocaleDateString('es-AR', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                })}
+              </div>
             </div>
-            <div className="text-body-large text-gray-text-primary">
-              {new Date(emmaEstadoActual.fechaCorte).toLocaleDateString('es-AR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </div>
-          </div>
 
-          <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-              APORTES ACUMULADOS
+            <div>
+              <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                APORTES ACUMULADOS
+              </div>
+              <CurrencyDisplay 
+                value={emmaEstadoActual.aportesAcumulados} 
+                size="medium" 
+                showSecondary={true}
+                originalCurrency="USD"
+              />
             </div>
-            <CurrencyDisplay 
-              value={emmaEstadoActual.aportesAcumulados} 
-              size="medium" 
-              showSecondary={true}
-              originalCurrency="USD"
-            />
-          </div>
 
-          <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-              RENDIMIENTO HISTÓRICO PROMEDIO
-            </div>
-            <div className="number-medium text-gray-text-primary">
-              {formatPercentage(emmaEstadoActual.rendimientoHistoricoPromedio)}
-            </div>
+            {emmaEstadoActual.rendimientoHistoricoPromedio > 0 && (
+              <div>
+                <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                  RENDIMIENTO HISTÓRICO PROMEDIO
+                </div>
+                <div className="number-medium text-gray-text-primary">
+                  {formatPercentage(emmaEstadoActual.rendimientoHistoricoPromedio)}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </Card>
       )}
 

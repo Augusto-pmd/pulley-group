@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 
 interface Flow {
   date: string;

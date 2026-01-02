@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../Card';
-import { formatCurrency } from '@/mock/data';
+import { formatCurrency } from '@/utils/number-format';
 import { formatNumber } from '@/utils/number-format';
 import type { Currency } from '@/mock/data';
 
@@ -15,8 +15,6 @@ export default function BaseCurrency() {
     { value: 'USD', label: 'Dólares (USD)', symbol: 'US$' },
     { value: 'EUR', label: 'Euros (EUR)', symbol: '€' },
   ];
-
-  const exampleValue = 8500000;
 
   return (
     <Card padding="large">
@@ -51,15 +49,6 @@ export default function BaseCurrency() {
       {/* Explicación del Impacto */}
       <div className="mt-6 text-body text-gray-text-tertiary">
         Esta configuración afecta cómo se muestran todos los valores en el sistema: Dashboard, Inversiones, Flujos, Proyecciones y Fondo Emma.
-      </div>
-
-      {/* Ejemplo Visual */}
-      <div className="mt-4">
-        <div className="text-body font-medium text-black mb-2">Ejemplo</div>
-        <div className="text-[24px] font-semibold font-mono-numbers text-black">
-          {currencies.find((c) => c.value === currency)?.symbol}
-          {formatNumber(exampleValue)}
-        </div>
       </div>
     </Card>
   );
