@@ -97,6 +97,8 @@ export function getCursorPosition(
  * Formatea un número con separadores de miles usando Intl.NumberFormat
  * Útil para formatear números que no son moneda
  * Ejemplo: 1000000 → "1.000.000"
+ * 
+ * @deprecated Usar formatNumber o formatCurrency según corresponda
  */
 export function formatNumberWithLocale(value: number, locale: string = 'es-AR'): string {
   return new Intl.NumberFormat(locale, {
@@ -126,40 +128,54 @@ export function formatNumber(
 /**
  * Helper unificado para formatear moneda en formato argentino
  * FORMATO OBLIGATORIO: puntos para miles, coma para decimales
- * Ejemplo: 1234567.89 → "1.234.567,89"
+ * Ejemplo: 1234567.89 → "1.234.567,89" (con decimals=2)
+ * Ejemplo: 1234567.89 → "1.234.568" (con decimals=0, default)
  * 
  * Este es el ÚNICO helper permitido para formatear valores monetarios en toda la aplicación.
  * Reemplaza formatCurrencyUSD, formatCurrencyARS, formatCurrency de mock/data.ts
  * 
+ * IMPORTANTE: Por defecto redondea a enteros (decimals=0) para legibilidad.
+ * Solo usa decimales cuando se especifica explícitamente.
+ * 
  * @param value - Valor numérico a formatear
- * @param decimals - Cantidad de decimales (default: 0 para montos enteros)
+ * @param decimals - Cantidad de decimales (default: 0 para montos enteros, redondea automáticamente)
  * @returns String formateado según estándar argentino
  */
 export function formatCurrency(
   value: number,
   decimals: number = 0
 ): string {
+  // Redondear el valor antes de formatear si decimals=0
+  const roundedValue = decimals === 0 ? Math.round(value) : value;
+  
   return new Intl.NumberFormat('es-AR', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
-  }).format(value);
+  }).format(roundedValue);
 }
 
 /**
  * Formatea un porcentaje en formato argentino
  * Ejemplo: 15.5 → "15,5%"
  * 
- * @param value - Porcentaje numérico (ej: 15.5 para 15.5%)
+ * IMPORTANTE: Si el valor viene como decimal (0-1), se multiplica por 100.
+ * Si viene como porcentaje (0-100), se usa directamente.
+ * Por defecto asume que viene como porcentaje (0-100).
+ * 
+ * @param value - Porcentaje numérico (ej: 15.5 para 15.5%, o 0.155 si viene como decimal)
  * @param decimals - Cantidad de decimales (default: 1)
+ * @param asDecimal - Si true, asume que value viene como decimal (0-1) y lo multiplica por 100
  * @returns String formateado con símbolo %
  */
 export function formatPercentage(
   value: number,
-  decimals: number = 1
+  decimals: number = 1,
+  asDecimal: boolean = false
 ): string {
+  const percentageValue = asDecimal ? value * 100 : value;
   return new Intl.NumberFormat('es-AR', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
-  }).format(value) + '%';
+  }).format(percentageValue) + '%';
 }
 
