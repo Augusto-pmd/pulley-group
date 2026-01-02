@@ -120,6 +120,7 @@ export async function createMovement(data: CreateMovementData): Promise<ApiMovem
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -189,6 +190,7 @@ export async function createConcept(data: {
         type: data.type,
         nature: data.nature || 'variable',
       }),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -221,6 +223,7 @@ export async function getOrCreateMonth(year: number, month: number): Promise<Api
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ year, month }),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -253,6 +256,7 @@ export async function closeMonth(year: number, month: number): Promise<ApiMonth>
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ year, month }),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -293,6 +297,7 @@ export async function updateMovement(id: string, data: UpdateMovementData): Prom
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -321,6 +326,7 @@ export async function deleteMovement(id: string): Promise<void> {
   try {
     const response = await fetch(`/api/movements/${id}`, {
       method: 'DELETE',
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -473,6 +479,7 @@ export async function createAsset(data: CreateAssetData): Promise<ApiAsset> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -537,6 +544,7 @@ export async function createAssetValuation(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -603,6 +611,7 @@ export async function createAssetLiability(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -638,6 +647,7 @@ export async function updateAssetLiability(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -767,6 +777,7 @@ export async function createInvestment(data: CreateInvestmentData): Promise<ApiI
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {
@@ -831,6 +842,7 @@ export async function createInvestmentEvent(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
+      cache: 'no-store',
     });
     
     if (!response.ok) {

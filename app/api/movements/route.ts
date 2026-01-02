@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // Función helper para normalizar números de forma segura
 function normalizeNumber(value: any): number {
   if (typeof value === 'number') {
