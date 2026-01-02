@@ -13,6 +13,30 @@ export async function GET(
     const year = parseInt(params.year);
     const month = parseInt(params.month);
 
+    // Validar que year y month sean números válidos
+    if (isNaN(year) || isNaN(month)) {
+      return NextResponse.json(
+        { error: 'year and month must be valid numbers' },
+        { status: 400 }
+      );
+    }
+
+    // Validar rango de mes (1-12)
+    if (month < 1 || month > 12) {
+      return NextResponse.json(
+        { error: 'month must be between 1 and 12' },
+        { status: 400 }
+      );
+    }
+
+    // Validar rango de año (razonable)
+    if (year < 2000 || year > 2100) {
+      return NextResponse.json(
+        { error: 'year must be between 2000 and 2100' },
+        { status: 400 }
+      );
+    }
+
     // UPSERT: crear si no existe, leer si existe
     const monthRecord = await prisma.month.upsert({
       where: {
@@ -41,10 +65,20 @@ export async function GET(
       nota: monthRecord.note ?? undefined,
       movimientos: monthRecord.movements,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching month:', error);
+    
+    // Si es error de validación de Prisma, retornar 400
+    if (error.code === 'P2002' || error.message?.includes('Unique constraint')) {
+      return NextResponse.json(
+        { error: 'Month already exists with different data' },
+        { status: 400 }
+      );
+    }
+    
+    // Para otros errores, retornar 500 solo si es realmente inesperado
     return NextResponse.json(
-      { error: 'Failed to fetch month' },
+      { error: 'Failed to fetch month', message: error.message || 'Unknown error' },
       { status: 500 }
     );
   }

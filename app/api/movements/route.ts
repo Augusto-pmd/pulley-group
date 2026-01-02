@@ -82,6 +82,30 @@ export async function POST(request: NextRequest) {
       ? normalizeNumber(exchangeRate) 
       : null;
 
+    // Validar que conceptId existe
+    const concept = await prisma.concept.findUnique({
+      where: { id: conceptId },
+    });
+
+    if (!concept) {
+      return NextResponse.json(
+        { error: `Concept with id "${conceptId}" does not exist. Please create the concept first.` },
+        { status: 400 }
+      );
+    }
+
+    // Validar que monthId existe
+    const month = await prisma.month.findUnique({
+      where: { id: monthId },
+    });
+
+    if (!month) {
+      return NextResponse.json(
+        { error: `Month with id "${monthId}" does not exist. Please create the month first.` },
+        { status: 400 }
+      );
+    }
+
     console.log('POST /api/movements - Valores normalizados:', {
       type,
       amountUSD: normalizedAmountUSD,
@@ -110,8 +134,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(movement, { status: 201 });
   } catch (error: any) {
     console.error('Error creating movement:', error);
+    
+    // Detectar errores de foreign key constraint
+    if (error.code === 'P2003' || error.message?.includes('Foreign key constraint')) {
+      return NextResponse.json(
+        { error: 'Invalid conceptId or monthId. Please ensure both exist before creating a movement.' },
+        { status: 400 }
+      );
+    }
+    
+    // Para otros errores inesperados, retornar 500
     return NextResponse.json(
-      { error: 'Failed to create movement', message: error.message },
+      { error: 'Failed to create movement', message: error.message || 'Unknown error' },
       { status: 500 }
     );
   }

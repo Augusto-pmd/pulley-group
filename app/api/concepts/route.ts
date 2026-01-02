@@ -6,62 +6,65 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    // Consultar conceptos existentes
+    // 1. Ejecutar prisma.concept.findMany() sin filtros
     let concepts = await prisma.concept.findMany({
       orderBy: {
         name: 'asc',
       },
     });
 
-    // Bootstrap automático: crear conceptos base si la tabla está vacía
+    // 2. Si el resultado tiene length === 0, ejecutar bootstrap
     if (concepts.length === 0) {
+      console.log('[GET /api/concepts] Bootstrap: tabla vacía, creando conceptos base...');
+      
       try {
-        console.log('[GET /api/concepts] Bootstrap: creando conceptos base...');
+        // Crear conceptos base con valores válidos del schema
         await prisma.concept.createMany({
           data: [
-            // Ingresos
-            { name: 'Honorarios', type: 'ingreso', nature: 'variable' },
-            { name: 'Alquiler cobrado', type: 'ingreso', nature: 'fijo' },
-            { name: 'Otros ingresos', type: 'ingreso', nature: 'variable' },
-            // Egresos
-            { name: 'Alquiler', type: 'egreso', nature: 'fijo' },
-            { name: 'Servicios', type: 'egreso', nature: 'fijo' },
-            { name: 'Supermercado', type: 'egreso', nature: 'variable' },
-            { name: 'Expensas', type: 'egreso', nature: 'fijo' },
-            { name: 'Otros gastos', type: 'egreso', nature: 'variable' },
+            { name: 'Ingreso', type: 'ingreso', nature: 'variable' },
+            { name: 'Gasto', type: 'egreso', nature: 'variable' },
+            { name: 'Ahorro', type: 'ingreso', nature: 'variable' },
           ],
-          skipDuplicates: true, // Evitar duplicados si ya existen
+          skipDuplicates: true, // La DB decide duplicados
         });
 
-        console.log('[GET /api/concepts] Bootstrap: conceptos creados exitosamente');
+        console.log('[GET /api/concepts] Bootstrap: conceptos base creados');
 
-        // Recargar conceptos después del bootstrap
+        // 3. Volver a ejecutar prisma.concept.findMany()
         concepts = await prisma.concept.findMany({
           orderBy: {
             name: 'asc',
           },
         });
         
-        console.log(`[GET /api/concepts] Bootstrap: ${concepts.length} conceptos disponibles`);
+        console.log(`[GET /api/concepts] Bootstrap: ${concepts.length} conceptos disponibles después del bootstrap`);
       } catch (bootstrapError: any) {
-        // Si falla el bootstrap, loguear el error completo
+        // Si falla el bootstrap, loguear el error completo para diagnóstico
         console.error('[GET /api/concepts] Error en bootstrap de conceptos:', {
           message: bootstrapError.message,
           code: bootstrapError.code,
           meta: bootstrapError.meta,
+          stack: bootstrapError.stack,
         });
-        // Continuar con array vacío en lugar de fallar
-        // El bootstrap puede fallar si hay problemas de DB, pero no debe romper el endpoint
+        // Reintentar findMany para ver si hay conceptos después del error
+        concepts = await prisma.concept.findMany({
+          orderBy: {
+            name: 'asc',
+          },
+        });
       }
     }
 
-    // Asegurar que siempre se devuelve un array (incluso si está vacío)
-    // DB vacía NO es error - retornar 200 con array vacío
+    // 4. Retornar siempre 200 con el array de conceptos
+    // NO retornar [] si la DB está vacía - el bootstrap debe haber creado conceptos
     return NextResponse.json(concepts || [], { status: 200 });
   } catch (error: any) {
-    console.error('Error fetching concepts:', error);
+    console.error('[GET /api/concepts] Error inesperado:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
     // En caso de error inesperado, retornar array vacío en lugar de 500
-    // Esto permite que el frontend funcione aunque haya problemas con la DB
     return NextResponse.json([], { status: 200 });
   }
 }
