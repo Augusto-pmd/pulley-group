@@ -71,7 +71,12 @@ model Month {
   year      Int
   month     Int
   status    MonthStatus
+  openDate  DateTime?
+  closeDate DateTime?
+  note      String?
   movements Movement[]
+
+  @@unique([year, month])
 }
 
 model Movement {
