@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function GET(
     const { id } = params;
 
     // Verificar que la inversión existe
-    const investment = await prisma.investment.findUnique({
+    const investment = await getPrisma().investment.findUnique({
       where: { id },
     });
 
@@ -23,7 +23,7 @@ export async function GET(
       );
     }
 
-    const events = await prisma.investmentEvent.findMany({
+    const events = await getPrisma().investmentEvent.findMany({
       where: { investmentId: id },
       orderBy: {
         date: 'desc',
@@ -87,7 +87,7 @@ export async function POST(
     }
 
     // Verificar que la inversión existe
-    const investment = await prisma.investment.findUnique({
+    const investment = await getPrisma().investment.findUnique({
       where: { id },
     });
 
@@ -102,7 +102,7 @@ export async function POST(
     const normalizedAmountUSD = normalizeNumber(amountUSD);
     console.log(`POST /api/investments/${id}/events - amountUSD normalizado:`, normalizedAmountUSD, typeof normalizedAmountUSD);
 
-    const event = await prisma.investmentEvent.create({
+    const event = await getPrisma().investmentEvent.create({
       data: {
         investmentId: id,
         type,

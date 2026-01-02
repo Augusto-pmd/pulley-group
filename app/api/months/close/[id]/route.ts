@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,7 +13,7 @@ export async function POST(
     const { id } = params;
 
     // Verificar que el mes existe
-    const month = await prisma.month.findUnique({
+    const month = await getPrisma().month.findUnique({
       where: { id },
     });
 
@@ -33,7 +33,7 @@ export async function POST(
     }
 
     // Cerrar el mes
-    const updatedMonth = await prisma.month.update({
+    const updatedMonth = await getPrisma().month.update({
       where: { id },
       data: {
         status: 'cerrado',

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const assets = await prisma.asset.findMany({
+    const assets = await getPrisma().asset.findMany({
       include: {
         valuations: {
           orderBy: {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[POST /api/assets] Intentando crear activo en Prisma...');
-    const asset = await prisma.asset.create({
+    const asset = await getPrisma().asset.create({
       data: {
         name,
         type,

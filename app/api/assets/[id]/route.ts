@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,7 +11,7 @@ export async function GET(
   try {
     const { id } = params;
 
-    const asset = await prisma.asset.findUnique({
+    const asset = await getPrisma().asset.findUnique({
       where: { id },
       include: {
         valuations: {

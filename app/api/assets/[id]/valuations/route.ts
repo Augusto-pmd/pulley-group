@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -12,7 +12,7 @@ export async function GET(
     const { id } = params;
 
     // Verificar que el activo existe
-    const asset = await prisma.asset.findUnique({
+    const asset = await getPrisma().asset.findUnique({
       where: { id },
     });
 
@@ -23,7 +23,7 @@ export async function GET(
       );
     }
 
-    const valuations = await prisma.assetValuation.findMany({
+    const valuations = await getPrisma().assetValuation.findMany({
       where: { assetId: id },
       orderBy: {
         date: 'desc',
@@ -87,7 +87,7 @@ export async function POST(
     }
 
     // Verificar que el activo existe
-    const asset = await prisma.asset.findUnique({
+    const asset = await getPrisma().asset.findUnique({
       where: { id },
     });
 
@@ -102,7 +102,7 @@ export async function POST(
     const normalizedValueUSD = normalizeNumber(valueUSD);
     console.log(`POST /api/assets/${id}/valuations - valueUSD normalizado:`, normalizedValueUSD, typeof normalizedValueUSD);
 
-    const valuation = await prisma.assetValuation.create({
+    const valuation = await getPrisma().assetValuation.create({
       data: {
         assetId: id,
         valueUSD: normalizedValueUSD,
