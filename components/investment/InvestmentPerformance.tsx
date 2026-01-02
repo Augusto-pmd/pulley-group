@@ -24,8 +24,8 @@ export default function InvestmentPerformance({ investment }: InvestmentPerforma
   const annualizedReal = 0; // Requiere IPC real
   const monthlyVariation = 0; // Requiere eventos mensuales reales
   const annualVariation = 0; // Requiere eventos anuales reales
-  const bestMonth = null; // Requiere análisis temporal real
-  const worstMonth = null; // Requiere análisis temporal real
+  const bestMonth: { date: string; roi: number } | null = null; // Requiere análisis temporal real
+  const worstMonth: { date: string; roi: number } | null = null; // Requiere análisis temporal real
 
   return (
     <Card>
