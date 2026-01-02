@@ -5,6 +5,24 @@ import { getEmmaEvolutionWithTramos } from '@/mock/emma-tramos';
 
 export default function EmmaEvolution() {
   const evolution = getEmmaEvolutionWithTramos();
+  
+  // Guard clause: si no hay datos, mostrar estado vacío
+  if (!evolution || evolution.length === 0) {
+    return (
+      <Card padding="large">
+        <div className="pb-6 border-b border-gray-divider mb-0">
+          <h3 className="text-heading-3 font-semibold text-black mb-1">EVOLUCIÓN TEMPORAL</h3>
+          <p className="text-body text-gray-text-tertiary">
+            Crecimiento año a año del fondo
+          </p>
+        </div>
+        <div className="pt-6 text-center text-body text-gray-text-tertiary">
+          No hay datos de evolución disponibles
+        </div>
+      </Card>
+    );
+  }
+
   // Mostrar solo hitos: año 0, 18, 25, 30
   const milestones = [0, 18, 25, 30];
   const filteredEvolution = evolution.filter((item) => milestones.includes(item.year));

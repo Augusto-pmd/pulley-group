@@ -58,13 +58,19 @@ export function getEmmaEvolutionWithTramos(): Array<{
     tramoId?: string;
   }> = [];
 
+  // Si no hay tramos, retornar array vacío
+  if (!emmaTramosMock || emmaTramosMock.length === 0) {
+    return evolution;
+  }
+
   // Año 0: aporte inicial
   const initialContribution = 1000000;
+  const firstTramo = emmaTramosMock[0];
   evolution.push({
     year: 0,
     capital: initialContribution,
     variation: 0,
-    tramoId: emmaTramosMock[0].id,
+    tramoId: firstTramo?.id,
   });
 
   let currentCapital = initialContribution;
@@ -82,7 +88,7 @@ export function getEmmaEvolutionWithTramos(): Array<{
     );
 
     // Si es el primer tramo, ajustar capital inicial
-    if (tramo.id === emmaTramosMock[0].id) {
+    if (firstTramo && tramo.id === firstTramo.id) {
       currentCapital = tramo.capitalInicial;
     }
 

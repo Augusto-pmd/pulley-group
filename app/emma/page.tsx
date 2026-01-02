@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ModuleHeader from '@/components/ModuleHeader';
+import Card from '@/components/Card';
 import EmmaCurrentState from '@/components/emma/EmmaCurrentState';
 import EmmaMilestones from '@/components/emma/EmmaMilestones';
 import EmmaEvolution from '@/components/emma/EmmaEvolution';
@@ -17,6 +18,24 @@ export default function EmmaPage() {
   const [tramos, setTramos] = useState<EmmaTramo[]>(emmaTramosMock);
   const [showEditPanel, setShowEditPanel] = useState(false);
   const tramoActual = getTramoActual();
+
+  // Guard clause: si no hay datos, mostrar estado vacío
+  if (!tramos || tramos.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Card padding="large">
+          <div className="text-center">
+            <h2 className="text-heading-2 text-gray-text-primary mb-2">
+              Sin datos disponibles
+            </h2>
+            <p className="text-body text-gray-text-tertiary">
+              No hay tramos configurados para el Fondo Emma. Configura los tramos para comenzar.
+            </p>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   // Handler para actualizar tramo actual
   const handleUpdateTramo = (updates: Partial<EmmaTramo>) => {
