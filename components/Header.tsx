@@ -14,6 +14,7 @@ export default function Header() {
     { href: '/activos', label: 'Activos' },
     { href: '/projections', label: 'Proyecciones' },
     { href: '/emma', label: 'Emma' },
+    { href: '/futurologia', label: 'Futurología' },
     { href: '/vista-contador', label: 'Vista Contador' },
   ];
 

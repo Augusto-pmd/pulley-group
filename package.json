@@ -6,35 +6,26 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "typecheck": "node scripts/audit/typecheck.mjs",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:smoke": "node ./e2e/smoke-api.mjs",
-    "db:clear": "node scripts/clear-all-data.mjs",
-    "audit:smoke-render": "node scripts/audit/smoke-render.mjs",
-    "audit:architecture": "node scripts/audit/architecture.mjs",
-    "audit:imports": "node scripts/audit/imports.mjs",
-    "audit:report": "node scripts/audit/report.mjs",
-    "audit:all": "npm run typecheck && npm run lint && npm run audit:smoke-render && npm run audit:architecture && npm run audit:imports && npm run audit:report"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.1",
-    "@temporalio/client": "^1.10.0",
+    "@prisma/client": "^5.7.1",
     "next": "^14.0.0",
-    "prisma": "^6.19.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.57.0",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.16",
-    "playwright": "^1.57.0",
     "postcss": "^8.4.31",
+    "prettier": "^3.7.4",
+    "prisma": "^5.7.1",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
