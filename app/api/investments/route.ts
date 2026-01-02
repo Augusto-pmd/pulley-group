@@ -65,9 +65,19 @@ export async function POST(request: NextRequest) {
     
     const { name, type, startDate, targetAmountUSD } = body;
 
+    // Validar campos requeridos
     if (!name || !type || !startDate || targetAmountUSD === undefined) {
       return NextResponse.json(
         { error: 'name, type, startDate, and targetAmountUSD are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validar tipo enum
+    const validTypes = ['financiera', 'inmobiliaria'];
+    if (!validTypes.includes(type)) {
+      return NextResponse.json(
+        { error: `Invalid type. Must be one of: ${validTypes.join(', ')}` },
         { status: 400 }
       );
     }
@@ -88,6 +98,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(investment, { status: 201 });
   } catch (error: any) {
     console.error('Error creating investment:', error);
+    
+    // Retornar 400 para errores de validación, 500 para errores inesperados
+    if (error.code === 'P2003' || error.message?.includes('Foreign key')) {
+      return NextResponse.json(
+        { error: 'Invalid data', message: error.message },
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       { error: 'Failed to create investment', message: error.message },
       { status: 500 }
