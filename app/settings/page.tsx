@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import ContextHeader from '@/components/ContextHeader';
 import IPCTable from '@/components/settings/IPCTable';
 import ProjectionAssumptions from '@/components/settings/ProjectionAssumptions';

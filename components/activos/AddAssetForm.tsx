@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../Card';
-import { addActivo, type TipoActivo, type Activo, type EstadoFiscalActivo } from '@/mock/activos';
+import { type TipoActivo, type Activo, type EstadoFiscalActivo } from '@/mock/activos';
 
 interface AddAssetFormProps {
   onSave: (activo: Activo) => void;
@@ -17,12 +17,24 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
   const [estadoFiscal, setEstadoFiscal] = useState<EstadoFiscalActivo>('no_declarado'); // Default: no declarado
   const [observaciones, setObservaciones] = useState<string>('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nombre || !valorInicial || isNaN(parseFloat(valorInicial))) return;
 
     const valorUsd = parseFloat(valorInicial);
-    const nuevoActivo = addActivo(nombre, tipo, valorUsd, fechaValuacion, observaciones || undefined, estadoFiscal);
+    
+    // Crear activo con estructura compatible con el tipo Activo del mock
+    const nuevoActivo: Activo = {
+      id: '', // Se asignará después de crear en la API
+      nombre,
+      tipo,
+      valorActualUsd: valorUsd,
+      fechaUltimaValuacion: fechaValuacion,
+      estadoFiscal,
+      observaciones: observaciones || undefined,
+      fechaCreacion: new Date().toISOString().split('T')[0],
+    };
+    
     onSave(nuevoActivo);
   };
 

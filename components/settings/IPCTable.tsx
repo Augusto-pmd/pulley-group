@@ -2,6 +2,7 @@
 
 import Card from '../Card';
 import { mockIPCData } from '@/mock/data';
+import { formatNumber } from '@/utils/number-format';
 import type { IPCData } from '@/mock/data';
 
 export default function IPCTable() {
@@ -55,7 +56,7 @@ export default function IPCTable() {
                 <div key={index} className="w-[120px] text-right">
                   <input
                     type="text"
-                    value={value.toFixed(1)}
+                    value={formatNumber(value, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                     readOnly
                     className="w-full text-body-large font-mono-numbers text-black bg-white border border-gray-border rounded-button px-3 py-2 text-right focus:border-blue-system focus:outline-none transition-colors duration-fast"
                   />

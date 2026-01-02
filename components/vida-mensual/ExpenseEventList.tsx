@@ -7,6 +7,7 @@ import SlideTransition from '@/components/animations/SlideTransition';
 import CurrencyDisplay from '@/components/CurrencyDisplay';
 import { formatCurrency } from '@/mock/data';
 import { formatCurrencyUSD, formatCurrencyARS } from '@/mock/exchange-rates';
+import { formatNumberWithLocale } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface ExpenseEventListProps {
@@ -163,7 +164,7 @@ export default function ExpenseEventList({
                     {/* Información de conversión */}
                     {evento.monedaOriginal === 'ARS' && evento.tipoCambioAplicado && (
                       <div className="text-body-small text-gray-text-tertiary mt-0.5">
-                        TC: {evento.tipoCambioAplicado.toLocaleString('es-AR')}
+                        TC: {formatNumberWithLocale(evento.tipoCambioAplicado)}
                       </div>
                     )}
                     {/* Monto en USD */}

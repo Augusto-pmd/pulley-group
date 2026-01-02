@@ -1,0 +1,62 @@
+name: 🔍 Pulley Group - Auditoría CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  audit:
+    name: Auditoría Completa
+    runs-on: ubuntu-latest
+    
+    steps:
+      # a) checkout
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      # b) setup-node
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      # c) npm install
+      - name: 🔧 Instalar dependencias
+        run: npm install
+
+      # d) npm run build
+      - name: 🏗️ Build del proyecto
+        run: npm run build
+
+      # e) npm run lint (solo si existe script)
+      - name: 🔍 Lint del código
+        run: |
+          if grep -q '"lint"' package.json; then
+            npm run lint
+          else
+            echo "⚠️  Script 'lint' no existe, omitiendo..."
+          fi
+
+      # f) npm run typecheck (solo si existe script)
+      - name: 📝 TypeCheck (TypeScript)
+        run: |
+          if grep -q '"typecheck"' package.json; then
+            npm run typecheck
+          else
+            echo "⚠️  Script 'typecheck' no existe, omitiendo..."
+          fi
+
+      # g) smoke check: render de app
+      - name: 🧪 Smoke Check - Render de app
+        run: npm run audit:smoke-render
+
+      # h) custom checks Pulley
+      - name: 🔐 Custom Check - Buscar uso de auth
+        run: npm run audit:architecture
+
+      - name: 🔗 Custom Check - Validar imports
+        run: npm run audit:imports
+

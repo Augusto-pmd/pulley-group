@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Card from './Card';
 import { formatCurrency, formatPercentage } from '@/mock/data';
 import type { Investment } from '@/mock/data';
@@ -21,21 +21,28 @@ export default function InvestmentsRanking({ investments }: InvestmentsRankingPr
     { value: 'result', label: 'Resultado' },
   ];
 
-  // Mock: ordenar inversiones según sortBy
-  const sortedInvestments = [...investments].sort((a, b) => {
-    switch (sortBy) {
-      case 'roiNominal':
-        return b.roiNominal - a.roiNominal;
-      case 'roiReal':
-        return b.roiReal - a.roiReal;
-      case 'capital':
-        return b.capital - a.capital;
-      case 'result':
-        return b.result - a.result;
-      default:
-        return 0;
+  // Ordenar inversiones según sortBy
+  const sortedInvestments = useMemo(() => {
+    try {
+      return [...(investments || [])].sort((a, b) => {
+        switch (sortBy) {
+          case 'roiNominal':
+            return (b.roiNominal || 0) - (a.roiNominal || 0);
+          case 'roiReal':
+            return (b.roiReal || 0) - (a.roiReal || 0);
+          case 'capital':
+            return (b.capital || 0) - (a.capital || 0);
+          case 'result':
+            return (b.result || 0) - (a.result || 0);
+          default:
+            return 0;
+        }
+      });
+    } catch (error) {
+      console.error('Error sorting investments:', error);
+      return investments || [];
     }
-  });
+  }, [investments, sortBy]);
 
   const formatSignedValue = (value: number) => {
     const sign = value >= 0 ? '+' : '';

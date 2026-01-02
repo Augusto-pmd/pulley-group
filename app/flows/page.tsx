@@ -7,6 +7,9 @@ import FlowIndicators from '@/components/flows/FlowIndicators';
 import { mockFlows } from '@/mock/data';
 import type { Flow } from '@/mock/data';
 
+// Forzar render dinámico para evitar timeout en build
+export const dynamic = 'force-dynamic';
+
 export default function FlowsPage() {
   // Mock: filtrar flujos (sin lógica real, solo estructura)
   const ingresos = mockFlows.filter((f) => f.type === 'ingreso');

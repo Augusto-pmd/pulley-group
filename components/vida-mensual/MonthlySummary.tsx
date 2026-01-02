@@ -2,6 +2,7 @@
 
 import Card from '@/components/Card';
 import { formatCurrency } from '@/mock/data';
+import { formatNumber } from '@/utils/number-format';
 import type { MonthlySummary } from '@/mock/data';
 
 interface MonthlySummaryProps {
@@ -57,7 +58,7 @@ export default function MonthlySummary({ summary }: MonthlySummaryProps) {
           </div>
           <div className="number-medium text-gray-text-tertiary">
             {summary.variation >= 0 ? '+' : ''}
-            {summary.variation.toFixed(1)}%
+            {formatNumber(summary.variation)}%
           </div>
           <div className="text-body-small text-gray-text-tertiary mt-1">
             vs promedio

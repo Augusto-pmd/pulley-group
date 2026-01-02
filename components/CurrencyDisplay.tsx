@@ -1,6 +1,14 @@
 'use client';
 
-import { formatCurrencyUSD, formatCurrencyARS, formatCurrencyDual, convertArsToUsdCurrent, convertUsdToArsCurrent } from '@/mock/exchange-rates';
+import { 
+  formatCurrencyUSD, 
+  formatCurrencyARS, 
+  formatCurrencyDual, 
+  convertArsToUsdCurrent, 
+  convertUsdToArsCurrent,
+  convertArsToUsd,
+  convertUsdToArs
+} from '@/mock/exchange-rates';
 
 interface CurrencyDisplayProps {
   value: number; // Valor en USD (asumido por defecto, sistema USD-first)
@@ -19,15 +27,30 @@ export default function CurrencyDisplay({
   size = 'medium',
   className = '',
 }: CurrencyDisplayProps) {
+  // Asegurar que value sea un número válido
+  const safeValue = typeof value === 'number' && !isNaN(value) ? value : 0;
+  
   // Convertir a USD (si viene en ARS)
-  const usdValue = originalCurrency === 'ARS' 
-    ? (fecha ? require('@/mock/exchange-rates').convertArsToUsd(value, fecha) : convertArsToUsdCurrent(value))
-    : value; // Ya está en USD
+  let usdValue: number;
+  try {
+    usdValue = originalCurrency === 'ARS' 
+      ? (fecha ? convertArsToUsd(safeValue, fecha) : convertArsToUsdCurrent(safeValue))
+      : safeValue; // Ya está en USD
+  } catch (error) {
+    console.error('Error converting to USD:', error);
+    usdValue = safeValue; // Fallback seguro
+  }
   
   // Convertir USD a ARS para mostrar secundario
-  const arsValue = originalCurrency === 'USD'
-    ? (fecha ? require('@/mock/exchange-rates').convertUsdToArs(value, fecha) : convertUsdToArsCurrent(value))
-    : (originalCurrency === 'ARS' ? value : convertUsdToArsCurrent(value)); // Si viene ARS, usar ese; si no, convertir USD
+  let arsValue: number;
+  try {
+    arsValue = originalCurrency === 'USD'
+      ? (fecha ? convertUsdToArs(safeValue, fecha) : convertUsdToArsCurrent(safeValue))
+      : (originalCurrency === 'ARS' ? safeValue : convertUsdToArsCurrent(safeValue)); // Si viene ARS, usar ese; si no, convertir USD
+  } catch (error) {
+    console.error('Error converting to ARS:', error);
+    arsValue = safeValue; // Fallback seguro
+  }
 
   const sizeClasses = {
     display: 'text-number-display number-hero',
@@ -98,14 +121,26 @@ export function CurrencyDisplaySigned(props: CurrencyDisplayProps) {
   const absValue = Math.abs(value);
   
   // Convertir a USD (si viene en ARS)
-  const usdValue = originalCurrency === 'ARS' 
-    ? (props.fecha ? require('@/mock/exchange-rates').convertArsToUsd(absValue, props.fecha) : convertArsToUsdCurrent(absValue))
-    : absValue; // Ya está en USD
+  let usdValue: number;
+  try {
+    usdValue = originalCurrency === 'ARS' 
+      ? (props.fecha ? convertArsToUsd(absValue, props.fecha) : convertArsToUsdCurrent(absValue))
+      : absValue; // Ya está en USD
+  } catch (error) {
+    console.error('Error converting to USD:', error);
+    usdValue = absValue; // Fallback seguro
+  }
   
   // Convertir USD a ARS para mostrar secundario
-  const arsValue = originalCurrency === 'USD'
-    ? (props.fecha ? require('@/mock/exchange-rates').convertUsdToArs(absValue, props.fecha) : convertUsdToArsCurrent(absValue))
-    : absValue; // Si viene ARS, usar ese
+  let arsValue: number;
+  try {
+    arsValue = originalCurrency === 'USD'
+      ? (props.fecha ? convertUsdToArs(absValue, props.fecha) : convertUsdToArsCurrent(absValue))
+      : absValue; // Si viene ARS, usar ese
+  } catch (error) {
+    console.error('Error converting to ARS:', error);
+    arsValue = absValue; // Fallback seguro
+  }
 
   const sizeClasses = {
     display: 'text-number-display number-hero',

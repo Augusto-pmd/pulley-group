@@ -4,6 +4,7 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import ExpenseEventList from './ExpenseEventList';
 import { formatCurrency, formatPercentage } from '@/mock/data';
+import { formatNumber } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface MonthClosedViewProps {
@@ -111,7 +112,7 @@ export default function MonthClosedView({
               EVENTOS
             </div>
             <div className="text-number-large number-glass">
-              {eventos.length}
+              {formatNumber(eventos.length)}
             </div>
             <div className="text-body-small text-gray-text-tertiary mt-2">
               eventos registrados
@@ -132,7 +133,7 @@ export default function MonthClosedView({
                 {formatPercentage(porcentajePorCategoria.fijo)} del total
               </div>
               <div className="text-body-small text-gray-text-tertiary mt-1">
-                {eventosPorCategoria.fijo.length} eventos
+                {formatNumber(eventosPorCategoria.fijo.length)} eventos
               </div>
             </div>
             <div>
@@ -142,7 +143,7 @@ export default function MonthClosedView({
                 {formatPercentage(porcentajePorCategoria.variable)} del total
               </div>
               <div className="text-body-small text-gray-text-tertiary mt-1">
-                {eventosPorCategoria.variable.length} eventos
+                {formatNumber(eventosPorCategoria.variable.length)} eventos
               </div>
             </div>
             <div>
@@ -152,7 +153,7 @@ export default function MonthClosedView({
                 {formatPercentage(porcentajePorCategoria.extraordinario)} del total
               </div>
               <div className="text-body-small text-gray-text-tertiary mt-1">
-                {eventosPorCategoria.extraordinario.length} eventos
+                {formatNumber(eventosPorCategoria.extraordinario.length)} eventos
               </div>
             </div>
           </div>

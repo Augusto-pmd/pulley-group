@@ -6,20 +6,20 @@ import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
 import { formatCurrencyUSD } from '@/mock/exchange-rates';
 import { 
-  getValuacionesByActivo, 
-  addValuacion, 
-  updateActivoNombre,
-  updateActivoTipo,
-  updateActivoObservaciones,
-  updateActivoEstadoFiscal,
-  getPasivoByActivo,
-  getPagosByPasivo,
   getPatrimonioNetoActivo,
   type Activo,
   type ValuacionActivo,
   type TipoActivo,
-  type EstadoFiscalActivo
+  type EstadoFiscalActivo,
+  type Pasivo,
+  type PagoPasivo
 } from '@/mock/activos';
+import {
+  getAssetValuations,
+  createAssetValuation,
+  getAssetLiability,
+  type ApiAssetValuation,
+} from '@/lib/api';
 
 interface AssetEditPanelProps {
   activo: Activo | null;
@@ -38,66 +38,99 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
   const [valuaciones, setValuaciones] = useState<ValuacionActivo[]>([]);
 
   useEffect(() => {
-    if (activo) {
-      setNombre(activo.nombre);
-      setTipo(activo.tipo);
-      setEstadoFiscal(activo.estadoFiscal);
-      setObservaciones(activo.observaciones || '');
-      setValuaciones(getValuacionesByActivo(activo.id));
-      setNuevaValuacionFecha(new Date().toISOString().split('T')[0]);
-      setNuevaValuacionValor('');
-      setNuevaValuacionNota('');
+    async function loadValuations() {
+      if (activo) {
+        setNombre(activo.nombre);
+        setTipo(activo.tipo);
+        setEstadoFiscal(activo.estadoFiscal);
+        setObservaciones(activo.observaciones || '');
+        setNuevaValuacionFecha(new Date().toISOString().split('T')[0]);
+        setNuevaValuacionValor('');
+        setNuevaValuacionNota('');
+        
+        try {
+          const apiValuations = await getAssetValuations(activo.id);
+          const transformedValuations: ValuacionActivo[] = apiValuations.map((v) => ({
+            id: v.id,
+            activoId: v.assetId,
+            fecha: v.date.split('T')[0],
+            valorUsd: v.valueUSD,
+            fechaCreacion: v.date.split('T')[0],
+          }));
+          setValuaciones(transformedValuations);
+        } catch (err) {
+          console.error('Error loading valuations:', err);
+          setValuaciones([]);
+        }
+      }
     }
+    
+    loadValuations();
   }, [activo]);
 
   if (!activo) return null;
 
   const handleSaveNombre = () => {
     if (nombre.trim() && nombre !== activo.nombre) {
-      updateActivoNombre(activo.id, nombre.trim());
+      // Actualizar solo en el estado local (la API no tiene endpoint para actualizar nombre aún)
       onUpdateAsset({ ...activo, nombre: nombre.trim() });
     }
   };
 
   const handleSaveTipo = () => {
     if (tipo !== activo.tipo) {
-      updateActivoTipo(activo.id, tipo);
+      // Actualizar solo en el estado local (la API no tiene endpoint para actualizar tipo aún)
       onUpdateAsset({ ...activo, tipo });
     }
   };
 
   const handleSaveEstadoFiscal = () => {
     if (estadoFiscal !== activo.estadoFiscal) {
-      updateActivoEstadoFiscal(activo.id, estadoFiscal);
+      // Actualizar solo en el estado local (la API no tiene endpoint para actualizar estado fiscal aún)
       onUpdateAsset({ ...activo, estadoFiscal });
     }
   };
 
   const handleSaveObservaciones = () => {
-    updateActivoObservaciones(activo.id, observaciones);
+    // Actualizar solo en el estado local (la API no tiene campo observaciones aún)
     onUpdateAsset({ ...activo, observaciones });
   };
 
-  const handleAddValuacion = () => {
+  const handleAddValuacion = async () => {
     if (!nuevaValuacionValor || isNaN(parseFloat(nuevaValuacionValor))) return;
     
-    const valorUsd = parseFloat(nuevaValuacionValor);
-    addValuacion(activo.id, nuevaValuacionFecha, valorUsd, nuevaValuacionNota || undefined);
-    
-    // Actualizar lista de valuaciones
-    setValuaciones(getValuacionesByActivo(activo.id));
-    
-    // Actualizar activo
-    const activoActualizado = {
-      ...activo,
-      valorActualUsd: valorUsd,
-      fechaUltimaValuacion: nuevaValuacionFecha,
-    };
-    onUpdateAsset(activoActualizado);
-    
-    // Resetear formulario
-    setNuevaValuacionValor('');
-    setNuevaValuacionNota('');
+    try {
+      const valorUsd = parseFloat(nuevaValuacionValor);
+      await createAssetValuation(activo.id, {
+        valueUSD: valorUsd,
+        date: nuevaValuacionFecha,
+      });
+      
+      // Recargar valuaciones desde la API
+      const apiValuations = await getAssetValuations(activo.id);
+      const transformedValuations: ValuacionActivo[] = apiValuations.map((v) => ({
+        id: v.id,
+        activoId: v.assetId,
+        fecha: v.date.split('T')[0],
+        valorUsd: v.valueUSD,
+        fechaCreacion: v.date.split('T')[0],
+      }));
+      setValuaciones(transformedValuations);
+      
+      // Actualizar activo con la nueva valuación
+      const activoActualizado = {
+        ...activo,
+        valorActualUsd: valorUsd,
+        fechaUltimaValuacion: nuevaValuacionFecha,
+      };
+      onUpdateAsset(activoActualizado);
+      
+      // Resetear formulario
+      setNuevaValuacionValor('');
+      setNuevaValuacionNota('');
+    } catch (err) {
+      console.error('Error creating valuation:', err);
+    }
   };
 
   const formatDate = (fecha: string) => {
@@ -110,7 +143,8 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
   };
 
   const pasivo = activo.pasivo;
-  const pagos = pasivo ? getPagosByPasivo(pasivo.id) : [];
+  // Los pagos no están en la API aún, usar array vacío
+  const pagos: PagoPasivo[] = [];
 
   return (
     <>

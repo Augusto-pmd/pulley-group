@@ -5,18 +5,19 @@ import Card from './Card';
 import CurrencyDisplay from './CurrencyDisplay';
 import { formatPercentage } from '@/mock/data';
 import type { Distribution } from '@/mock/data';
-import { getPatrimonioNetoActivosUsd } from '@/mock/activos';
 
 interface DistributionProps {
   data: Distribution;
   total: number;
+  activosNetos: number; // Recibir desde Dashboard en lugar de calcular desde mock
 }
 
-export default function Distribution({ data, total }: DistributionProps) {
-  const activosNetos = useMemo(() => getPatrimonioNetoActivosUsd(), []);
+export default function Distribution({ data, total, activosNetos }: DistributionProps) {
+  // Asegurar que activosNetos sea un número válido
+  const activosNetosValue = typeof activosNetos === 'number' ? activosNetos : 0;
   
   const categories = [
-    { label: 'Activos', value: activosNetos },
+    { label: 'Activos', value: activosNetosValue },
     { label: 'Inversiones', value: data.productive + data.passive },
     { label: 'Liquidez', value: data.liquidity },
     { label: 'Fondo Emma', value: data.longTerm },

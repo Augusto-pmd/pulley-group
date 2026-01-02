@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ConceptType {
+  ingreso
+  egreso
+}
+
+enum ConceptNature {
+  fijo
+  variable
+  extraordinario
+}
+
+enum MonthStatus {
+  abierto
+  cerrado
+}
+
+enum MovementType {
+  ingreso
+  egreso
+}
+
+enum MovementStatus {
+  pagado
+  pendiente
+}
+
+enum AssetType {
+  inmueble
+  vehiculo
+  otro
+}
+
+enum FiscalStatus {
+  declarado
+  no_declarado
+}
+
+enum InvestmentType {
+  financiera
+  inmobiliaria
+}
+
+enum InvestmentEventType {
+  aporte
+  retiro
+  ajuste
+}
+
+model Concept {
+  id        String        @id @default(cuid())
+  name      String
+  type      ConceptType
+  nature    ConceptNature
+  movements Movement[]
+}
+
+model Month {
+  id        String      @id @default(cuid())
+  year      Int
+  month     Int
+  status    MonthStatus
+  movements Movement[]
+}
+
+model Movement {
+  id               String          @id @default(cuid())
+  type             MovementType
+  amountUSD        Float
+  currencyOriginal String
+  exchangeRate     Float?
+  date             DateTime
+  status           MovementStatus?
+  conceptId        String
+  concept          Concept         @relation(fields: [conceptId], references: [id])
+  monthId          String
+  month            Month           @relation(fields: [monthId], references: [id])
+}
+
+model Asset {
+  id           String           @id @default(cuid())
+  name         String
+  type         AssetType
+  fiscalStatus FiscalStatus
+  valuations   AssetValuation[]
+  liability    Liability?
+}
+
+model AssetValuation {
+  id       String   @id @default(cuid())
+  assetId  String
+  asset    Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  valueUSD Float
+  date     DateTime
+}
+
+model Liability {
+  id                    String @id @default(cuid())
+  assetId               String @unique
+  asset                 Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  totalAmountUSD        Float
+  remainingAmountUSD    Float
+  installmentsTotal     Int
+  installmentsRemaining Int
+  monthlyInstallmentUSD Float
+}
+
+model Investment {
+  id              String            @id @default(cuid())
+  name            String
+  type            InvestmentType
+  startDate       DateTime
+  targetAmountUSD Float
+  events          InvestmentEvent[]
+}
+
+model InvestmentEvent {
+  id           String              @id @default(cuid())
+  investmentId String
+  investment   Investment          @relation(fields: [investmentId], references: [id], onDelete: Cascade)
+  type         InvestmentEventType
+  amountUSD    Float
+  date         DateTime
+  note         String?
+}

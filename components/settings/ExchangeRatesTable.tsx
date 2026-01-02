@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import { exchangeRatesMock, formatCurrencyUSD, formatCurrencyARS, getCurrentExchangeRate, type ExchangeRate } from '@/mock/exchange-rates';
+import { formatNumber } from '@/utils/number-format';
 
 export default function ExchangeRatesTable() {
   const [rates, setRates] = useState<ExchangeRate[]>(exchangeRatesMock);
@@ -70,7 +71,7 @@ export default function ExchangeRatesTable() {
               })}
             </div>
             <div className="w-[200px] text-right text-body-large font-mono-numbers text-gray-text-primary">
-              {rate.usdToArs.toLocaleString('es-AR')} ARS
+              {formatNumber(rate.usdToArs)} ARS
             </div>
             <div className="flex-1 text-body text-gray-text-tertiary">
               {rate.nota || '-'}

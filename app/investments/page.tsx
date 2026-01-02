@@ -1,20 +1,140 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import InvestmentCard from '@/components/InvestmentCard';
 import InvestmentFilters from '@/components/InvestmentFilters';
 import ModuleHeader from '@/components/ModuleHeader';
 import InvestmentEventForm from '@/components/investment/InvestmentEventForm';
 import AddInvestmentForm from '@/components/investment/AddInvestmentForm';
-import { getInversionesActivas } from '@/mock/inversiones';
-import { mockInvestments } from '@/mock/data'; // Legacy: usado para convertir Inversion a Investment en InvestmentCard
+import Card from '@/components/Card';
+import { type Inversion } from '@/mock/inversiones';
+import type { Investment } from '@/mock/data';
+import {
+  getInvestments,
+  createInvestment,
+  getInvestmentEvents,
+  type ApiInvestment,
+} from '@/lib/api';
+
+// Función de transformación entre tipos de API y tipos del mock
+function apiInvestmentToInversion(apiInvestment: ApiInvestment): Inversion {
+  return {
+    id: apiInvestment.id,
+    nombre: apiInvestment.name,
+    tipo: apiInvestment.type,
+    fechaInicio: apiInvestment.startDate.split('T')[0],
+    montoObjetivo: apiInvestment.targetAmountUSD,
+    plazoEstimado: 60, // No está en la API, usar valor por defecto
+    tipoRetorno: 'mixta', // No está en la API, usar valor por defecto
+    estadoFiscal: 'declarado', // No está en la API, usar valor por defecto
+    fechaCreacion: apiInvestment.startDate.split('T')[0],
+  };
+}
+
+// Función para convertir ApiInvestment + eventos a Investment (para InvestmentCard)
+async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<Investment> {
+  // Calcular capital, result, ROI desde eventos
+  const events = apiInvestment.events || [];
+  let capital = 0;
+  let result = 0;
+
+  events.forEach((event) => {
+    if (event.type === 'aporte') {
+      capital += event.amountUSD;
+      result += event.amountUSD;
+    } else if (event.type === 'retiro') {
+      capital -= event.amountUSD;
+      result -= event.amountUSD;
+    } else if (event.type === 'ajuste') {
+      // Ajuste modifica el resultado pero no el capital
+      result += event.amountUSD;
+    }
+  });
+
+  // Si no hay eventos, usar targetAmountUSD como capital inicial
+  if (events.length === 0) {
+    capital = apiInvestment.targetAmountUSD;
+  }
+
+  // Calcular ROI (simplificado: result / capital * 100)
+  const roiNominal = capital > 0 ? (result / capital) * 100 : 0;
+  const roiReal = roiNominal * 0.7; // Simplificado: asumir 30% de inflación
+
+  return {
+    id: apiInvestment.id,
+    name: apiInvestment.name,
+    type: apiInvestment.type === 'financiera' ? 'Financiera' : 'Inmobiliaria',
+    capital,
+    result,
+    roiNominal,
+    roiReal,
+    status: 'active',
+  };
+}
 
 export default function InvestmentsPage() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedInvestmentId, setSelectedInvestmentId] = useState<string | null>(null);
+  const [inversiones, setInversiones] = useState<Inversion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  const inversiones = getInversionesActivas();
+  // Cargar inversiones desde la API
+  useEffect(() => {
+    async function loadInvestments() {
+      try {
+        setLoading(true);
+        setError(null);
+        const apiInvestments = await getInvestments();
+        // Asegurar que apiInvestments es un array antes de mapear
+        const transformedInvestments = Array.isArray(apiInvestments)
+          ? apiInvestments.map(apiInvestmentToInversion)
+          : [];
+        setInversiones(transformedInvestments);
+      } catch (err: any) {
+        console.error('Error loading investments:', err);
+        setError(err.message || 'Error al cargar inversiones');
+        // En caso de error, establecer array vacío para evitar errores de renderizado
+        setInversiones([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadInvestments();
+  }, []);
+
+  // Estado para inversiones transformadas para InvestmentCard
+  const [investmentsForCard, setInvestmentsForCard] = useState<Investment[]>([]);
+
+  // Cargar inversiones transformadas para InvestmentCard
+  useEffect(() => {
+    async function loadInvestmentsForCard() {
+      try {
+        const apiInvestments = await getInvestments();
+        // Asegurar que apiInvestments es un array antes de mapear
+        if (Array.isArray(apiInvestments) && apiInvestments.length > 0) {
+          const transformed = await Promise.all(
+            apiInvestments.map(apiInvestmentToInvestment)
+          );
+          setInvestmentsForCard(transformed);
+        } else {
+          setInvestmentsForCard([]);
+        }
+      } catch (err) {
+        console.error('Error loading investments for card:', err);
+        setInvestmentsForCard([]);
+      }
+    }
+
+    if (inversiones.length > 0) {
+      loadInvestmentsForCard();
+    } else {
+      setInvestmentsForCard([]);
+    }
+  }, [inversiones]);
+
   const totalInvestments = inversiones.length;
 
   const handleCreateInvestment = () => {
@@ -41,10 +161,75 @@ export default function InvestmentsPage() {
     setSelectedInvestmentId(null);
   };
 
-  const handleSaveInvestment = () => {
-    setShowAddForm(false);
-    // Refrescar lista de inversiones (en real, esto actualizaría el estado)
+  const handleSaveInvestment = async () => {
+    // La creación se maneja en AddInvestmentForm, aquí solo recargamos
+    try {
+      const apiInvestments = await getInvestments();
+      // Asegurar que apiInvestments es un array antes de mapear
+      const transformedInvestments = Array.isArray(apiInvestments)
+        ? apiInvestments.map(apiInvestmentToInversion)
+        : [];
+      setInversiones(transformedInvestments);
+      
+      // Recargar también para InvestmentCard
+      if (Array.isArray(apiInvestments) && apiInvestments.length > 0) {
+        const transformed = await Promise.all(
+          apiInvestments.map(apiInvestmentToInvestment)
+        );
+        setInvestmentsForCard(transformed);
+      } else {
+        setInvestmentsForCard([]);
+      }
+      
+      setShowAddForm(false);
+    } catch (err: any) {
+      console.error('Error refreshing investments:', err);
+      setError(err.message || 'Error al actualizar inversiones');
+    }
   };
+
+  const handleSaveEvent = async () => {
+    // La creación se maneja en InvestmentEventForm, aquí solo recargamos
+    try {
+      const apiInvestments = await getInvestments();
+      // Asegurar que apiInvestments es un array antes de mapear
+      const transformedInvestments = Array.isArray(apiInvestments)
+        ? apiInvestments.map(apiInvestmentToInversion)
+        : [];
+      setInversiones(transformedInvestments);
+      
+      // Recargar también para InvestmentCard
+      if (Array.isArray(apiInvestments) && apiInvestments.length > 0) {
+        const transformed = await Promise.all(
+          apiInvestments.map(apiInvestmentToInvestment)
+        );
+        setInvestmentsForCard(transformed);
+      } else {
+        setInvestmentsForCard([]);
+      }
+      
+      handleCloseEventForm();
+    } catch (err: any) {
+      console.error('Error refreshing investments:', err);
+      setError(err.message || 'Error al actualizar inversiones');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-body text-gray-text-tertiary">Cargando inversiones...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-body text-red-600">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -89,10 +274,7 @@ export default function InvestmentsPage() {
           <InvestmentEventForm
             investmentId={selectedInvestmentId}
             onClose={handleCloseEventForm}
-            onSave={() => {
-              handleCloseEventForm();
-              // Mock: aquí se guardaría el evento
-            }}
+            onSave={handleSaveEvent}
           />
         </div>
       )}
@@ -127,20 +309,9 @@ export default function InvestmentsPage() {
             </Card>
           ) : (
             <div className="space-y-4">
-              {inversiones.map((inversion) => {
-                // Convertir Inversion a Investment para compatibilidad con InvestmentCard
-                const investment: typeof mockInvestments[0] = {
-                  id: inversion.id,
-                  name: inversion.nombre,
-                  type: inversion.tipo === 'financiera' ? 'Financiera' : 'Inmobiliaria',
-                  capital: inversion.montoObjetivo, // Mock: usar monto objetivo como capital
-                  result: 0, // Mock: se calcularía desde eventos
-                  roiNominal: 0, // Mock: se calcularía desde eventos
-                  roiReal: 0, // Mock: se calcularía desde eventos
-                  status: 'active',
-                };
-                return <InvestmentCard key={inversion.id} investment={investment} />;
-              })}
+              {investmentsForCard.map((investment) => (
+                <InvestmentCard key={investment.id} investment={investment} />
+              ))}
             </div>
           )}
         </>

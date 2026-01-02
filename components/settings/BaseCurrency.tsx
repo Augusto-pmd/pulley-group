@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import { formatCurrency } from '@/mock/data';
+import { formatNumber } from '@/utils/number-format';
 import type { Currency } from '@/mock/data';
 
 export default function BaseCurrency() {
@@ -57,7 +58,7 @@ export default function BaseCurrency() {
         <div className="text-body font-medium text-black mb-2">Ejemplo</div>
         <div className="text-[24px] font-semibold font-mono-numbers text-black">
           {currencies.find((c) => c.value === currency)?.symbol}
-          {exampleValue.toLocaleString('es-AR')}
+          {formatNumber(exampleValue)}
         </div>
       </div>
     </Card>

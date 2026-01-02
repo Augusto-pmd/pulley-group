@@ -16,7 +16,15 @@ export default function ProjectionsBar() {
   const horizons: Horizon[] = [5, 10, 20];
 
   // Calcular patrimonio neto de activos (valor - pasivos, no se proyectan con rendimiento)
-  const activos = useMemo(() => getPatrimonioNetoActivosUsd(), []);
+  // En producción, este valor debería venir de la API, no del mock
+  const activos = useMemo(() => {
+    try {
+      return getPatrimonioNetoActivosUsd();
+    } catch (error) {
+      console.error('Error calculating activos:', error);
+      return 0;
+    }
+  }, []);
 
   // Mock: valores según escenario y horizonte
   // Los activos se suman al patrimonio base pero no se proyectan con rendimiento

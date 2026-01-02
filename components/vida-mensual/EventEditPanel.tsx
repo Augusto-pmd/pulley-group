@@ -5,13 +5,14 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
 import { getInitialExchangeRate, formatCurrencyUSD, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition } from '@/utils/number-format';
-import type { EventoMensual } from '@/mock/eventos';
+import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumberWithLocale } from '@/utils/number-format';
+import type { EventoMensual } from '@/types/vida-mensual';
 
 interface EventEditPanelProps {
   evento: EventoMensual | null;
   onClose: () => void;
   onSave: (evento: EventoMensual) => void;
+  onDelete?: (id: string) => void;
   onUpdateConcepto?: (conceptoId: string, categoria: 'fijo' | 'variable' | 'extraordinario') => void;
   conceptos: Array<{ id: string; nombre: string; categoria?: 'fijo' | 'variable' | 'extraordinario' }>;
 }
@@ -20,6 +21,7 @@ export default function EventEditPanel({
   evento,
   onClose,
   onSave,
+  onDelete,
   onUpdateConcepto,
   conceptos,
 }: EventEditPanelProps) {
@@ -211,7 +213,7 @@ export default function EventEditPanel({
                 />
                 {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
                   <div className="mt-1.5 text-body-small text-gray-text-tertiary">
-                    ≈ {formatCurrencyUSD(montoUsdPreview)} (con TC {tipoCambio.toLocaleString('es-AR')})
+                    ≈ {formatCurrencyUSD(montoUsdPreview)} (con TC {formatNumberWithLocale(tipoCambio)})
                   </div>
                 )}
               </div>
@@ -320,6 +322,19 @@ export default function EventEditPanel({
 
           {/* Footer */}
           <div className="p-6 border-t border-gray-divider flex gap-3">
+            {onDelete && evento && (
+              <button
+                onClick={() => {
+                  if (window.confirm('¿Estás seguro de que deseas eliminar este movimiento?')) {
+                    onDelete(evento.id);
+                    onClose();
+                  }
+                }}
+                className="px-4 py-2.5 text-body text-red-600 hover:text-red-700 transition-colors duration-fast"
+              >
+                Eliminar
+              </button>
+            )}
             <button
               onClick={onClose}
               className="flex-1 px-4 py-2.5 text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"

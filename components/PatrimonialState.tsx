@@ -1,39 +1,66 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import Card from './Card';
 import CurrencyDisplay, { CurrencyDisplaySigned } from './CurrencyDisplay';
-import { getPatrimonioNetoActivosUsd } from '@/mock/activos';
 import type { PatrimonialState } from '@/mock/data';
 import { getCurrentMonth } from '@/mock/month-status';
-import { eventosMock, getEventosByMes } from '@/mock/eventos';
+import { getMovements, type ApiMovement } from '@/lib/api';
 
 interface PatrimonialStateProps {
   data: PatrimonialState;
 }
 
 export default function PatrimonialState({ data }: PatrimonialStateProps) {
-  // Calcular patrimonio total incluyendo activos (patrimonio neto: valor - pasivos)
+  const [movements, setMovements] = useState<ApiMovement[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Cargar movimientos del mes actual
+  useEffect(() => {
+    async function loadMovements() {
+      try {
+        setLoading(true);
+        const currentMonth = getCurrentMonth();
+        const [year, month] = currentMonth.split('-').map(Number);
+        const apiMovements = await getMovements(year, month);
+        setMovements(Array.isArray(apiMovements) ? apiMovements : []);
+      } catch (error) {
+        console.error('Error loading movements:', error);
+        setMovements([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadMovements();
+  }, []);
+
+  // Calcular patrimonio total (ya viene calculado desde el Dashboard)
   const totalPatrimony = useMemo(() => {
-    const patrimonioNetoActivos = getPatrimonioNetoActivosUsd();
-    return data.total + patrimonioNetoActivos;
+    return data.total;
   }, [data.total]);
 
-  // Calcular ingresos y egresos del mes actual
-  const currentMonth = getCurrentMonth();
-  const eventosMes = useMemo(() => getEventosByMes(currentMonth, eventosMock), [currentMonth]);
-  
+  // Calcular ingresos y egresos del mes actual desde datos reales
   const ingresosMes = useMemo(() => {
-    return eventosMes
-      .filter((e) => e.tipo === 'ingreso')
-      .reduce((sum, e) => sum + e.montoUsd, 0);
-  }, [eventosMes]);
+    try {
+      return (movements || [])
+        .filter((m) => m && m.type === 'ingreso')
+        .reduce((sum, m) => sum + (m.amountUSD || 0), 0);
+    } catch (error) {
+      console.error('Error calculating ingresos:', error);
+      return 0;
+    }
+  }, [movements]);
 
   const egresosMes = useMemo(() => {
-    return eventosMes
-      .filter((e) => e.tipo === 'egreso')
-      .reduce((sum, e) => sum + e.montoUsd, 0);
-  }, [eventosMes]);
+    try {
+      return (movements || [])
+        .filter((m) => m && m.type === 'egreso')
+        .reduce((sum, m) => sum + (m.amountUSD || 0), 0);
+    } catch (error) {
+      console.error('Error calculating egresos:', error);
+      return 0;
+    }
+  }, [movements]);
 
   const resultadoMes = ingresosMes - egresosMes;
 

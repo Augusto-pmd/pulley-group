@@ -225,6 +225,7 @@ export function addActivo(
     tipo,
     valorActualUsd: valorInicialUsd,
     fechaUltimaValuacion: fechaValuacion,
+    estadoFiscal: 'no_declarado',
     observaciones,
     fechaCreacion: new Date().toISOString().split('T')[0],
   };

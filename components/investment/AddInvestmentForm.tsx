@@ -2,8 +2,9 @@
 
 import { useState, useRef } from 'react';
 import Card from '../Card';
-import { addInversion, type TipoInversion, type TipoRetorno, type EstadoFiscalInversion } from '@/mock/inversiones';
+import { type TipoInversion, type TipoRetorno, type EstadoFiscalInversion } from '@/mock/inversiones';
 import { formatNumberWithSeparators, parseFormattedNumber } from '@/utils/number-format';
+import { createInvestment } from '@/lib/api';
 
 interface AddInvestmentFormProps {
   onClose: () => void;
@@ -26,7 +27,7 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
     setMontoObjetivoFormatted(formatted);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!nombre || !montoObjetivoFormatted || !plazoEstimado) return;
@@ -37,19 +38,20 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
     if (isNaN(montoObjetivo) || montoObjetivo <= 0) return;
     if (isNaN(plazoNum) || plazoNum <= 0) return;
 
-    // Crear la inversión
-    addInversion({
-      nombre,
-      tipo,
-      fechaInicio,
-      montoObjetivo,
-      plazoEstimado: plazoNum,
-      tipoRetorno,
-      estadoFiscal,
-      observaciones: observaciones || undefined,
-    });
+    try {
+      // Crear la inversión en la API
+      await createInvestment({
+        name: nombre,
+        type: tipo,
+        startDate: fechaInicio,
+        targetAmountUSD: montoObjetivo,
+      });
 
-    onSave();
+      onSave();
+    } catch (err: any) {
+      console.error('Error creating investment:', err);
+      alert(err.message || 'Error al crear inversión');
+    }
   };
 
   return (

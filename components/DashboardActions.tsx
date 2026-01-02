@@ -22,8 +22,8 @@ export default function DashboardActions() {
   }
 
   // Ordenar por prioridad
-  const priorityOrder = { high: 0, medium: 1, low: 2 };
-  actions.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+  const priorityOrder: Record<string, number> = { high: 0, medium: 1, low: 2 };
+  actions.sort((a, b) => (priorityOrder[a.priority] || 0) - (priorityOrder[b.priority] || 0));
 
   // Si no hay acciones urgentes, no mostrar el bloque
   if (actions.length === 0) {

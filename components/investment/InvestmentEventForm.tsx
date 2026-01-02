@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Card from '../Card';
-import { getInversionesActivas } from '@/mock/inversiones';
+import { type Inversion } from '@/mock/inversiones';
 import CurrencyDisplay from '../CurrencyDisplay';
 import { getInitialExchangeRate, formatCurrencyUSD, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseFormattedNumber, formatNumberWithLocale } from '@/utils/number-format';
+import { getInvestments, createInvestmentEvent, type ApiInvestment } from '@/lib/api';
 
 interface InvestmentEventFormProps {
   investmentId?: string | null;
@@ -14,7 +15,7 @@ interface InvestmentEventFormProps {
 }
 
 export default function InvestmentEventForm({ investmentId, onClose, onSave }: InvestmentEventFormProps) {
-  const inversiones = getInversionesActivas();
+  const [inversiones, setInversiones] = useState<Inversion[]>([]);
   const [tipoEvento, setTipoEvento] = useState<'aporte' | 'retiro' | 'ajuste' | 'resultado'>('aporte');
   const [inversion, setInversion] = useState<string>(investmentId || '');
   const [fecha, setFecha] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -23,6 +24,32 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
   const [tipoCambio, setTipoCambio] = useState<number>(getInitialExchangeRate());
   const [nota, setNota] = useState<string>('');
   const montoInputRef = useRef<HTMLInputElement>(null);
+
+  // Cargar inversiones desde la API
+  useEffect(() => {
+    async function loadInvestments() {
+      try {
+        const apiInvestments = await getInvestments();
+        // Transformar a formato Inversion para compatibilidad
+        const transformed: Inversion[] = apiInvestments.map((apiInv: ApiInvestment) => ({
+          id: apiInv.id,
+          nombre: apiInv.name,
+          tipo: apiInv.type,
+          fechaInicio: apiInv.startDate.split('T')[0],
+          montoObjetivo: apiInv.targetAmountUSD,
+          plazoEstimado: 60,
+          tipoRetorno: 'mixta',
+          estadoFiscal: 'declarado',
+          fechaCreacion: apiInv.startDate.split('T')[0],
+        }));
+        setInversiones(transformed);
+      } catch (err) {
+        console.error('Error loading investments:', err);
+      }
+    }
+
+    loadInvestments();
+  }, []);
 
   const montoNum = parseFormattedNumber(montoFormatted);
   const montoUsdPreview = montoFormatted && !isNaN(montoNum) && montoNum > 0
@@ -34,17 +61,37 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
     setMontoFormatted(formatted);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inversion || !montoFormatted) return;
+    
+    const montoNum = parseFormattedNumber(montoFormatted);
+    if (isNaN(montoNum) || montoNum <= 0) return;
+
+    // Calcular monto en USD
+    const montoUsd = moneda === 'ARS' ? montoNum / tipoCambio : montoNum;
     
     // Guardar TC usado
     if (moneda === 'ARS') {
       setLastUsedExchangeRate(tipoCambio);
     }
-    
-    // Mock: aquí se guardaría el evento
-    onSave();
+
+    try {
+      // Convertir tipoEvento: 'resultado' no existe en la API, usar 'ajuste'
+      const eventType = tipoEvento === 'resultado' ? 'ajuste' : tipoEvento;
+      
+      await createInvestmentEvent(inversion, {
+        type: eventType as 'aporte' | 'retiro' | 'ajuste',
+        amountUSD: montoUsd,
+        date: fecha,
+        note: nota || null,
+      });
+
+      onSave();
+    } catch (err: any) {
+      console.error('Error creating investment event:', err);
+      alert(err.message || 'Error al registrar evento');
+    }
   };
 
   return (
@@ -170,7 +217,7 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
             />
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
               <div className="mt-1.5 text-body-small text-gray-text-tertiary">
-                ≈ {formatCurrencyUSD(montoUsdPreview)} (con TC {tipoCambio.toLocaleString('es-AR')})
+                ≈ {formatCurrencyUSD(montoUsdPreview)} (con TC {formatNumberWithLocale(tipoCambio)})
               </div>
             )}
           </div>

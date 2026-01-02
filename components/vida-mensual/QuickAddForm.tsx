@@ -6,7 +6,7 @@ import CurrencyDisplay from '../CurrencyDisplay';
 import FeedbackPulse from '../animations/FeedbackPulse';
 import { conceptosMock } from '@/mock/conceptos';
 import { convertArsToUsdCurrent, getCurrentExchangeRate, formatCurrencyUSD, getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumberWithLocale } from '@/utils/number-format';
 
 interface QuickAddFormProps {
   onAdd: (
@@ -17,8 +17,8 @@ interface QuickAddFormProps {
     categoria: 'fijo' | 'variable' | 'extraordinario', 
     estado: 'pagado' | 'pendiente',
     monedaOriginal: 'ARS' | 'USD',
-    tipoCambioAplicado?: number,
-    montoUsd: number
+    montoUsd: number,
+    tipoCambioAplicado?: number
   ) => void;
 }
 
@@ -121,8 +121,8 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         selectedConcept.categoria, // Naturaleza heredada del concepto
         estadoFinal,
         moneda,
-        moneda === 'ARS' ? tipoCambio : undefined,
-        montoUsd
+        montoUsd,
+        moneda === 'ARS' ? tipoCambio : undefined
       );
     } else {
       // Si es nuevo concepto, usar la naturaleza seleccionada
@@ -141,8 +141,8 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         naturaleza, // Naturaleza definida para concepto nuevo
         estadoFinal,
         moneda,
-        moneda === 'ARS' ? tipoCambio : undefined,
-        montoUsd
+        montoUsd,
+        moneda === 'ARS' ? tipoCambio : undefined
       );
     }
 
@@ -306,7 +306,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
               <div className="mt-1.5 text-body-small text-gray-text-tertiary">
                 ≈ <span className="font-medium text-gray-text-secondary">{formatCurrencyUSD(montoUsdPreview)}</span>
                 {' '}
-                <span className="text-gray-text-disabled">(con TC {tipoCambio.toLocaleString('es-AR')})</span>
+                <span className="text-gray-text-disabled">(con TC {formatNumberWithLocale(tipoCambio)})</span>
               </div>
             )}
           </div>

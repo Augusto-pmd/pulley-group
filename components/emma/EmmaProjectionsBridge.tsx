@@ -13,9 +13,9 @@ interface EmmaProjectionsBridgeProps {
 export default function EmmaProjectionsBridge({ horizon }: EmmaProjectionsBridgeProps) {
   // Mock: calcular contribución según horizonte
   const getEmmaProjection = (h: Horizon) => {
-    if (h === 5) return mockEmmaMilestones[0].nominal * 0.3; // 18 años * 0.3
-    if (h === 10) return mockEmmaMilestones[0].nominal * 0.6; // 18 años * 0.6
-    return mockEmmaMilestones[1].nominal; // 25 años
+    if (h === 5) return mockEmmaMilestones[0].capital * 0.3; // 18 años * 0.3
+    if (h === 10) return mockEmmaMilestones[0].capital * 0.6; // 18 años * 0.6
+    return mockEmmaMilestones[1].capital; // 25 años
   };
 
   const contribution = getEmmaProjection(horizon);

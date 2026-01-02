@@ -6,8 +6,7 @@ import MonthTable from './MonthTable';
 import EventEditPanel from './EventEditPanel';
 import MonthSummary from './MonthSummary';
 import FadeIn from '../animations/FadeIn';
-import { conceptosMock } from '@/mock/conceptos';
-import type { EventoMensual } from '@/mock/eventos';
+import type { EventoMensual } from '@/types/vida-mensual';
 
 interface MonthOpenViewProps {
   mes: string;
@@ -15,6 +14,7 @@ interface MonthOpenViewProps {
   onToggleEstado: (id: string) => void;
   onEditMonto: (id: string, nuevoMonto: number) => void;
   onUpdateEvent: (evento: EventoMensual) => void;
+  onDeleteEvent?: (id: string) => void;
   onAddEvent: (
     conceptoId: string, 
     conceptoNombre: string,
@@ -27,6 +27,7 @@ interface MonthOpenViewProps {
     montoUsd?: number
   ) => void;
   promedioMensual: number;
+  concepts?: Array<{ id: string; nombre: string; categoria: 'fijo' | 'variable' | 'extraordinario' }>;
 }
 
 export default function MonthOpenView({
@@ -35,8 +36,10 @@ export default function MonthOpenView({
   onToggleEstado,
   onEditMonto,
   onUpdateEvent,
+  onDeleteEvent,
   onAddEvent,
   promedioMensual,
+  concepts = [],
 }: MonthOpenViewProps) {
   // Filtrar eventos del mes
   const eventosMes = eventos.filter((e) => e.mes === mes);
@@ -53,9 +56,10 @@ export default function MonthOpenView({
     estado: 'pagado' | 'pendiente',
     monedaOriginal: 'ARS' | 'USD',
     tipoCambioAplicado?: number,
-    montoUsd: number
+    montoUsd?: number
   ) => {
-    onAddEvent(conceptoId, conceptoNombre, tipo, monto, categoria, estado, monedaOriginal, tipoCambioAplicado, montoUsd);
+    const montoUsdFinal = montoUsd || monto;
+    onAddEvent(conceptoId, conceptoNombre, tipo, monto, categoria, estado, monedaOriginal, montoUsdFinal, tipoCambioAplicado);
   };
 
   const handleSelectEvent = (evento: EventoMensual) => {
@@ -71,20 +75,13 @@ export default function MonthOpenView({
     setSelectedEvent(null);
   };
 
-  const conceptosList = conceptosMock.map((c) => ({ 
-    id: c.id, 
-    nombre: c.nombre,
-    categoria: c.categoria 
-  }));
+  // Usar conceptos desde props (cargados desde API)
+  const conceptosList = concepts;
 
   // Handler para actualizar naturaleza del concepto
   const handleUpdateConcepto = (conceptoId: string, categoria: 'fijo' | 'variable' | 'extraordinario') => {
-    // Mock: actualizar concepto en conceptosMock
-    // En producción, esto actualizaría la base de datos y solo afectaría eventos futuros
-    const conceptoIndex = conceptosMock.findIndex((c) => c.id === conceptoId);
-    if (conceptoIndex !== -1) {
-      conceptosMock[conceptoIndex].categoria = categoria;
-    }
+    // TODO: Implementar actualización de concepto en API cuando esté disponible
+    console.log('Update concepto:', conceptoId, categoria);
   };
 
   return (
@@ -116,6 +113,7 @@ export default function MonthOpenView({
         evento={selectedEvent}
         onClose={handleClosePanel}
         onSave={handleSaveEvent}
+        onDelete={onDeleteEvent}
         onUpdateConcepto={handleUpdateConcepto}
         conceptos={conceptosList}
       />

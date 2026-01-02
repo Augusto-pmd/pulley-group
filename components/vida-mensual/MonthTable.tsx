@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import { formatCurrencyUSD, formatCurrencyARS } from '@/mock/exchange-rates';
-import type { EventoMensual } from '@/mock/eventos';
+import { formatNumberWithLocale } from '@/utils/number-format';
+import type { EventoMensual } from '@/types/vida-mensual';
 
 interface MonthTableProps {
   eventos: EventoMensual[];
@@ -82,7 +83,7 @@ export default function MonthTable({
                 </div>
                 {evento.tipoCambioAplicado && (
                   <div className="text-caption text-gray-text-disabled">
-                    TC: {evento.tipoCambioAplicado.toLocaleString('es-AR')}
+                    TC: {formatNumberWithLocale(evento.tipoCambioAplicado)}
                   </div>
                 )}
               </div>

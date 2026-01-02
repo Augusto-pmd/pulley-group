@@ -5,9 +5,10 @@ interface CardProps {
   className?: string;
   hover?: boolean;
   padding?: 'normal' | 'large' | 'compact';
+  onClick?: () => void;
 }
 
-export default function Card({ children, className = '', hover = false, padding = 'normal' }: CardProps) {
+export default function Card({ children, className = '', hover = false, padding = 'normal', onClick }: CardProps) {
   const paddingClasses = {
     normal: 'p-5',
     large: 'p-6',
@@ -16,10 +17,11 @@ export default function Card({ children, className = '', hover = false, padding 
 
   return (
     <div
+      onClick={onClick}
       className={`
         rounded-card backdrop-blur-card border border-white/20
         ${paddingClasses[padding]}
-        ${hover ? 'cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5 hover:backdrop-blur-[50px]' : ''}
+        ${hover || onClick ? 'cursor-pointer transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5 hover:backdrop-blur-[50px]' : ''}
         ${className}
       `}
       style={{

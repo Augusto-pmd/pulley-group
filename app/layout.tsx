@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>
+      <body className="antialiased">
         {/* Fondo vivo con blobs flotantes */}
         <BackgroundBlobs />
         
