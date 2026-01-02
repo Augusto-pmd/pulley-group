@@ -22,56 +22,15 @@ export interface EmmaEstadoActual {
   rendimientoHistoricoPromedio: number; // % anual (mock)
 }
 
-// Mock: estado actual del Fondo Emma (solo lectura)
+// Datos mock eliminados - usar API real
 export const emmaEstadoActual: EmmaEstadoActual = {
-  capitalAcumulado: 3200000,
-  fechaCorte: '2024-03-15',
-  aportesAcumulados: 2800000, // Aportes totales realizados
-  rendimientoHistoricoPromedio: 12.5, // Mock: promedio histórico
+  capitalAcumulado: 0,
+  fechaCorte: new Date().toISOString().split('T')[0],
+  aportesAcumulados: 0,
+  rendimientoHistoricoPromedio: 0,
 };
 
-// Mock: tramos históricos y actual
-export const emmaTramosMock: EmmaTramo[] = [
-  // Tramo 1: Inicial (cerrado)
-  {
-    id: 't-001',
-    fechaInicio: '2022-01-15',
-    fechaFin: '2023-06-30',
-    instrumento: 'Fondo Renta Fija',
-    rendimientoEsperado: 8.5,
-    inflacionAsumida: 25.0,
-    aporteMensual: 100000,
-    capitalInicial: 1000000,
-    nota: 'Tramo inicial del fondo',
-    fechaCreacion: '2022-01-15',
-  },
-  // Tramo 2: Intermedio (cerrado)
-  {
-    id: 't-002',
-    fechaInicio: '2023-07-01',
-    fechaFin: '2024-02-28',
-    instrumento: 'Fondo Mixto',
-    rendimientoEsperado: 10.0,
-    inflacionAsumida: 25.0,
-    aporteMensual: 120000,
-    capitalInicial: 2200000, // Capital al inicio de este tramo
-    nota: 'Cambio a fondo mixto para mayor crecimiento',
-    fechaCreacion: '2023-07-01',
-  },
-  // Tramo 3: Actual (sin fechaFin)
-  {
-    id: 't-003',
-    fechaInicio: '2024-03-01',
-    fechaFin: undefined, // Tramo actual
-    instrumento: 'Fondo Renta Variable',
-    rendimientoEsperado: 12.0,
-    inflacionAsumida: 25.0,
-    aporteMensual: 150000,
-    capitalInicial: 3000000, // Capital al inicio de este tramo
-    nota: 'Mayor exposición a renta variable',
-    fechaCreacion: '2024-03-01',
-  },
-];
+export const emmaTramosMock: EmmaTramo[] = [];
 
 // Helper: obtener tramo actual
 export function getTramoActual(): EmmaTramo | undefined {

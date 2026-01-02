@@ -57,82 +57,11 @@ export interface Activo {
   fechaModificacion?: string; // YYYY-MM-DD
 }
 
-// Mock: pasivos asociados a activos
-export const pasivosMock: Pasivo[] = [
-  {
-    id: 'p-001',
-    activoId: 'a-002', // Auto Toyota Corolla
-    montoFinanciadoUsd: 15000,
-    cuotasTotales: 36,
-    cuotasRestantes: 24,
-    valorCuotaUsd: 416.67, // 15000 / 36
-    saldoPendienteUsd: 10000, // 24 * 416.67
-    conceptoId: 'c-019', // Concepto "Cuota Auto" (se creará)
-    conceptoNombre: 'Cuota Auto',
-    fechaInicio: '2023-06-15',
-    fechaCreacion: '2023-06-15',
-  },
-];
-
-// Mock: pagos de pasivos
-export const pagosPasivosMock: PagoPasivo[] = [
-  // Pagos del auto (12 cuotas pagadas de 36)
-  { id: 'pp-001', pasivoId: 'p-001', activoId: 'a-002', eventoMensualId: 'e-auto-001', fecha: '2023-07-01', montoUsd: 416.67, saldoAnteriorUsd: 15000, saldoNuevoUsd: 14583.33, cuotasRestantesAnterior: 36, cuotasRestantesNuevo: 35, fechaCreacion: '2023-07-01' },
-  { id: 'pp-002', pasivoId: 'p-001', activoId: 'a-002', eventoMensualId: 'e-auto-002', fecha: '2023-08-01', montoUsd: 416.67, saldoAnteriorUsd: 14583.33, saldoNuevoUsd: 14166.66, cuotasRestantesAnterior: 35, cuotasRestantesNuevo: 34, fechaCreacion: '2023-08-01' },
-  // ... (10 pagos más, total 12 pagados)
-];
-
-// Mock: activos patrimoniales
-export const activosMock: Activo[] = [
-  {
-    id: 'a-001',
-    nombre: 'Departamento Palermo',
-    tipo: 'inmueble',
-    valorActualUsd: 180000,
-    fechaUltimaValuacion: '2024-03-15',
-    estadoFiscal: 'declarado', // Declarado en Bienes Personales
-    observaciones: 'Departamento 2 ambientes, zona Palermo. Última valuación por tasador profesional.',
-    fechaCreacion: '2023-01-10',
-  },
-  {
-    id: 'a-002',
-    nombre: 'Auto Toyota Corolla',
-    tipo: 'vehiculo',
-    valorActualUsd: 12000,
-    fechaUltimaValuacion: '2024-02-20',
-    estadoFiscal: 'no_declarado', // Vehículo no declarado
-    observaciones: 'Modelo 2020, 45.000 km. Valor según cotización de mercado.',
-    pasivo: pasivosMock.find((p) => p.activoId === 'a-002'), // Pasivo asociado
-    fechaCreacion: '2023-06-15',
-  },
-  {
-    id: 'a-003',
-    nombre: 'Casa Nordelta',
-    tipo: 'inmueble',
-    valorActualUsd: 350000,
-    fechaUltimaValuacion: '2024-01-10',
-    estadoFiscal: 'declarado', // Declarado en Bienes Personales
-    observaciones: 'Casa 3 dormitorios, terreno 500m². Última valuación por inmobiliaria.',
-    fechaCreacion: '2022-05-20',
-  },
-];
-
-// Mock: historial de valuaciones
-export const valuacionesMock: ValuacionActivo[] = [
-  // Departamento Palermo
-  { id: 'v-001', activoId: 'a-001', fecha: '2023-01-10', valorUsd: 160000, fechaCreacion: '2023-01-10', nota: 'Valuación inicial' },
-  { id: 'v-002', activoId: 'a-001', fecha: '2023-06-15', valorUsd: 170000, fechaCreacion: '2023-06-15', nota: 'Revaluación semestral' },
-  { id: 'v-003', activoId: 'a-001', fecha: '2024-03-15', valorUsd: 180000, fechaCreacion: '2024-03-15', nota: 'Valuación por tasador profesional' },
-  
-  // Auto Toyota Corolla
-  { id: 'v-004', activoId: 'a-002', fecha: '2023-06-15', valorUsd: 15000, fechaCreacion: '2023-06-15', nota: 'Valuación inicial' },
-  { id: 'v-005', activoId: 'a-002', fecha: '2024-02-20', valorUsd: 12000, fechaCreacion: '2024-02-20', nota: 'Depreciación por uso y km' },
-  
-  // Casa Nordelta
-  { id: 'v-006', activoId: 'a-003', fecha: '2022-05-20', valorUsd: 320000, fechaCreacion: '2022-05-20', nota: 'Valuación inicial' },
-  { id: 'v-007', activoId: 'a-003', fecha: '2023-05-20', valorUsd: 335000, fechaCreacion: '2023-05-20', nota: 'Revaluación anual' },
-  { id: 'v-008', activoId: 'a-003', fecha: '2024-01-10', valorUsd: 350000, fechaCreacion: '2024-01-10', nota: 'Valuación por inmobiliaria' },
-];
+// Datos mock eliminados - usar API real
+export const pasivosMock: Pasivo[] = [];
+export const pagosPasivosMock: PagoPasivo[] = [];
+export const activosMock: Activo[] = [];
+export const valuacionesMock: ValuacionActivo[] = [];
 
 // Helper: obtener valuaciones de un activo (ordenadas por fecha descendente)
 export function getValuacionesByActivo(activoId: string): ValuacionActivo[] {

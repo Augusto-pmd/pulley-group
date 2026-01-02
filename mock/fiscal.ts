@@ -25,26 +25,9 @@ export interface ConceptoFiscal {
   fechaDefinicion: string; // YYYY-MM-DD
 }
 
-// Mock: etiquetas fiscales por concepto
-export const conceptosFiscalesMock: ConceptoFiscal[] = [
-  // Ingresos facturados (ejemplos)
-  // { conceptoId: 'c-ingreso-001', etiquetaFiscal: 'ingreso_facturado_afip', fechaDefinicion: '2024-01-01' },
-  
-  // Gastos deducibles
-  { conceptoId: 'c-001', etiquetaFiscal: 'gasto_no_deducible', fechaDefinicion: '2024-01-01' }, // Alquiler
-  { conceptoId: 'c-002', etiquetaFiscal: 'gasto_no_deducible', fechaDefinicion: '2024-01-01' }, // Expensas
-  { conceptoId: 'c-003', etiquetaFiscal: 'gasto_deducible', fechaDefinicion: '2024-01-01' }, // Luz (si es oficina)
-  { conceptoId: 'c-004', etiquetaFiscal: 'gasto_deducible', fechaDefinicion: '2024-01-01' }, // Gas (si es oficina)
-  { conceptoId: 'c-006', etiquetaFiscal: 'gasto_deducible', fechaDefinicion: '2024-01-01' }, // Internet
-  { conceptoId: 'c-007', etiquetaFiscal: 'gasto_deducible', fechaDefinicion: '2024-01-01' }, // Teléfono
-  { conceptoId: 'c-012', etiquetaFiscal: 'gasto_deducible', fechaDefinicion: '2024-01-01' }, // Seguro Auto (si es para trabajo)
-  { conceptoId: 'c-016', etiquetaFiscal: 'gasto_deducible', fechaDefinicion: '2024-01-01' }, // Impuestos
-  
-  // Pasivos
-  { conceptoId: 'c-019', etiquetaFiscal: 'pago_pasivo', fechaDefinicion: '2024-01-01' }, // Cuota Auto
-  
-  // Resto: neutro fiscal por defecto
-];
+// Datos mock eliminados - usar API real
+// Las etiquetas fiscales deben almacenarse en la base de datos
+export const conceptosFiscalesMock: ConceptoFiscal[] = [];
 
 // Helper: obtener etiqueta fiscal de un concepto
 export function getEtiquetaFiscal(conceptoId: string): EtiquetaFiscal {

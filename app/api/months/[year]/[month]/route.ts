@@ -13,27 +13,25 @@ export async function GET(
     const year = parseInt(params.year);
     const month = parseInt(params.month);
 
-    let monthRecord = await prisma.month.findUnique({
+    // UPSERT: crear si no existe, leer si existe
+    const monthRecord = await prisma.month.upsert({
       where: {
         year_month: {
           year,
           month,
         },
       },
+      update: {},
+      create: {
+        year,
+        month,
+        status: 'abierto',
+        openDate: new Date(),
+      },
+      include: {
+        movements: true,
+      },
     });
-
-    // Si no existe, crear automáticamente (apertura automática)
-    if (!monthRecord) {
-      const openDate = `${year}-${String(month).padStart(2, '0')}-01`;
-      monthRecord = await prisma.month.create({
-        data: {
-          year,
-          month,
-          status: 'abierto',
-          openDate,
-        },
-      });
-    }
 
     return NextResponse.json({
       mes: `${year}-${String(month).padStart(2, '0')}`,
@@ -41,6 +39,7 @@ export async function GET(
       fechaApertura: monthRecord.openDate,
       fechaCierre: monthRecord.closeDate ?? undefined,
       nota: monthRecord.note ?? undefined,
+      movimientos: monthRecord.movements,
     });
   } catch (error) {
     console.error('Error fetching month:', error);

@@ -19,57 +19,8 @@ export interface Inversion {
   fechaModificacion?: string; // YYYY-MM-DD
 }
 
-// Mock: inversiones existentes
-export const inversionesMock: Inversion[] = [
-  {
-    id: 'inv-001',
-    nombre: 'Fondo Renta Variable',
-    tipo: 'financiera',
-    fechaInicio: '2022-03-15',
-    montoObjetivo: 2500000,
-    plazoEstimado: 60, // 5 años
-    tipoRetorno: 'mixta',
-    estadoFiscal: 'declarado',
-    observaciones: 'Fondo diversificado de renta variable',
-    fechaCreacion: '2022-03-15',
-  },
-  {
-    id: 'inv-002',
-    nombre: 'Bonos Gobierno',
-    tipo: 'financiera',
-    fechaInicio: '2022-01-10',
-    montoObjetivo: 1800000,
-    plazoEstimado: 36, // 3 años
-    tipoRetorno: 'renta',
-    estadoFiscal: 'declarado',
-    observaciones: 'Bonos soberanos en USD',
-    fechaCreacion: '2022-01-10',
-  },
-  {
-    id: 'inv-003',
-    nombre: 'Acciones Tech',
-    tipo: 'financiera',
-    fechaInicio: '2021-06-01',
-    montoObjetivo: 1200000,
-    plazoEstimado: 120, // 10 años
-    tipoRetorno: 'capitalizacion',
-    estadoFiscal: 'no_declarado',
-    observaciones: 'Portfolio de acciones tecnológicas',
-    fechaCreacion: '2021-06-01',
-  },
-  {
-    id: 'inv-004',
-    nombre: 'Proyecto Inmobiliario Nordelta',
-    tipo: 'inmobiliaria',
-    fechaInicio: '2023-01-01',
-    montoObjetivo: 700000,
-    plazoEstimado: 240, // 20 años
-    tipoRetorno: 'capitalizacion',
-    estadoFiscal: 'declarado',
-    observaciones: 'Desarrollo inmobiliario, aportes escalonados',
-    fechaCreacion: '2023-01-01',
-  },
-];
+// Datos mock eliminados - usar API real
+export const inversionesMock: Inversion[] = [];
 
 // Helper: obtener inversión por ID
 export function getInversionById(id: string): Inversion | undefined {

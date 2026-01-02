@@ -56,70 +56,9 @@ function createEvento(
   };
 }
 
-// Eventos mensuales extraídos del Excel
-// Cada mes es un evento independiente, no se sobrescriben valores
-// TC aplicado: Enero-Marzo 2024 = 800, Abril 2024 = 1000
-export const eventosMock: EventoMensual[] = [
-  // Enero 2024 (TC: 800)
-  createEvento('e-001', 'c-001', 'Alquiler', 'egreso', '2024-01-01', '2024-01', 50000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-002', 'c-002', 'Expensas', 'egreso', '2024-01-01', '2024-01', 15000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-003', 'c-003', 'Luz', 'egreso', '2024-01-10', '2024-01', 8500, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-004', 'c-004', 'Gas', 'egreso', '2024-01-10', '2024-01', 5200, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-005', 'c-006', 'Internet', 'egreso', '2024-01-05', '2024-01', 12000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-006', 'c-007', 'Teléfono', 'egreso', '2024-01-05', '2024-01', 5000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-007', 'c-008', 'Supermercado', 'egreso', '2024-01-15', '2024-01', 32000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-008', 'c-009', 'Farmacia', 'egreso', '2024-01-20', '2024-01', 7500, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-009', 'c-010', 'Transporte', 'egreso', '2024-01-25', '2024-01', 14000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-010', 'c-011', 'Gimnasio', 'egreso', '2024-01-01', '2024-01', 12000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-011', 'c-012', 'Seguro Auto', 'egreso', '2024-01-01', '2024-01', 18000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-012', 'c-017', 'Servicio Streaming', 'egreso', '2024-01-01', '2024-01', 5000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-013', 'c-015', 'Mantenimiento Auto', 'egreso', '2024-01-15', '2024-01', 30000, 'ARS', 800, 'pagado', 'extraordinario', 'Cambio de aceite y revisión'),
-  
-  // Febrero 2024 (TC: 800)
-  createEvento('e-014', 'c-001', 'Alquiler', 'egreso', '2024-02-01', '2024-02', 50000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-015', 'c-002', 'Expensas', 'egreso', '2024-02-01', '2024-02', 15000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-016', 'c-003', 'Luz', 'egreso', '2024-02-10', '2024-02', 7800, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-017', 'c-004', 'Gas', 'egreso', '2024-02-10', '2024-02', 4800, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-018', 'c-005', 'Agua', 'egreso', '2024-02-15', '2024-02', 6000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-019', 'c-006', 'Internet', 'egreso', '2024-02-05', '2024-02', 12000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-020', 'c-007', 'Teléfono', 'egreso', '2024-02-05', '2024-02', 5000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-021', 'c-008', 'Supermercado', 'egreso', '2024-02-15', '2024-02', 38000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-022', 'c-009', 'Farmacia', 'egreso', '2024-02-20', '2024-02', 8200, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-023', 'c-010', 'Transporte', 'egreso', '2024-02-25', '2024-02', 16000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-024', 'c-011', 'Gimnasio', 'egreso', '2024-02-01', '2024-02', 12000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-025', 'c-012', 'Seguro Auto', 'egreso', '2024-02-01', '2024-02', 18000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-026', 'c-014', 'Ropa', 'egreso', '2024-02-10', '2024-02', 25000, 'ARS', 800, 'pagado', 'extraordinario'),
-  createEvento('e-027', 'c-017', 'Servicio Streaming', 'egreso', '2024-02-01', '2024-02', 5000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-028', 'c-018', 'Medicamentos', 'egreso', '2024-02-20', '2024-02', 5500, 'ARS', 800, 'pagado', 'variable'),
-  
-  // Marzo 2024 (TC: 800)
-  createEvento('e-029', 'c-001', 'Alquiler', 'egreso', '2024-03-01', '2024-03', 50000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-030', 'c-002', 'Expensas', 'egreso', '2024-03-01', '2024-03', 15000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-031', 'c-003', 'Luz', 'egreso', '2024-03-10', '2024-03', 8200, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-032', 'c-004', 'Gas', 'egreso', '2024-03-10', '2024-03', 5100, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-033', 'c-006', 'Internet', 'egreso', '2024-03-05', '2024-03', 12000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-034', 'c-007', 'Teléfono', 'egreso', '2024-03-05', '2024-03', 5000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-035', 'c-008', 'Supermercado', 'egreso', '2024-03-15', '2024-03', 35000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-036', 'c-009', 'Farmacia', 'egreso', '2024-03-20', '2024-03', 8000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-037', 'c-010', 'Transporte', 'egreso', '2024-03-25', '2024-03', 15000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-038', 'c-011', 'Gimnasio', 'egreso', '2024-03-01', '2024-03', 12000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-039', 'c-012', 'Seguro Auto', 'egreso', '2024-03-01', '2024-03', 18000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-040', 'c-013', 'Restaurante', 'egreso', '2024-03-18', '2024-03', 10000, 'ARS', 800, 'pagado', 'variable'),
-  createEvento('e-041', 'c-017', 'Servicio Streaming', 'egreso', '2024-03-01', '2024-03', 5000, 'ARS', 800, 'pagado', 'fijo'),
-  createEvento('e-042', 'c-018', 'Medicamentos', 'egreso', '2024-03-20', '2024-03', 6000, 'ARS', 800, 'pagado', 'variable'),
-  
-  // Abril 2024 (TC: 1000)
-  createEvento('e-043', 'c-001', 'Alquiler', 'egreso', '2024-04-01', '2024-04', 50000, 'ARS', 1000, 'pagado', 'fijo'),
-  createEvento('e-044', 'c-002', 'Expensas', 'egreso', '2024-04-01', '2024-04', 15000, 'ARS', 1000, 'pagado', 'fijo'),
-  createEvento('e-045', 'c-003', 'Luz', 'egreso', '2024-04-10', '2024-04', 7900, 'ARS', 1000, 'pendiente', 'variable'),
-  createEvento('e-046', 'c-004', 'Gas', 'egreso', '2024-04-10', '2024-04', 4900, 'ARS', 1000, 'pendiente', 'variable'),
-  createEvento('e-047', 'c-006', 'Internet', 'egreso', '2024-04-05', '2024-04', 12000, 'ARS', 1000, 'pagado', 'fijo'),
-  createEvento('e-048', 'c-007', 'Teléfono', 'egreso', '2024-04-05', '2024-04', 5000, 'ARS', 1000, 'pagado', 'fijo'),
-  createEvento('e-049', 'c-008', 'Supermercado', 'egreso', '2024-04-15', '2024-04', 36000, 'ARS', 1000, 'pendiente', 'variable'),
-  createEvento('e-050', 'c-011', 'Gimnasio', 'egreso', '2024-04-01', '2024-04', 12000, 'ARS', 1000, 'pagado', 'fijo'),
-  createEvento('e-051', 'c-012', 'Seguro Auto', 'egreso', '2024-04-01', '2024-04', 18000, 'ARS', 1000, 'pagado', 'fijo'),
-  createEvento('e-052', 'c-017', 'Servicio Streaming', 'egreso', '2024-04-01', '2024-04', 5000, 'ARS', 1000, 'pagado', 'fijo'),
-];
+// Datos mock eliminados - usar API real
+// Los eventos se cargan desde /api/movements
+export const eventosMock: EventoMensual[] = [];
 
 // --- Funciones de ayuda para acceder a los eventos ---
 

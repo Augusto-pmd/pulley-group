@@ -12,13 +12,9 @@ export interface MonthState {
   nota?: string;
 }
 
-// Mock: estados de meses (persistencia)
-export const monthStatesMock: MonthState[] = [
-  { mes: '2024-01', estado: 'CERRADO', fechaApertura: '2024-01-01', fechaCierre: '2024-02-01' },
-  { mes: '2024-02', estado: 'CERRADO', fechaApertura: '2024-02-01', fechaCierre: '2024-03-01' },
-  { mes: '2024-03', estado: 'CERRADO', fechaApertura: '2024-03-01', fechaCierre: '2024-04-01' },
-  { mes: '2024-04', estado: 'ABIERTO', fechaApertura: '2024-04-01' },
-];
+// Datos mock eliminados - usar API real
+// Los estados de mes se cargan desde /api/months
+export const monthStatesMock: MonthState[] = [];
 
 // Helper: obtener el primer día del mes en formato YYYY-MM-DD
 function getFirstDayOfMonth(mes: string): string {

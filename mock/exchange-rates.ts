@@ -10,38 +10,22 @@ export interface ExchangeRate {
   fechaModificacion?: string; // YYYY-MM-DD
 }
 
-// Mock: tabla de tipos de cambio históricos
-export const exchangeRatesMock: ExchangeRate[] = [
-  { fecha: '2022-01-01', usdToArs: 200, fechaCreacion: '2022-01-01' },
-  { fecha: '2022-06-01', usdToArs: 250, fechaCreacion: '2022-06-01' },
-  { fecha: '2023-01-01', usdToArs: 350, fechaCreacion: '2023-01-01' },
-  { fecha: '2023-06-01', usdToArs: 500, fechaCreacion: '2023-06-01' },
-  { fecha: '2024-01-01', usdToArs: 800, fechaCreacion: '2024-01-01' },
-  { fecha: '2024-03-15', usdToArs: 1000, fechaCreacion: '2024-03-15' },
-];
+// Datos mock eliminados - usar API real para tipos de cambio
+export const exchangeRatesMock: ExchangeRate[] = [];
 
 // Helper: obtener tipo de cambio para una fecha específica
+// TODO: Implementar con API real de tipos de cambio
 export function getExchangeRateForDate(fecha: string): number {
-  // Ordenar por fecha descendente
-  const sortedRates = [...exchangeRatesMock].sort((a, b) => 
-    b.fecha.localeCompare(a.fecha)
-  );
-  
-  // Encontrar el tipo de cambio más reciente anterior o igual a la fecha
-  const rate = sortedRates.find((r) => r.fecha <= fecha);
-  
-  // Si no hay tasa para esa fecha, usar la más antigua disponible
-  // Si no hay ninguna tasa, usar la tasa actual como fallback
-  return rate?.usdToArs || sortedRates[sortedRates.length - 1]?.usdToArs || getCurrentExchangeRate();
+  // Por ahora retornar un valor por defecto
+  // TODO: Consultar API de tipos de cambio
+  return getCurrentExchangeRate();
 }
 
 // Helper: obtener tipo de cambio actual (más reciente)
+// TODO: Implementar con API real de tipos de cambio
 export function getCurrentExchangeRate(): number {
-  const sortedRates = [...exchangeRatesMock].sort((a, b) => 
-    b.fecha.localeCompare(a.fecha)
-  );
-  // Si no hay tasas, retornar la última tasa disponible o un valor por defecto razonable
-  return sortedRates[0]?.usdToArs || (sortedRates.length > 0 ? sortedRates[sortedRates.length - 1]?.usdToArs : 1000);
+  // Valor por defecto razonable hasta que se implemente API real
+  return 1000;
 }
 
 // Helper: convertir ARS a USD usando tipo de cambio de una fecha

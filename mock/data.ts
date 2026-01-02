@@ -188,144 +188,17 @@ export function formatCurrency(value: number): string {
   return formatCurrencyDual(usdValue, arsValue);
 }
 
-// Mock data para Vida Mensual
-export const mockConcepts: Concept[] = [
-  {
-    id: '1',
-    name: 'Alquiler',
-    type: 'egreso',
-    category: 'fijo',
-    isRecurrent: true,
-    frequency: 'mensual',
-    estimatedAmount: 50000,
-    lastUsed: '2024-03-01',
-  },
-  {
-    id: '2',
-    name: 'Expensas',
-    type: 'egreso',
-    category: 'fijo',
-    isRecurrent: true,
-    frequency: 'mensual',
-    estimatedAmount: 15000,
-    lastUsed: '2024-03-01',
-  },
-  {
-    id: '3',
-    name: 'Servicios',
-    type: 'egreso',
-    category: 'variable',
-    isRecurrent: true,
-    frequency: 'mensual',
-    estimatedAmount: 12000,
-    lastUsed: '2024-03-01',
-  },
-  {
-    id: '4',
-    name: 'Ingresos alquiler',
-    type: 'ingreso',
-    category: 'fijo',
-    isRecurrent: true,
-    frequency: 'mensual',
-    estimatedAmount: 80000,
-    lastUsed: '2024-03-01',
-  },
-  {
-    id: '5',
-    name: 'Ingresos inversiones',
-    type: 'ingreso',
-    category: 'variable',
-    isRecurrent: true,
-    frequency: 'mensual',
-    estimatedAmount: 150000,
-    lastUsed: '2024-03-01',
-  },
-  {
-    id: '6',
-    name: 'Supermercado',
-    type: 'egreso',
-    category: 'variable',
-    isRecurrent: true,
-    frequency: 'mensual',
-    estimatedAmount: 35000,
-    lastUsed: '2024-03-01',
-  },
-];
-
-export const mockMonthlyMovements: MonthlyMovement[] = [
-  {
-    id: '1',
-    type: 'ingreso',
-    concept: 'Ingresos inversiones',
-    amount: 150000,
-    date: '2024-03-05',
-    category: 'variable',
-    isRecurrent: true,
-  },
-  {
-    id: '2',
-    type: 'ingreso',
-    concept: 'Ingresos alquiler',
-    amount: 80000,
-    date: '2024-03-01',
-    category: 'fijo',
-    isRecurrent: true,
-  },
-  {
-    id: '3',
-    type: 'egreso',
-    concept: 'Alquiler',
-    amount: 50000,
-    date: '2024-03-01',
-    category: 'fijo',
-    isRecurrent: true,
-  },
-  {
-    id: '4',
-    type: 'egreso',
-    concept: 'Expensas',
-    amount: 15000,
-    date: '2024-03-01',
-    category: 'fijo',
-    isRecurrent: true,
-  },
-  {
-    id: '5',
-    type: 'egreso',
-    concept: 'Servicios',
-    amount: 12000,
-    date: '2024-03-10',
-    category: 'variable',
-    isRecurrent: true,
-  },
-  {
-    id: '6',
-    type: 'egreso',
-    concept: 'Supermercado',
-    amount: 35000,
-    date: '2024-03-15',
-    category: 'variable',
-    isRecurrent: true,
-  },
-  {
-    id: '7',
-    type: 'egreso',
-    concept: 'Restaurante',
-    amount: 8000,
-    date: '2024-03-20',
-    category: 'extraordinario',
-    isRecurrent: false,
-  },
-];
-
+// Datos mock eliminados - usar API real
+export const mockConcepts: Concept[] = [];
+export const mockMonthlyMovements: MonthlyMovement[] = [];
 export const mockMonthlySummary: MonthlySummary = {
-  month: '2024-03',
-  totalIncome: 230000,
-  totalExpenses: 120000,
-  netResult: 110000,
-  averageMonthly: 105000,
-  minimumExpense: 77000,
-  variation: 4.8,
+  month: '',
+  totalIncome: 0,
+  totalExpenses: 0,
+  netResult: 0,
+  averageMonthly: 0,
+  minimumExpense: 0,
+  variation: 0,
 };
 
 // Formatear porcentajes

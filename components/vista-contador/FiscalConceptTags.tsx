@@ -1,12 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '../Card';
-import { conceptosMock } from '@/mock/conceptos';
+import { getConcepts } from '@/lib/api';
 import { getEtiquetaFiscal, setEtiquetaFiscal, type EtiquetaFiscal } from '@/mock/fiscal';
 
 export default function FiscalConceptTags() {
-  const [conceptos, setConceptos] = useState(conceptosMock);
+  const [conceptos, setConceptos] = useState<Array<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' }>>([]);
+
+  // Cargar conceptos desde la API
+  useEffect(() => {
+    async function loadConcepts() {
+      try {
+        const apiConcepts = await getConcepts();
+        const mappedConcepts = apiConcepts.map((c) => ({
+          id: c.id,
+          nombre: c.name,
+          tipo: c.type,
+          categoria: c.nature,
+        }));
+        setConceptos(mappedConcepts);
+      } catch (error) {
+        console.error('Error loading concepts:', error);
+        setConceptos([]);
+      }
+    }
+    loadConcepts();
+  }, []);
 
   const handleChangeEtiqueta = (conceptoId: string, nuevaEtiqueta: EtiquetaFiscal) => {
     setEtiquetaFiscal(conceptoId, nuevaEtiqueta);
@@ -71,9 +91,8 @@ export default function FiscalConceptTags() {
                   <div className="text-body-large text-gray-text-primary font-medium mb-1">
                     {concepto.nombre}
                   </div>
-                  <div className="text-body-small text-gray-text-tertiary">
-                    {concepto.categoria.charAt(0).toUpperCase() + concepto.categoria.slice(1)} ·{' '}
-                    {concepto.recurrente ? 'Recurrente' : 'Puntual'}
+                  <div className="text-body-small text-gray-text-tertiary capitalize">
+                    {concepto.categoria} · {concepto.tipo}
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

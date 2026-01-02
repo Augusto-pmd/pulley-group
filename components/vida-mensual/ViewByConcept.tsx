@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '@/components/Card';
 import ExpenseEventList from './ExpenseEventList';
 import { formatCurrency } from '@/mock/data';
 import type { EventoMensual } from '@/mock/eventos';
-import { conceptosMock } from '@/mock/conceptos';
+import { getConcepts } from '@/lib/api';
 
 interface ViewByConceptProps {
   eventos: EventoMensual[];
@@ -24,10 +24,31 @@ function getTotalByConcepto(eventos: EventoMensual[], conceptoId: string): numbe
 
 export default function ViewByConcept({ eventos, onToggleEstado, onEditMonto }: ViewByConceptProps) {
   const [selectedConceptoId, setSelectedConceptoId] = useState<string | null>(null);
+  const [conceptos, setConceptos] = useState<Array<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' }>>([]);
   const eventosConcepto = selectedConceptoId ? getEventosByConcepto(eventos, selectedConceptoId) : [];
 
+  // Cargar conceptos desde la API
+  useEffect(() => {
+    async function loadConcepts() {
+      try {
+        const apiConcepts = await getConcepts();
+        const mappedConcepts = apiConcepts.map((c) => ({
+          id: c.id,
+          nombre: c.name,
+          tipo: c.type,
+          categoria: c.nature,
+        }));
+        setConceptos(mappedConcepts);
+      } catch (error) {
+        console.error('Error loading concepts:', error);
+        setConceptos([]);
+      }
+    }
+    loadConcepts();
+  }, []);
+
   // Agrupar conceptos con estadísticas
-  const conceptosConStats = conceptosMock.map((concepto) => {
+  const conceptosConStats = conceptos.map((concepto) => {
     const eventosConcepto = getEventosByConcepto(eventos, concepto.id);
     const total = getTotalByConcepto(eventos, concepto.id);
     const promedio = eventosConcepto.length > 0 ? total / eventosConcepto.length : 0;
@@ -71,7 +92,6 @@ export default function ViewByConcept({ eventos, onToggleEstado, onEditMonto }: 
                       </div>
                       <div className="text-body-small text-gray-text-tertiary">
                         {concepto.totalEventos} eventos
-                        {concepto.recurrente && ` · ${concepto.frecuencia}`}
                         {concepto.ultimoEvento && (
                           <span className="ml-2">
                             · Último: {new Date(concepto.ultimoEvento.fecha).toLocaleDateString('es-AR', {
@@ -105,7 +125,7 @@ export default function ViewByConcept({ eventos, onToggleEstado, onEditMonto }: 
           <Card padding="large">
             <div className="mb-6">
               <h3 className="text-heading-2 text-gray-text-primary mb-2">
-                {conceptosMock.find((c) => c.id === selectedConceptoId)?.nombre}
+                {conceptos.find((c) => c.id === selectedConceptoId)?.nombre}
               </h3>
               <p className="text-body text-gray-text-tertiary">
                 Historial completo de eventos para este concepto

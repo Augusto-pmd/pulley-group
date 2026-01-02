@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import FeedbackPulse from '../animations/FeedbackPulse';
-import { conceptosMock } from '@/mock/conceptos';
+import { getConcepts } from '@/lib/api';
 import { convertArsToUsdCurrent, getCurrentExchangeRate, formatCurrencyUSD, getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
 import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumberWithLocale } from '@/utils/number-format';
 
@@ -32,15 +32,37 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
   const [estado, setEstado] = useState<'pagado' | 'pendiente'>('pagado');
   const [naturaleza, setNaturaleza] = useState<'fijo' | 'variable' | 'extraordinario'>('variable'); // Solo para conceptos nuevos
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredConcepts, setFilteredConcepts] = useState<typeof conceptosMock>([]);
-  const [selectedConcept, setSelectedConcept] = useState<typeof conceptosMock[0] | null>(null);
+  const [allConcepts, setAllConcepts] = useState<Array<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' }>>([]);
+  const [filteredConcepts, setFilteredConcepts] = useState<Array<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' }>>([]);
+  const [selectedConcept, setSelectedConcept] = useState<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' } | null>(null);
   const [justAdded, setJustAdded] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Cargar conceptos desde la API
+  useEffect(() => {
+    async function loadConcepts() {
+      try {
+        const apiConcepts = await getConcepts();
+        // Mapear ApiConcept al formato esperado
+        const mappedConcepts = apiConcepts.map((c) => ({
+          id: c.id,
+          nombre: c.name,
+          tipo: c.type,
+          categoria: c.nature,
+        }));
+        setAllConcepts(mappedConcepts);
+      } catch (error) {
+        console.error('Error loading concepts:', error);
+        setAllConcepts([]);
+      }
+    }
+    loadConcepts();
+  }, []);
 
   useEffect(() => {
     if (concepto.length > 0) {
       // Filtrar conceptos por tipo de movimiento
-      const filtered = conceptosMock.filter((c) =>
+      const filtered = allConcepts.filter((c) =>
         c.tipo === tipoMovimiento &&
         c.nombre.toLowerCase().includes(concepto.toLowerCase())
       );
@@ -51,16 +73,13 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
       setShowSuggestions(false);
       setSelectedConcept(null);
     }
-  }, [concepto, tipoMovimiento]);
+  }, [concepto, tipoMovimiento, allConcepts]);
 
-  const handleConceptSelect = (conceptoSeleccionado: typeof conceptosMock[0]) => {
+  const handleConceptSelect = (conceptoSeleccionado: { id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' }) => {
     setConcepto(conceptoSeleccionado.nombre);
     setSelectedConcept(conceptoSeleccionado);
     // Heredar naturaleza del concepto existente
     setNaturaleza(conceptoSeleccionado.categoria);
-    if (conceptoSeleccionado.montoEstimado) {
-      setMontoFormatted(formatNumberWithSeparators(conceptoSeleccionado.montoEstimado));
-    }
     setShowSuggestions(false);
     // Focus en monto después de seleccionar concepto
     setTimeout(() => {
@@ -276,11 +295,9 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                   className="w-full text-left px-4 py-2.5 hover:bg-blue-50/30 transition-colors duration-fast"
                 >
                   <div className="text-body text-gray-text-primary font-medium">{c.nombre}</div>
-                  {c.montoEstimado && (
-                    <div className="text-body-small text-gray-text-tertiary">
-                      {formatCurrencyUSD(convertArsToUsdCurrent(c.montoEstimado))}
-                    </div>
-                  )}
+                  <div className="text-body-small text-gray-text-tertiary capitalize">
+                    {c.categoria}
+                  </div>
                 </button>
               ))}
             </div>
