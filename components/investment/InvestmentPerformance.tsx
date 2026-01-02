@@ -1,9 +1,33 @@
+import React from 'react';
 import Card from '../Card';
 import { formatPercentage } from '@/utils/number-format';
 import type { Investment } from '@/mock/data';
 
 interface InvestmentPerformanceProps {
   investment: Investment;
+}
+
+type PerformanceMonth = {
+  date: string;
+  roi: number;
+};
+
+// Helper para renderizar mejor/peor mes con type narrowing correcto
+function renderPerformanceMonth(
+  month: PerformanceMonth | null,
+  label: string
+): React.ReactNode {
+  if (month === null) {
+    return null;
+  }
+  return (
+    <div>
+      <div className="text-body text-gray-text-tertiary mb-1">{label}</div>
+      <div className="text-body text-gray-text-tertiary">
+        {month.date}: {formatPercentage(month.roi)}
+      </div>
+    </div>
+  );
 }
 
 export default function InvestmentPerformance({ investment }: InvestmentPerformanceProps) {
@@ -24,8 +48,11 @@ export default function InvestmentPerformance({ investment }: InvestmentPerforma
   const annualizedReal = 0; // Requiere IPC real
   const monthlyVariation = 0; // Requiere eventos mensuales reales
   const annualVariation = 0; // Requiere eventos anuales reales
-  const bestMonth: { date: string; roi: number } | null = null; // Requiere análisis temporal real
-  const worstMonth: { date: string; roi: number } | null = null; // Requiere análisis temporal real
+  
+  // Mejor y peor mes - solo desde datos reales de análisis temporal
+  // Si no hay eventos de múltiples meses, estos son null
+  const bestMonth: PerformanceMonth | null = null; // Requiere análisis temporal real
+  const worstMonth: PerformanceMonth | null = null; // Requiere análisis temporal real
 
   return (
     <Card>
@@ -90,29 +117,15 @@ export default function InvestmentPerformance({ investment }: InvestmentPerforma
       </div>
 
       {/* Mejor y Peor Mes - Solo si hay datos reales */}
-      {(bestMonth || worstMonth) && (
+      {bestMonth !== null || worstMonth !== null ? (
         <div className="grid grid-cols-2 gap-6">
-          {bestMonth && (
-            <div>
-              <div className="text-body text-gray-text-tertiary mb-1">Mejor mes</div>
-              <div className="text-body text-gray-text-tertiary">
-                {bestMonth.date}: {formatPercentage(bestMonth.roi)}
-              </div>
-            </div>
-          )}
-          {worstMonth && (
-            <div>
-              <div className="text-body text-gray-text-tertiary mb-1">Peor mes</div>
-              <div className="text-body text-gray-text-tertiary">
-                {worstMonth.date}: {formatPercentage(worstMonth.roi)}
-              </div>
-            </div>
-          )}
+          {renderPerformanceMonth(bestMonth, 'Mejor mes')}
+          {renderPerformanceMonth(worstMonth, 'Peor mes')}
         </div>
-      )}
+      ) : null}
       
       {/* Mensaje si no hay métricas temporales */}
-      {!bestMonth && !worstMonth && (
+      {bestMonth === null && worstMonth === null && (
         <div className="mt-8 text-center text-body-small text-gray-text-tertiary">
           Se requieren eventos de múltiples meses para calcular variaciones mensuales y mejores/peores meses.
         </div>
