@@ -33,25 +33,25 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 // Inicialización lazy: PrismaClient solo se crea cuando se llama getPrisma()
-let prisma: PrismaClient | null = null;
+let prismaInstance: PrismaClient | null = null;
 
 export function getPrisma(): PrismaClient {
   // Validar DATABASE_URL solo cuando se instancia PrismaClient (runtime, no build)
-  if (!prisma) {
+  if (!prismaInstance) {
     validateDatabaseUrl();
     
     // Reutilizar instancia global en desarrollo para hot-reload
     if (process.env.NODE_ENV !== 'production' && globalForPrisma.prisma) {
-      prisma = globalForPrisma.prisma;
+      prismaInstance = globalForPrisma.prisma;
     } else {
-      prisma = new PrismaClient();
+      prismaInstance = new PrismaClient();
       if (process.env.NODE_ENV !== 'production') {
-        globalForPrisma.prisma = prisma;
+        globalForPrisma.prisma = prismaInstance;
       }
     }
   }
   
-  return prisma;
+  return prismaInstance;
 }
 
 // Exportar prisma para compatibilidad (deprecated, usar getPrisma())
