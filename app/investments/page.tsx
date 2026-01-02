@@ -13,6 +13,7 @@ import {
   getInvestments,
   createInvestment,
   getInvestmentEvents,
+  deleteInvestment,
   type ApiInvestment,
 } from '@/lib/api';
 
@@ -158,6 +159,26 @@ export default function InvestmentsPage() {
   const handleCloseEventForm = () => {
     setShowEventForm(false);
     setSelectedInvestmentId(null);
+  };
+
+  const handleDeleteInvestment = async (id: string) => {
+    try {
+      // Recargar inversiones desde la API
+      const apiInvestments = await getInvestments();
+      const transformedInvestments = Array.isArray(apiInvestments)
+        ? apiInvestments.map(apiInvestmentToInversion)
+        : [];
+      setInversiones(transformedInvestments);
+      
+      // Recargar inversiones para InvestmentCard
+      const transformedForCard = await Promise.all(
+        apiInvestments.map(apiInvestmentToInvestment)
+      );
+      setInvestmentsForCard(transformedForCard);
+    } catch (err: any) {
+      console.error('Error deleting investment:', err);
+      setError(err.message || 'Error al eliminar inversión');
+    }
   };
 
   const handleSaveInvestment = async () => {
@@ -311,7 +332,11 @@ export default function InvestmentsPage() {
               {investmentsForCard
                 .filter((investment) => investment.capital > 0) // Solo mostrar inversiones con capital real
                 .map((investment) => (
-                  <InvestmentCard key={investment.id} investment={investment} />
+                  <InvestmentCard 
+                    key={investment.id} 
+                    investment={investment}
+                    onDelete={handleDeleteInvestment}
+                  />
                 ))}
               {investmentsForCard.filter((investment) => investment.capital === 0).length > 0 && (
                 <Card padding="large">

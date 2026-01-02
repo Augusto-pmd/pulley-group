@@ -502,6 +502,75 @@ export async function createAsset(data: CreateAssetData): Promise<ApiAsset> {
 }
 
 /**
+ * Actualizar un activo
+ */
+export interface UpdateAssetData {
+  name?: string;
+  type?: 'INMUEBLE' | 'VEHICULO' | 'OTRO';
+  fiscalStatus?: 'declarado' | 'no_declarado';
+}
+
+export async function updateAsset(
+  assetId: string,
+  data: UpdateAssetData
+): Promise<ApiAsset> {
+  try {
+    const response = await fetch(`/api/assets/${assetId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error in updateAsset:', error);
+    throw error;
+  }
+}
+
+/**
+ * Eliminar un activo
+ */
+export async function deleteAsset(assetId: string): Promise<void> {
+  try {
+    const response = await fetch(`/api/assets/${assetId}`, {
+      method: 'DELETE',
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+  } catch (error: any) {
+    console.error('Error in deleteAsset:', error);
+    throw error;
+  }
+}
+
+/**
  * Obtener valuaciones de un activo
  */
 export async function getAssetValuations(assetId: string): Promise<ApiAssetValuation[]> {
@@ -762,6 +831,76 @@ export async function getInvestment(id: string): Promise<ApiInvestment> {
     return await response.json();
   } catch (error: any) {
     console.error('Error in getInvestment:', error);
+    throw error;
+  }
+}
+
+/**
+ * Actualizar una inversión
+ */
+export interface UpdateInvestmentData {
+  name?: string;
+  type?: 'financiera' | 'inmobiliaria';
+  targetAmountUSD?: number;
+  startDate?: string;
+}
+
+export async function updateInvestment(
+  investmentId: string,
+  data: UpdateInvestmentData
+): Promise<ApiInvestment> {
+  try {
+    const response = await fetch(`/api/investments/${investmentId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error in updateInvestment:', error);
+    throw error;
+  }
+}
+
+/**
+ * Eliminar una inversión
+ */
+export async function deleteInvestment(investmentId: string): Promise<void> {
+  try {
+    const response = await fetch(`/api/investments/${investmentId}`, {
+      method: 'DELETE',
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+  } catch (error: any) {
+    console.error('Error in deleteInvestment:', error);
     throw error;
   }
 }

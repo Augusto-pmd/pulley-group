@@ -130,6 +130,25 @@ export default function ActivosPage() {
     setSelectedAsset(null);
   };
 
+  const handleDeleteAsset = async (id: string) => {
+    try {
+      // Recargar activos desde la API
+      const apiAssets = await getAssets();
+      const transformedAssets = Array.isArray(apiAssets) 
+        ? apiAssets.map(apiAssetToActivo)
+        : [];
+      setActivos(transformedAssets);
+      
+      // Cerrar panel si el activo eliminado estaba seleccionado
+      if (selectedAsset?.id === id) {
+        setSelectedAsset(null);
+      }
+    } catch (err: any) {
+      console.error('Error deleting asset:', err);
+      setError(err.message || 'Error al eliminar activo');
+    }
+  };
+
   const handleUpdateAsset = async (activoActualizado: Activo) => {
     // Actualizar en el estado local
     setActivos(activos.map((a) => (a.id === activoActualizado.id ? activoActualizado : a)));
@@ -215,6 +234,7 @@ export default function ActivosPage() {
             activo={selectedAsset}
             onClose={handleClosePanel}
             onUpdateAsset={handleUpdateAsset}
+            onDeleteAsset={handleDeleteAsset}
           />
         </>
       )}

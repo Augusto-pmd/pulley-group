@@ -1,17 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Card from '@/components/Card';
 import ContextHeader from '@/components/ContextHeader';
 import Tabs from '@/components/Tabs';
+import ConfirmDeleteModal from '@/components/ConfirmDeleteModal';
 import InvestmentSummary from '@/components/investment/InvestmentSummary';
 import InvestmentFlows from '@/components/investment/InvestmentFlows';
 import InvestmentPerformance from '@/components/investment/InvestmentPerformance';
 import InvestmentProjection from '@/components/investment/InvestmentProjection';
 import InvestmentNotes from '@/components/investment/InvestmentNotes';
 import type { Investment } from '@/mock/data';
-import { getInvestment, getInvestmentEvents, type ApiInvestment } from '@/lib/api';
+import { getInvestment, getInvestmentEvents, deleteInvestment, type ApiInvestment } from '@/lib/api';
 
 interface InvestmentDetailPageProps {
   params: {
@@ -65,9 +67,12 @@ async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<
 }
 
 export default function InvestmentDetailPage({ params }: InvestmentDetailPageProps) {
+  const router = useRouter();
   const [investment, setInvestment] = useState<Investment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function loadInvestment() {
@@ -128,16 +133,48 @@ export default function InvestmentDetailPage({ params }: InvestmentDetailPagePro
       {/* Encabezado de la inversión */}
       <div className="mb-8">
         <Card padding="large">
-          {/* Nombre de Inversión */}
-          <h1 className="text-display-2 text-gray-text-primary mb-1">
-            {investment.name}
-          </h1>
-          {/* Tipo y Estado */}
-          <div className="text-body-large text-gray-text-tertiary">
-            {investment.type} · Activa
+          <div className="flex items-start justify-between">
+            <div>
+              {/* Nombre de Inversión */}
+              <h1 className="text-display-2 text-gray-text-primary mb-1">
+                {investment.name}
+              </h1>
+              {/* Tipo y Estado */}
+              <div className="text-body-large text-gray-text-tertiary">
+                {investment.type} · Activa
+              </div>
+            </div>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              disabled={isDeleting}
+              className="px-3 py-1.5 text-body-small text-red-600 hover:bg-red-50 rounded-button border border-red-200 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Eliminar
+            </button>
           </div>
         </Card>
       </div>
+
+      {/* Modal de confirmación de eliminación */}
+      <ConfirmDeleteModal
+        isOpen={showDeleteConfirm}
+        title="Eliminar inversión"
+        message="¿Estás seguro de que deseas eliminar esta inversión? Se eliminarán también todos los eventos asociados (aportes, retiros, ajustes)."
+        itemName={investment.name}
+        onConfirm={async () => {
+          setIsDeleting(true);
+          try {
+            await deleteInvestment(investment.id);
+            router.push('/investments');
+          } catch (error) {
+            console.error('Error deleting investment:', error);
+            alert('Error al eliminar la inversión. Por favor, intenta nuevamente.');
+            setIsDeleting(false);
+            setShowDeleteConfirm(false);
+          }
+        }}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
 
         {/* Pestañas */}
         <Tabs

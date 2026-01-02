@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
+import ConfirmDeleteModal from '../ConfirmDeleteModal';
 import { formatCurrency } from '@/utils/number-format';
 import { 
   getPatrimonioNetoActivo,
@@ -18,6 +19,8 @@ import {
   getAssetValuations,
   createAssetValuation,
   getAssetLiability,
+  updateAsset,
+  deleteAsset,
   type ApiAssetValuation,
 } from '@/lib/api';
 
@@ -25,9 +28,10 @@ interface AssetEditPanelProps {
   activo: Activo | null;
   onClose: () => void;
   onUpdateAsset: (activo: Activo) => void;
+  onDeleteAsset: (id: string) => void;
 }
 
-export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: AssetEditPanelProps) {
+export default function AssetEditPanel({ activo, onUpdateAsset, onClose, onDeleteAsset }: AssetEditPanelProps) {
   const [nombre, setNombre] = useState<string>('');
   const [tipo, setTipo] = useState<TipoActivo>('otro');
   const [estadoFiscal, setEstadoFiscal] = useState<EstadoFiscalActivo>('no_declarado');
@@ -36,6 +40,8 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
   const [nuevaValuacionValor, setNuevaValuacionValor] = useState<string>('');
   const [nuevaValuacionNota, setNuevaValuacionNota] = useState<string>('');
   const [valuaciones, setValuaciones] = useState<ValuacionActivo[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     async function loadValuations() {
@@ -70,24 +76,58 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
 
   if (!activo) return null;
 
-  const handleSaveNombre = () => {
-    if (nombre.trim() && nombre !== activo.nombre) {
-      // Actualizar solo en el estado local (la API no tiene endpoint para actualizar nombre aún)
-      onUpdateAsset({ ...activo, nombre: nombre.trim() });
+  const handleSaveNombre = async () => {
+    if (nombre.trim() && nombre !== activo.nombre && activo) {
+      try {
+        await updateAsset(activo.id, { name: nombre.trim() });
+        onUpdateAsset({ ...activo, nombre: nombre.trim() });
+      } catch (error) {
+        console.error('Error updating asset name:', error);
+      }
     }
   };
 
-  const handleSaveTipo = () => {
-    if (tipo !== activo.tipo) {
-      // Actualizar solo en el estado local (la API no tiene endpoint para actualizar tipo aún)
-      onUpdateAsset({ ...activo, tipo });
+  const handleSaveTipo = async () => {
+    if (tipo !== activo.tipo && activo) {
+      try {
+        const tipoMap: Record<TipoActivo, 'INMUEBLE' | 'VEHICULO' | 'OTRO'> = {
+          inmueble: 'INMUEBLE',
+          vehiculo: 'VEHICULO',
+          otro: 'OTRO',
+        };
+        await updateAsset(activo.id, { type: tipoMap[tipo] });
+        onUpdateAsset({ ...activo, tipo });
+      } catch (error) {
+        console.error('Error updating asset type:', error);
+      }
     }
   };
 
-  const handleSaveEstadoFiscal = () => {
-    if (estadoFiscal !== activo.estadoFiscal) {
-      // Actualizar solo en el estado local (la API no tiene endpoint para actualizar estado fiscal aún)
-      onUpdateAsset({ ...activo, estadoFiscal });
+  const handleSaveEstadoFiscal = async () => {
+    if (estadoFiscal !== activo.estadoFiscal && activo) {
+      try {
+        await updateAsset(activo.id, { fiscalStatus: estadoFiscal });
+        onUpdateAsset({ ...activo, estadoFiscal });
+      } catch (error) {
+        console.error('Error updating asset fiscal status:', error);
+      }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!activo) return;
+    
+    setIsDeleting(true);
+    try {
+      await deleteAsset(activo.id);
+      onDeleteAsset(activo.id);
+      onClose();
+    } catch (error) {
+      console.error('Error deleting asset:', error);
+      alert('Error al eliminar el activo. Por favor, intenta nuevamente.');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -171,8 +211,17 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
                   ✕
                 </button>
               </div>
-              <div className="text-body-small text-gray-text-tertiary">
-                {activo.tipo.charAt(0).toUpperCase() + activo.tipo.slice(1)}
+              <div className="flex items-center justify-between">
+                <div className="text-body-small text-gray-text-tertiary">
+                  {activo.tipo.charAt(0).toUpperCase() + activo.tipo.slice(1)}
+                </div>
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  disabled={isDeleting}
+                  className="px-3 py-1.5 text-body-small text-red-600 hover:bg-red-50 rounded-button border border-red-200 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Eliminar
+                </button>
               </div>
             </div>
 
@@ -457,6 +506,16 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose }: Asset
           </div>
         </div>
       </SlideTransition>
+
+      {/* Modal de confirmación de eliminación */}
+      <ConfirmDeleteModal
+        isOpen={showDeleteConfirm}
+        title="Eliminar activo"
+        message="¿Estás seguro de que deseas eliminar este activo? Se eliminarán también todas las valuaciones y pasivos asociados."
+        itemName={activo?.nombre}
+        onConfirm={handleDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </>
   );
 }
