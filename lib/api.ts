@@ -983,7 +983,9 @@ export async function deleteInvestment(investmentId: string): Promise<void> {
 
 export interface ApiEmma {
   id: string;
-  startDate: string | null;
+  startDate: string;
+  capitalInicial: number;
+  aportePeriodico: number | null;
   expectedRate: number;
   horizon: number;
   contributionFrequency: 'mensual' | 'anual';
@@ -992,7 +994,9 @@ export interface ApiEmma {
 }
 
 export interface CreateEmmaData {
-  startDate?: string | null;
+  startDate: string;
+  capitalInicial?: number;
+  aportePeriodico?: number;
   expectedRate: number;
   horizon: number;
   contributionFrequency: 'mensual' | 'anual';

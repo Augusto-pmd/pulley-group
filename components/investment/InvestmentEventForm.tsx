@@ -5,7 +5,7 @@ import Card from '../Card';
 import { type Inversion } from '@/mock/inversiones';
 import CurrencyDisplay from '../CurrencyDisplay';
 import { getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, formatNumber, formatCurrency } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseNumberAR, formatNumberAR, formatCurrencyAR } from '@/utils/number-format';
 import { getInvestments, createInvestmentEvent, type ApiInvestment } from '@/lib/api';
 
 interface InvestmentEventFormProps {
@@ -23,6 +23,7 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
   const [moneda, setMoneda] = useState<'ARS' | 'USD'>('ARS');
   const [tipoCambio, setTipoCambio] = useState<number>(getInitialExchangeRate());
   const [nota, setNota] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
   const montoInputRef = useRef<HTMLInputElement>(null);
 
   // Cargar inversiones desde la API
@@ -51,7 +52,7 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
     loadInvestments();
   }, []);
 
-  const montoNum = parseFormattedNumber(montoFormatted);
+  const montoNum = parseNumberAR(montoFormatted) ?? 0;
   const montoUsdPreview = montoFormatted && !isNaN(montoNum) && montoNum > 0
     ? (moneda === 'ARS' ? montoNum / tipoCambio : montoNum)
     : 0;
@@ -62,11 +63,29 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('[InvestmentEvent] SUBMIT_HANDLER_CALLED', { inversion, montoFormatted, tipoEvento, fecha, moneda });
     e.preventDefault();
-    if (!inversion || !montoFormatted) return;
+    setError(null);
     
-    const montoNum = parseFormattedNumber(montoFormatted);
-    if (isNaN(montoNum) || montoNum <= 0) return;
+    // Validación JS
+    if (!inversion || inversion.trim() === '') {
+      setError('Debe seleccionar una inversión');
+      console.log('[InvestmentEvent] EARLY_RETURN: Validación fallida - inversión vacía');
+      return;
+    }
+    
+    if (!montoFormatted || montoFormatted.trim() === '') {
+      setError('El monto es obligatorio');
+      console.log('[InvestmentEvent] EARLY_RETURN: Validación fallida - monto vacío');
+      return;
+    }
+
+    const montoNum = parseNumberAR(montoFormatted) ?? 0;
+    if (isNaN(montoNum) || montoNum <= 0) {
+      setError('El monto debe ser mayor a 0');
+      console.log('[InvestmentEvent] EARLY_RETURN: montoNum inválido', { montoNum });
+      return;
+    }
 
     // Calcular monto en USD
     const montoUsd = moneda === 'ARS' ? montoNum / tipoCambio : montoNum;
@@ -79,13 +98,15 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
     try {
       // Convertir tipoEvento: 'resultado' no existe en la API, usar 'ajuste'
       const eventType = tipoEvento === 'resultado' ? 'ajuste' : tipoEvento;
-      
-      await createInvestmentEvent(inversion, {
+      const eventData = {
         type: eventType as 'aporte' | 'retiro' | 'ajuste',
         amountUSD: montoUsd,
         date: fecha,
         note: nota || null,
-      });
+      };
+      console.log('[InvestmentEvent] POST_API_CALL: createInvestmentEvent', { investmentId: inversion, eventData });
+      const response = await createInvestmentEvent(inversion, eventData);
+      console.log('[InvestmentEvent] POST_API_RESPONSE', response);
 
       onSave();
     } catch (err: any) {
@@ -114,7 +135,7 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form noValidate onSubmit={handleSubmit} className="space-y-4" data-testid="modal-form">
         {/* Tipo de Evento */}
         <div>
           <label className="block text-body text-text-primary mb-1.5">Tipo de evento</label>
@@ -240,7 +261,6 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
                 e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
                 e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
               }}
-              required
             >
               <option value="" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Seleccionar inversión...</option>
               {inversiones.map((inv) => (
@@ -273,7 +293,6 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
               e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
               e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
-            required
           />
         </div>
 
@@ -302,11 +321,10 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
                 e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
               }}
               placeholder="0"
-              required
             />
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
               <div className="mt-1.5 text-body-small text-text-secondary">
-                ≈ {formatCurrency(montoUsdPreview)} (con TC {formatNumber(tipoCambio)})
+                ≈ {formatCurrencyAR(montoUsdPreview, 2)} (con TC {formatNumberAR(tipoCambio, 2)})
               </div>
             )}
           </div>
@@ -346,8 +364,8 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
           <div>
             <label className="block text-body text-text-primary mb-1.5">TC aplicado</label>
             <input
-              type="number"
-              value={tipoCambio}
+              type="text"
+              value={tipoCambio.toString()}
               onChange={(e) => {
                 const value = parseFloat(e.target.value);
                 if (!isNaN(value) && value > 0) {
@@ -370,8 +388,6 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
                 e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
               }}
               placeholder="1000"
-              min="1"
-              step="1"
             />
           </div>
         )}

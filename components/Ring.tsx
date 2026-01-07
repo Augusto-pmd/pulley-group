@@ -126,28 +126,37 @@ export default function Ring() {
     }
   }, [showRadialNav]);
 
+  // Determinar si el Ring debe interceptar eventos
+  // Solo en modo estado o cuando la navegación radial está activa
+  const shouldInterceptEvents = mode === 'estado' || showRadialNav;
+
   return (
     <div
       ref={ringRef}
-      className={`${getRingPosition()} z-[100] pointer-events-auto`}
-      onMouseEnter={handleRingMouseEnter}
-      onMouseLeave={handleRingMouseLeave}
+      className={`${getRingPosition()} z-[100]`}
+      style={{
+        pointerEvents: shouldInterceptEvents ? 'auto' : 'none',
+      }}
+      onMouseEnter={shouldInterceptEvents ? handleRingMouseEnter : undefined}
+      onMouseLeave={shouldInterceptEvents ? handleRingMouseLeave : undefined}
     >
-      {/* Halo exterior - luz cálida filtrada */}
+      {/* Halo exterior - luz cálida filtrada - DECORATIVO, no intercepta */}
       <div
         className={`${getRingSize()} rounded-full absolute inset-0 transition-all duration-1000`}
         style={{
           background: `radial-gradient(circle, rgba(181, 154, 106, ${isPulsing ? '0.15' : '0.08'}) 0%, transparent 70%)`,
           filter: 'blur(20px)',
           animation: isPulsing ? 'pulse-slow 4s ease-in-out infinite' : 'none',
+          pointerEvents: 'none', // Halo decorativo nunca intercepta
         }}
       />
       
       {/* Anillo principal - translúcido, iluminado desde dentro */}
       <div
-        className={`${getRingSize()} rounded-full flex items-center justify-center transition-all duration-1000 cursor-pointer group relative`}
-        onClick={handleRingClick}
+        className={`${getRingSize()} rounded-full flex items-center justify-center transition-all duration-1000 group relative`}
         style={{
+          cursor: shouldInterceptEvents ? 'pointer' : 'default',
+          pointerEvents: shouldInterceptEvents ? 'auto' : 'none',
           // Borde con reflejo de oro
           border: `2px solid rgba(181, 154, 106, ${mode === 'fondo' && emmaCapital && emmaCapital > 0 ? '0.5' : '0.3'})`,
           // Fondo translúcido con luz interna

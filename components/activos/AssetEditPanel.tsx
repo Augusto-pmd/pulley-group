@@ -5,7 +5,7 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
 import ConfirmDeleteModal from '../ConfirmDeleteModal';
-import { formatCurrency } from '@/utils/number-format';
+import { formatCurrencyAR, parseNumberAR } from '@/utils/number-format';
 import { 
   getPatrimonioNetoActivo,
   type Activo,
@@ -138,10 +138,10 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose, onDelet
   };
 
   const handleAddValuacion = async () => {
-    if (!nuevaValuacionValor || isNaN(parseFloat(nuevaValuacionValor))) return;
+    const valorUsd = parseNumberAR(nuevaValuacionValor);
+    if (!nuevaValuacionValor || valorUsd === null) return;
     
     try {
-      const valorUsd = parseFloat(nuevaValuacionValor);
       await createAssetValuation(activo.id, {
         valueUSD: valorUsd,
         date: nuevaValuacionFecha,
@@ -359,13 +359,12 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose, onDelet
                   <div>
                     <label className="block text-body text-gray-text-primary mb-1.5">Valor (USD)</label>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="decimal"
                       value={nuevaValuacionValor}
                       onChange={(e) => setNuevaValuacionValor(e.target.value)}
                       className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
                       placeholder="0"
-                      min="0"
-                      step="0.01"
                     />
                     <div className="mt-1.5 text-body-small text-gray-text-disabled">
                       Valor en USD. Este será el nuevo valor actual del activo.
@@ -383,7 +382,7 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose, onDelet
                   </div>
                   <button
                     onClick={handleAddValuacion}
-                    disabled={!nuevaValuacionValor || isNaN(parseFloat(nuevaValuacionValor))}
+                    disabled={!nuevaValuacionValor || parseNumberAR(nuevaValuacionValor) === null}
                     className="w-full px-4 py-2.5 bg-blue-600 text-white text-body font-medium rounded-button hover:bg-blue-700 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Agregar valuación
@@ -521,7 +520,7 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose, onDelet
                                 />
                               </div>
                               <div className="text-body-small text-gray-text-tertiary mt-1">
-                                Saldo: {formatCurrency(pago.saldoAnteriorUsd)} → {formatCurrency(pago.saldoNuevoUsd)}
+                                Saldo: {formatCurrencyAR(pago.saldoAnteriorUsd, 2)} → {formatCurrencyAR(pago.saldoNuevoUsd, 2)}
                               </div>
                             </div>
                           ))}

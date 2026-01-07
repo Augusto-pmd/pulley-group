@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Card from './Card';
-import { formatNumberWithSeparators, parseFormattedNumber, formatCurrency } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseNumberAR, formatCurrencyAR } from '@/utils/number-format';
 import { updateMovement, deleteMovement, getConcepts, getOrCreateMonth, type ApiMovement } from '@/lib/api';
 
 interface MovementEditModalProps {
@@ -67,7 +67,7 @@ export default function MovementEditModal({
 
     try {
       // Validar monto
-      const montoNum = parseFormattedNumber(montoFormatted);
+      const montoNum = parseNumberAR(montoFormatted) ?? 0;
       if (montoNum <= 0) {
         setError('El monto debe ser mayor a 0');
         setLoading(false);
@@ -148,7 +148,7 @@ export default function MovementEditModal({
         )}
 
         {!showDeleteConfirm ? (
-          <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-6">
+          <form noValidate onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="space-y-6">
             {/* Monto */}
             <div>
               <label className="block text-body-small text-gray-text-secondary mb-2">
@@ -159,7 +159,7 @@ export default function MovementEditModal({
                 value={montoFormatted}
                 onChange={handleMontoChange}
                 placeholder="0"
-                required
+                inputMode="decimal"
                 className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
                 style={{
                   border: '1px solid rgba(142, 142, 138, 0.2)',
@@ -187,7 +187,6 @@ export default function MovementEditModal({
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
-                required
                 className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
                 style={{
                   border: '1px solid rgba(142, 142, 138, 0.2)',
@@ -213,7 +212,6 @@ export default function MovementEditModal({
               <select
                 value={conceptId}
                 onChange={(e) => setConceptId(e.target.value)}
-                required
                 className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
                 style={{
                   border: '1px solid rgba(142, 142, 138, 0.2)',

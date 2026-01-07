@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Card from '../Card';
-import { formatCurrency } from '@/utils/number-format';
+import { formatCurrencyAR } from '@/utils/number-format';
 import { getInvestmentEvents, deleteInvestmentEvent, type ApiInvestmentEvent } from '@/lib/api';
 import ConfirmDeleteModal from '../ConfirmDeleteModal';
 import MovementEditModal from '../MovementEditModal';
@@ -96,7 +96,7 @@ export default function InvestmentFlows({ investmentId }: InvestmentFlowsProps) 
 
   const formatSignedValue = (value: number) => {
     const sign = value >= 0 ? '+' : '';
-    return `${sign}${formatCurrency(value)}`;
+    return `${sign}${formatCurrencyAR(value, 2)}`;
   };
 
   return (
@@ -108,7 +108,7 @@ export default function InvestmentFlows({ investmentId }: InvestmentFlowsProps) 
             TOTAL APORTES
           </div>
           <div className="text-[20px] font-semibold font-mono-numbers text-black">
-            {formatCurrency(totalContributions)}
+            {formatCurrencyAR(totalContributions, 2)}
           </div>
         </div>
         <div>
@@ -116,7 +116,7 @@ export default function InvestmentFlows({ investmentId }: InvestmentFlowsProps) 
             TOTAL RETIROS
           </div>
           <div className="text-[20px] font-semibold font-mono-numbers text-black">
-            {formatCurrency(totalWithdrawals)}
+            {formatCurrencyAR(totalWithdrawals, 2)}
           </div>
         </div>
         <div>
@@ -124,7 +124,7 @@ export default function InvestmentFlows({ investmentId }: InvestmentFlowsProps) 
             TOTAL INGRESOS
           </div>
           <div className="text-[20px] font-semibold font-mono-numbers text-black">
-            {formatCurrency(totalIncome)}
+            {formatCurrencyAR(totalIncome, 2)}
           </div>
         </div>
         <div>
@@ -132,7 +132,7 @@ export default function InvestmentFlows({ investmentId }: InvestmentFlowsProps) 
             SALDO ACTUAL
           </div>
           <div className="text-[20px] font-semibold font-mono-numbers text-black">
-            {formatCurrency(currentBalance)}
+            {formatCurrencyAR(currentBalance, 2)}
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function InvestmentFlows({ investmentId }: InvestmentFlowsProps) 
                   {formatSignedValue(event.amountUSD)}
                 </div>
                 <div className="w-[160px] text-right text-body font-mono-numbers text-text-primary">
-                  {formatCurrency(balance)}
+                  {formatCurrencyAR(balance, 2)}
                 </div>
                 <div className="flex-1 text-body text-text-secondary">
                   {event.note || '-'}

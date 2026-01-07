@@ -1,0 +1,42 @@
+[
+  {
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+    "timestamp": "2026-01-07T13:18:21.945Z"
+  },
+  {
+    "type": "error",
+    "text": "Warning: In HTML, %s cannot be a descendant of <%s>.\nThis will cause a hydration error.%s <button> button \n    at button\n    at div\n    at button\n    at div\n    at div\n    at div\n    at MonthTable (webpack-internal:///(app-pages-browser)/./components/vida-mensual/MonthTable.tsx:12:11)\n    at div\n    at FadeIn (webpack-internal:///(app-pages-browser)/./components/animations/FadeIn.tsx:12:11)\n    at div\n    at div\n    at div\n    at MonthOpenView (webpack-internal:///(app-pages-browser)/./components/vida-mensual/MonthOpenView.tsx:26:11)\n    at div\n    at div\n    at VidaMensualPage (webpack-internal:///(app-pages-browser)/./app/vida-mensual/page.tsx:70:76)\n    at ClientPageRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/client-page.js:14:11)\n    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)\n    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)\n    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)\n    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)\n    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)\n    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)\n    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)\n    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)\n    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)\n    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)\n    at InnerLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:243:11)\n    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)\n    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)\n    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)\n    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)\n    at LoadingBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:349:11)\n    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)\n    at InnerScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:153:9)\n    at ScrollAndFocusHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:228:11)\n    at RenderFromTemplateContext (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/render-from-template-context.js:16:44)\n    at OuterLayoutRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/layout-router.js:370:11)\n    at main\n    at div\n    at RingDataProvider (webpack-internal:///(app-pages-browser)/./contexts/RingDataContext.tsx:14:11)\n    at ModeProvider (webpack-internal:///(app-pages-browser)/./contexts/ModeContext.tsx:14:11)\n    at body\n    at html\n    at RootLayout (Server)\n    at RedirectErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:74:9)\n    at RedirectBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/redirect-boundary.js:82:11)\n    at NotFoundErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:76:9)\n    at NotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/not-found-boundary.js:84:11)\n    at DevRootNotFoundBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/dev-root-not-found-boundary.js:33:11)\n    at ReactDevOverlay (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/ReactDevOverlay.js:87:9)\n    at HotReload (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:321:11)\n    at Router (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:207:11)\n    at ErrorBoundaryHandler (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:113:9)\n    at ErrorBoundary (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/error-boundary.js:160:11)\n    at AppRouter (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/app-router.js:585:13)\n    at ServerRoot (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:112:27)\n    at Root (webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/app-index.js:117:11)",
+    "timestamp": "2026-01-07T13:18:25.103Z"
+  },
+  {
+    "type": "log",
+    "text": "[VidaMensual] SUBMIT_HANDLER_CALLED {concepto: , montoFormatted: , tipoMovimiento: egreso}",
+    "timestamp": "2026-01-07T13:18:26.263Z"
+  },
+  {
+    "type": "log",
+    "text": "[VidaMensual] EARLY_RETURN: Validación fallida - concepto vacío",
+    "timestamp": "2026-01-07T13:18:26.263Z"
+  },
+  {
+    "type": "log",
+    "text": "[VidaMensual] SUBMIT_HANDLER_CALLED {concepto: Concepto-1767791901384-716, montoFormatted: 1.000, tipoMovimiento: egreso}",
+    "timestamp": "2026-01-07T13:18:26.845Z"
+  },
+  {
+    "type": "log",
+    "text": "[VidaMensual] PRE_API_CALL: onAdd with newConcept {nuevoConcepto: Object, montoArs: 1, montoUsd: 0.001}",
+    "timestamp": "2026-01-07T13:18:26.845Z"
+  },
+  {
+    "type": "log",
+    "text": "[VidaMensual] POST_API_CALL: createMovement {type: egreso, amountUSD: 0.001, currencyOriginal: ARS, exchangeRate: 1000, date: 2026-01-07}",
+    "timestamp": "2026-01-07T13:18:27.593Z"
+  },
+  {
+    "type": "log",
+    "text": "[VidaMensual] POST_API_RESPONSE {id: cmk41nq6y00071tw61eawflpm, type: egreso, amountUSD: 0.001, currencyOriginal: ARS, exchangeRate: 1000}",
+    "timestamp": "2026-01-07T13:18:28.480Z"
+  }
+]

@@ -3,8 +3,7 @@
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import ExpenseEventList from './ExpenseEventList';
-import { formatCurrency, formatPercentage } from '@/utils/number-format';
-import { formatNumber } from '@/utils/number-format';
+import { formatCurrencyAR, formatPercentAR, formatNumberAR } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface MonthClosedViewProps {
@@ -106,7 +105,7 @@ export default function MonthClosedView({
             </div>
             <CurrencyDisplay value={totalEgresos} size="medium" showSecondary={false} />
             <div className="text-body-small text-text-secondary mt-2">
-              vs Promedio: {variacion >= 0 ? '+' : ''}{formatPercentage(variacion)}
+              vs Promedio: {variacion >= 0 ? '+' : ''}{formatPercentAR(variacion, 1)}
             </div>
           </div>
 
@@ -115,7 +114,7 @@ export default function MonthClosedView({
               EVENTOS
             </div>
             <div className="text-number-large number-glass">
-              {formatNumber(eventos.length)}
+              {formatNumberAR(eventos.length, 0)}
             </div>
             <div className="text-body-small text-text-secondary mt-2">
               eventos registrados
@@ -133,30 +132,30 @@ export default function MonthClosedView({
               <div className="text-body text-text-secondary mb-2">Fijos</div>
               <CurrencyDisplay value={totalPorCategoria.fijo} size="medium" showSecondary={false} />
               <div className="text-body-small text-text-secondary mt-1">
-                {formatPercentage(porcentajePorCategoria.fijo)} del total
+                {formatPercentAR(porcentajePorCategoria.fijo, 1)} del total
               </div>
               <div className="text-body-small text-text-secondary mt-1">
-                {formatNumber(eventosPorCategoria.fijo.length)} eventos
+                {formatNumberAR(eventosPorCategoria.fijo.length, 0)} eventos
               </div>
             </div>
             <div>
               <div className="text-body text-text-secondary mb-2">Variables</div>
               <CurrencyDisplay value={totalPorCategoria.variable} size="medium" showSecondary={false} />
               <div className="text-body-small text-text-secondary mt-1">
-                {formatPercentage(porcentajePorCategoria.variable)} del total
+                {formatPercentAR(porcentajePorCategoria.variable, 1)} del total
               </div>
               <div className="text-body-small text-text-secondary mt-1">
-                {formatNumber(eventosPorCategoria.variable.length)} eventos
+                {formatNumberAR(eventosPorCategoria.variable.length, 0)} eventos
               </div>
             </div>
             <div>
               <div className="text-body text-text-secondary mb-2">Extraordinarios</div>
               <CurrencyDisplay value={totalPorCategoria.extraordinario} size="medium" showSecondary={false} />
               <div className="text-body-small text-text-secondary mt-1">
-                {formatPercentage(porcentajePorCategoria.extraordinario)} del total
+                {formatPercentAR(porcentajePorCategoria.extraordinario, 1)} del total
               </div>
               <div className="text-body-small text-text-secondary mt-1">
-                {formatNumber(eventosPorCategoria.extraordinario.length)} eventos
+                {formatNumberAR(eventosPorCategoria.extraordinario.length, 0)} eventos
               </div>
             </div>
           </div>

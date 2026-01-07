@@ -1,37 +1,198 @@
-// Utilidades para formateo de números en inputs
+/**
+ * SISTEMA ÚNICO DE FORMATO NUMÉRICO - PULLEY
+ * 
+ * Formato oficial obligatorio:
+ * - Punto (.) para miles
+ * - Coma (,) para decimales
+ * 
+ * Ejemplos válidos: 1.234 | 12.500 | 1.234.567 | 1.234.567,89
+ * 
+ * Este es el ÚNICO archivo permitido para formateo numérico en toda la aplicación.
+ */
 
 /**
- * Formatea un número con separadores de miles usando estándar argentino (es-AR)
- * Para números completos usa Intl.NumberFormat, para strings parciales (input) formatea manualmente
- * Ejemplo: 1111111 → "1.111.111", "1234" → "1.234"
+ * Formatea un número general en formato argentino
+ * @param value - Número a formatear
+ * @param decimals - Cantidad de decimales (default: 0)
+ * @returns String formateado: "1.234.567" o "1.234.567,89"
+ */
+export function formatNumberAR(value: number, decimals: number = 0): string {
+  if (isNaN(value) || value === null || value === undefined) {
+    return '0';
+  }
+
+  return new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+/**
+ * Formatea un valor monetario en formato argentino
+ * @param value - Valor numérico a formatear
+ * @param decimals - Cantidad de decimales (default: 2 para moneda)
+ * @returns String formateado: "1.234.567,89"
+ */
+export function formatCurrencyAR(value: number, decimals: number = 2): string {
+  if (isNaN(value) || value === null || value === undefined) {
+    return '0,00';
+  }
+
+  return new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value);
+}
+
+/**
+ * Formatea un porcentaje en formato argentino
+ * @param value - Porcentaje numérico (0-100, no decimal 0-1)
+ * @param decimals - Cantidad de decimales (default: 1)
+ * @returns String formateado: "15,5%"
+ */
+export function formatPercentAR(value: number, decimals: number = 1): string {
+  if (isNaN(value) || value === null || value === undefined) {
+    return '0,0%';
+  }
+
+  return new Intl.NumberFormat('es-AR', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  }).format(value) + '%';
+}
+
+/**
+ * Parsea un string con formato argentino a número
+ * Acepta:
+ * - Puntos de miles opcionales: "1.234.567"
+ * - Coma decimal opcional: "1234,56"
+ * - Espacios: "1 234 567"
+ * - Símbolo $ opcional: "$1.234,56"
+ * 
+ * @param input - String formateado según estándar argentino
+ * @returns Número puro o null si inválido
+ */
+export function parseNumberAR(input: string): number | null {
+  if (!input || input.trim() === '') {
+    return null;
+  }
+
+  // Remover símbolo $ y espacios
+  let cleaned = input.replace(/\$/g, '').replace(/\s/g, '');
+
+  // Si está vacío después de limpiar, retornar null
+  if (cleaned === '') {
+    return null;
+  }
+
+  // Detectar formato: si tiene coma, es decimal; si solo tiene puntos, son miles
+  const hasComma = cleaned.includes(',');
+  const hasDot = cleaned.includes('.');
+
+  if (hasComma && hasDot) {
+    // Formato completo: "1.234.567,89"
+    // Remover puntos (miles) y convertir coma a punto (decimal)
+    cleaned = cleaned.replace(/\./g, '').replace(',', '.');
+  } else if (hasComma && !hasDot) {
+    // Solo coma decimal: "1234,56"
+    cleaned = cleaned.replace(',', '.');
+  } else if (!hasComma && hasDot) {
+    // Solo puntos: "1.234.567" (miles) o "1234.56" (decimal con punto - formato incorrecto pero tolerado)
+    // Si tiene más de un punto, son miles; si tiene uno, podría ser decimal
+    const dotCount = (cleaned.match(/\./g) || []).length;
+    if (dotCount > 1) {
+      // Múltiples puntos = miles, remover todos
+      cleaned = cleaned.replace(/\./g, '');
+    } else {
+      // Un solo punto: asumir decimal (formato incorrecto pero tolerado)
+      // No hacer nada, parseFloat lo manejará
+    }
+  }
+  // Si no tiene ni coma ni punto, es un número entero sin formato
+
+  const parsed = parseFloat(cleaned);
+  
+  if (isNaN(parsed)) {
+    return null;
+  }
+
+  return parsed;
+}
+
+// ============================================================================
+// FUNCIONES DE COMPATIBILIDAD (mantener para migración gradual)
+// ============================================================================
+
+/**
+ * @deprecated Usar formatNumberAR
+ */
+export function formatNumber(
+  value: number,
+  options?: Intl.NumberFormatOptions
+): string {
+  const decimals = options?.minimumFractionDigits ?? options?.maximumFractionDigits ?? 0;
+  return formatNumberAR(value, decimals);
+}
+
+/**
+ * @deprecated Usar formatCurrencyAR
+ */
+export function formatCurrency(
+  value: number,
+  decimals: number = 0
+): string {
+  // Si decimals es 0, redondear a entero; si es 2, usar 2 decimales
+  return formatCurrencyAR(value, decimals === 0 ? 0 : 2);
+}
+
+/**
+ * @deprecated Usar formatPercentAR
+ */
+export function formatPercentage(
+  value: number,
+  decimals: number = 1,
+  asDecimal: boolean = false
+): string {
+  const percentageValue = asDecimal ? value * 100 : value;
+  return formatPercentAR(percentageValue, decimals);
+}
+
+/**
+ * @deprecated Usar parseNumberAR
+ */
+export function parseFormattedNumber(value: string): number {
+  const parsed = parseNumberAR(value);
+  return parsed ?? 0;
+}
+
+// ============================================================================
+// FUNCIONES PARA INPUTS (mantener para compatibilidad con componentes existentes)
+// ============================================================================
+
+/**
+ * Formatea un valor para input (permite escritura fluida)
+ * @deprecated Considerar usar directamente formatNumberAR en inputs
  */
 export function formatNumberWithSeparators(value: string | number): string {
   if (value === '' || value === null || value === undefined) return '';
   
-  // Si es un número, usar Intl.NumberFormat directamente
   if (typeof value === 'number') {
-    return new Intl.NumberFormat('es-AR', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 20, // Permitir muchos decimales para inputs
-    }).format(value);
+    return formatNumberAR(value, 0);
   }
   
-  // Para strings (input del usuario), formatear manualmente según estándar argentino
+  // Para strings (input del usuario), formatear manualmente
   const stringValue = String(value);
   const cleaned = stringValue.replace(/[^\d.,]/g, '');
   
-  // Si está vacío, retornar vacío
   if (cleaned === '') return '';
   
-  // Separar parte entera y decimal (en AR usa coma como decimal)
-  // Normalizar: convertir cualquier coma decimal a punto para procesamiento interno
+  // Normalizar: convertir coma decimal a punto para procesamiento
   const normalized = cleaned.replace(',', '.');
   const parts = normalized.split('.');
   const integerPart = parts[0] || '';
   const decimalPart = parts[1];
   
-  // Formatear parte entera con separadores de miles (punto en formato argentino)
-  // Dividir en grupos de 3 desde el final
+  // Formatear parte entera con separadores de miles (punto)
   let formattedInteger = '';
   for (let i = integerPart.length - 1, count = 0; i >= 0; i--) {
     if (count > 0 && count % 3 === 0) {
@@ -41,44 +202,23 @@ export function formatNumberWithSeparators(value: string | number): string {
     count++;
   }
   
-  // Reconstruir con decimal si existe (usar coma como separador decimal en formato argentino)
+  // Reconstruir con decimal si existe (usar coma como separador decimal)
   return decimalPart !== undefined ? `${formattedInteger},${decimalPart}` : formattedInteger;
 }
 
 /**
- * Parsea un número formateado con separadores de miles (formato argentino) a número puro
- * Maneja formato argentino: punto como separador de miles, coma como separador decimal
- * Ejemplo: "1.111.111,50" → 1111111.50
- * @param value - String formateado según estándar argentino
- * @returns Número puro (number)
- */
-export function parseFormattedNumber(value: string): number {
-  if (!value || value === '') return 0;
-  
-  // Formato argentino: punto = miles, coma = decimal
-  // Remover separadores de miles (puntos) y convertir coma decimal a punto
-  const cleaned = value.replace(/\./g, '').replace(',', '.');
-  const parsed = parseFloat(cleaned);
-  
-  return isNaN(parsed) ? 0 : parsed;
-}
-
-/**
  * Obtiene la posición del cursor después de formatear un número
- * Mantiene la posición relativa del cursor al agregar/quitar separadores
+ * @deprecated Mantener para compatibilidad
  */
 export function getCursorPosition(
   oldValue: string,
   newValue: string,
   oldCursorPosition: number
 ): number {
-  // Si el valor no cambió, mantener posición
   if (oldValue === newValue) return oldCursorPosition;
   
-  // Contar dígitos antes del cursor en el valor anterior
   const digitsBefore = oldValue.substring(0, oldCursorPosition).replace(/[^\d]/g, '').length;
   
-  // Encontrar la posición del cursor que tenga la misma cantidad de dígitos antes
   let digitCount = 0;
   for (let i = 0; i < newValue.length; i++) {
     if (/\d/.test(newValue[i])) {
@@ -89,93 +229,12 @@ export function getCursorPosition(
     }
   }
   
-  // Si no se encuentra, retornar al final
   return newValue.length;
 }
 
 /**
- * Formatea un número con separadores de miles usando Intl.NumberFormat
- * Útil para formatear números que no son moneda
- * Ejemplo: 1000000 → "1.000.000"
- * 
- * @deprecated Usar formatNumber o formatCurrency según corresponda
+ * @deprecated Usar formatNumberAR
  */
 export function formatNumberWithLocale(value: number, locale: string = 'es-AR'): string {
-  return new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(value);
+  return formatNumberAR(value, 0);
 }
-
-/**
- * Formatea un número con separadores de miles y decimales limitados
- * Helper reutilizable para formateo consistente en toda la UI
- * @param value - Número a formatear
- * @param options - Opciones adicionales de Intl.NumberFormat
- * @returns Número formateado (ej: 2123231.3 → "2.123.231,30")
- */
-export function formatNumber(
-  value: number,
-  options?: Intl.NumberFormatOptions
-): string {
-  return new Intl.NumberFormat('es-AR', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-    ...options,
-  }).format(value);
-}
-
-/**
- * Helper unificado para formatear moneda en formato argentino
- * FORMATO OBLIGATORIO: puntos para miles, coma para decimales
- * Ejemplo: 1234567.89 → "1.234.567,89" (con decimals=2)
- * Ejemplo: 1234567.89 → "1.234.568" (con decimals=0, default)
- * 
- * Este es el ÚNICO helper permitido para formatear valores monetarios en toda la aplicación.
- * Reemplaza formatCurrencyUSD, formatCurrencyARS, formatCurrency de mock/data.ts
- * 
- * IMPORTANTE: Por defecto redondea a enteros (decimals=0) para legibilidad.
- * Solo usa decimales cuando se especifica explícitamente.
- * 
- * @param value - Valor numérico a formatear
- * @param decimals - Cantidad de decimales (default: 0 para montos enteros, redondea automáticamente)
- * @returns String formateado según estándar argentino
- */
-export function formatCurrency(
-  value: number,
-  decimals: number = 0
-): string {
-  // Redondear el valor antes de formatear si decimals=0
-  const roundedValue = decimals === 0 ? Math.round(value) : value;
-  
-  return new Intl.NumberFormat('es-AR', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(roundedValue);
-}
-
-/**
- * Formatea un porcentaje en formato argentino
- * Ejemplo: 15.5 → "15,5%"
- * 
- * IMPORTANTE: Si el valor viene como decimal (0-1), se multiplica por 100.
- * Si viene como porcentaje (0-100), se usa directamente.
- * Por defecto asume que viene como porcentaje (0-100).
- * 
- * @param value - Porcentaje numérico (ej: 15.5 para 15.5%, o 0.155 si viene como decimal)
- * @param decimals - Cantidad de decimales (default: 1)
- * @param asDecimal - Si true, asume que value viene como decimal (0-1) y lo multiplica por 100
- * @returns String formateado con símbolo %
- */
-export function formatPercentage(
-  value: number,
-  decimals: number = 1,
-  asDecimal: boolean = false
-): string {
-  const percentageValue = asDecimal ? value * 100 : value;
-  return new Intl.NumberFormat('es-AR', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  }).format(percentageValue) + '%';
-}
-

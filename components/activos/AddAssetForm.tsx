@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import { type TipoActivo, type Activo, type EstadoFiscalActivo } from '@/mock/activos';
+import { parseNumberAR } from '@/utils/number-format';
 
 interface AddAssetFormProps {
   onSave: (activo: Activo) => void;
@@ -16,12 +17,33 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
   const [fechaValuacion, setFechaValuacion] = useState<string>(new Date().toISOString().split('T')[0]);
   const [estadoFiscal, setEstadoFiscal] = useState<EstadoFiscalActivo>('no_declarado'); // Default: no declarado
   const [observaciones, setObservaciones] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    console.log('[Activos] SUBMIT_HANDLER_CALLED', { nombre, valorInicial, tipo, fechaValuacion, estadoFiscal });
     e.preventDefault();
-    if (!nombre || !valorInicial || isNaN(parseFloat(valorInicial))) return;
+    e.stopPropagation();
+    setError(null);
+    
+    // Validación JS
+    if (!nombre || nombre.trim() === '') {
+      setError('El nombre es obligatorio');
+      console.log('[Activos] EARLY_RETURN: Validación fallida - nombre vacío');
+      return;
+    }
+    
+    if (!valorInicial || valorInicial.trim() === '') {
+      setError('El valor inicial es obligatorio');
+      console.log('[Activos] EARLY_RETURN: Validación fallida - valor vacío');
+      return;
+    }
 
-    const valorUsd = parseFloat(valorInicial);
+    const valorUsd = parseNumberAR(valorInicial);
+    if (valorUsd === null || isNaN(valorUsd) || valorUsd < 0) {
+      setError('El valor debe ser un número válido mayor o igual a 0');
+      console.log('[Activos] EARLY_RETURN: parseNumberAR falló', { valorInicial, valorUsd });
+      return;
+    }
     
     // Crear activo con estructura compatible con el tipo Activo del mock
     const nuevoActivo: Activo = {
@@ -35,6 +57,7 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
       fechaCreacion: new Date().toISOString().split('T')[0],
     };
     
+    console.log('[Activos] PRE_API_CALL: onSave', nuevoActivo);
     onSave(nuevoActivo);
   };
 
@@ -58,7 +81,12 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form 
+        noValidate 
+        onSubmit={handleSubmit}
+        className="space-y-4"
+        data-testid="modal-form"
+      >
         {/* Nombre */}
         <div>
           <label className="block text-body text-text-primary mb-1.5">Nombre</label>
@@ -81,7 +109,6 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
               e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
             placeholder="Ej: Departamento Palermo, Auto Toyota..."
-            required
           />
         </div>
 
@@ -105,7 +132,6 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
               e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
               e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
-            required
           >
             <option value="inmueble" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Inmueble</option>
             <option value="vehiculo" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Vehículo</option>
@@ -117,7 +143,8 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
         <div>
           <label className="block text-body text-text-primary mb-1.5">Valor inicial (USD)</label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             value={valorInicial}
             onChange={(e) => setValorInicial(e.target.value)}
             className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
@@ -135,9 +162,6 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
               e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
             placeholder="0"
-            required
-            min="0"
-            step="0.01"
           />
           <div className="mt-1.5 text-body-small text-text-secondary" style={{ opacity: 0.6 }}>
             Valor en USD. Este será el valor actual del activo. Podrás actualizarlo mediante nuevas valuaciones.
@@ -165,7 +189,6 @@ export default function AddAssetForm({ onSave, onClose }: AddAssetFormProps) {
               e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
               e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
-            required
           />
         </div>
 

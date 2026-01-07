@@ -95,13 +95,17 @@ export default function ActivosPage() {
   }, []);
 
   const handleAddAsset = async (nuevoActivo: Activo) => {
+    console.log('[Activos] handleAddAsset CALLED', nuevoActivo);
     try {
       // Crear activo en la API
-      const apiAsset = await createAsset({
+      const assetData = {
         name: nuevoActivo.nombre,
         type: nuevoActivo.tipo,
         fiscalStatus: nuevoActivo.estadoFiscal,
-      });
+      };
+      console.log('[Activos] POST_API_CALL: createAsset', assetData);
+      const apiAsset = await createAsset(assetData);
+      console.log('[Activos] POST_API_RESPONSE', apiAsset);
 
       // Si hay valor inicial, crear valuación
       if (nuevoActivo.valorActualUsd > 0) {

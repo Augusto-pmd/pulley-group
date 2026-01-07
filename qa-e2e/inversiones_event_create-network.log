@@ -1,0 +1,50 @@
+[
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": 200,
+    "timestamp": "2026-01-07T13:18:12.522Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": 200,
+    "timestamp": "2026-01-07T13:18:12.522Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": 200,
+    "timestamp": "2026-01-07T13:18:13.074Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": 200,
+    "timestamp": "2026-01-07T13:18:13.083Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": 200,
+    "timestamp": "2026-01-07T13:18:16.149Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": 200,
+    "timestamp": "2026-01-07T13:18:16.149Z"
+  },
+  {
+    "method": "POST",
+    "url": "http://localhost:3000/api/investments/cmjx9zmqh0000jx6qd8jvc0ko/events",
+    "status": 201,
+    "timestamp": "2026-01-07T13:18:16.736Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/investments",
+    "status": null,
+    "timestamp": "2026-01-07T13:18:17.733Z"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "type": "info",
+    "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
+    "timestamp": "2026-01-07T13:18:12.450Z"
+  },
+  {
+    "type": "log",
+    "text": "[Inversiones] SUBMIT_HANDLER_CALLED {nombre: 24, montoObjetivoFormatted: 50.000, plazoEstimado: , tipo: financiera, fechaInicio: 2026-01-07}",
+    "timestamp": "2026-01-07T13:18:14.108Z"
+  },
+  {
+    "type": "log",
+    "text": "[Inversiones] EARLY_RETURN: Validación fallida - plazo vacío",
+    "timestamp": "2026-01-07T13:18:14.108Z"
+  },
+  {
+    "type": "log",
+    "text": "[InvestmentEvent] SUBMIT_HANDLER_CALLED {inversion: cmjx9zmqh0000jx6qd8jvc0ko, montoFormatted: 5.000, tipoEvento: aporte, fecha: 2026-01-07, moneda: ARS}",
+    "timestamp": "2026-01-07T13:18:16.734Z"
+  },
+  {
+    "type": "log",
+    "text": "[InvestmentEvent] POST_API_CALL: createInvestmentEvent {investmentId: cmjx9zmqh0000jx6qd8jvc0ko, eventData: Object}",
+    "timestamp": "2026-01-07T13:18:16.735Z"
+  },
+  {
+    "type": "log",
+    "text": "[InvestmentEvent] POST_API_RESPONSE {id: cmk41nhw400041tw658x4s0hz, investmentId: cmjx9zmqh0000jx6qd8jvc0ko, type: aporte, amountUSD: 0.005, date: 2026-01-07T00:00:00.000Z}",
+    "timestamp": "2026-01-07T13:18:17.733Z"
+  }
+]

@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import { exchangeRatesMock, getCurrentExchangeRate, type ExchangeRate } from '@/mock/exchange-rates';
-import { formatCurrency } from '@/utils/number-format';
-import { formatNumber } from '@/utils/number-format';
+import { formatCurrency, formatNumber, parseNumberAR } from '@/utils/number-format';
 
 export default function ExchangeRatesTable() {
   const [rates, setRates] = useState<ExchangeRate[]>(exchangeRatesMock);
@@ -103,7 +102,10 @@ export default function ExchangeRatesTable() {
               <input
                 type="number"
                 value={newRate.usdToArs}
-                onChange={(e) => setNewRate({ ...newRate, usdToArs: parseFloat(e.target.value) || 0 })}
+                onChange={(e) => {
+                  const value = parseNumberAR(e.target.value);
+                  setNewRate({ ...newRate, usdToArs: value ?? 0 });
+                }}
                 className="w-full px-4 py-2 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/50"
                 min="0"
                 step="0.01"

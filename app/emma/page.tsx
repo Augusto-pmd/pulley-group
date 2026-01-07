@@ -68,11 +68,11 @@ export default function EmmaPage() {
   // MODO FONDO: Si no iniciado, anillo apagado, solo botón
   if (!hasMovements && !showInitForm) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
+      <div className="flex items-center justify-center min-h-screen relative z-30">
+        <div className="text-center relative z-30">
           <button
             onClick={() => setShowInitForm(true)}
-            className="px-8 py-3 rounded-button text-body-large font-medium transition-all duration-300"
+            className="px-8 py-3 rounded-button text-body-large font-medium transition-all duration-300 relative z-30"
             style={{
               backgroundColor: 'rgba(181, 154, 106, 0.2)',
               backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',

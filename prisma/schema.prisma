@@ -142,9 +142,12 @@ model InvestmentEvent {
 
 // Modelo Emma: Solo guarda supuestos (tasa, horizonte, frecuencia)
 // El dinero real viene de Movements con concepto "Aporte fondo Emma"
+// capitalInicial y aportePeriodico son solo referencia, no duplican dinero
 model Emma {
   id                    String   @id @default(cuid())
-  startDate             DateTime? // Fecha de inicio (opcional hasta que se inicie)
+  startDate             DateTime  // Fecha de inicio
+  capitalInicial        Float    // Capital inicial (solo referencia, dinero real en Movements)
+  aportePeriodico       Float?   // Aporte periódico (opcional, solo referencia)
   expectedRate          Float    // Tasa esperada anual (%)
   horizon               Int      // Horizonte en años
   contributionFrequency String   // 'mensual' | 'anual'

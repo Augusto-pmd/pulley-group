@@ -5,7 +5,7 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
 import { getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumber, formatCurrency } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseFormattedNumber, parseNumberAR, getCursorPosition, formatNumber, formatCurrency } from '@/utils/number-format';
 import type { EventoMensual } from '@/types/vida-mensual';
 
 interface EventEditPanelProps {
@@ -240,19 +240,18 @@ export default function EventEditPanel({
               <div>
                 <label className="block text-body text-gray-text-primary mb-1.5">TC aplicado</label>
                 <input
-                  type="number"
-                  value={tipoCambio}
+                  type="text"
+                  inputMode="decimal"
+                  value={tipoCambio.toString()}
                   onChange={(e) => {
-                    const value = parseFloat(e.target.value);
-                    if (!isNaN(value) && value > 0) {
+                    const value = parseNumberAR(e.target.value);
+                    if (value !== null && !isNaN(value) && value > 0) {
                       setTipoCambio(value);
                       setLastUsedExchangeRate(value);
                     }
                   }}
                   className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
                   placeholder="1000"
-                  min="1"
-                  step="1"
                 />
               </div>
             )}

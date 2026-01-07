@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../Card';
-import { formatNumberWithSeparators, parseFormattedNumber, formatCurrency } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseNumberAR, formatCurrencyAR } from '@/utils/number-format';
 import { getConcepts, getOrCreateMonth, createMovement } from '@/lib/api';
 
 interface EmmaContributionFormProps {
@@ -44,7 +44,7 @@ export default function EmmaContributionForm({ onComplete, onCancel }: EmmaContr
       }
 
       // Validar monto
-      const montoNum = parseFormattedNumber(montoFormatted);
+      const montoNum = parseNumberAR(montoFormatted) ?? 0;
       if (montoNum <= 0) {
         setError('El monto debe ser mayor a 0');
         setLoading(false);
@@ -103,7 +103,7 @@ export default function EmmaContributionForm({ onComplete, onCancel }: EmmaContr
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form noValidate onSubmit={handleSubmit} className="space-y-6" data-testid="modal-form">
         {/* Fecha */}
         <div>
           <label className="block text-body-small text-gray-text-secondary mb-2">
@@ -114,7 +114,6 @@ export default function EmmaContributionForm({ onComplete, onCancel }: EmmaContr
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
             max={new Date().toISOString().split('T')[0]}
-            required
             className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
           />
         </div>
@@ -126,10 +125,10 @@ export default function EmmaContributionForm({ onComplete, onCancel }: EmmaContr
           </label>
           <input
             type="text"
+            inputMode="decimal"
             value={montoFormatted}
             onChange={handleMontoChange}
             placeholder="0"
-            required
             className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 font-mono"
           />
           <p className="mt-1 text-caption text-gray-text-tertiary">

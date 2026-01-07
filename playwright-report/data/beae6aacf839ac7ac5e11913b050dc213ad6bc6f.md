@@ -1,0 +1,70 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: Presiona ⌘K o / para navegar
+      - button "Entendido" [ref=e6] [cursor=pointer]
+    - generic [ref=e11] [cursor=pointer]:
+      - generic [ref=e12]: 0,00
+      - generic [ref=e13]: usd
+    - main [ref=e14]:
+      - generic [ref=e17]:
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - heading "Inversiones" [level=1] [ref=e21]
+            - paragraph [ref=e22]: Proyectos de inversión con objetivo, plazo y criterio de evaluación
+          - generic [ref=e24]:
+            - generic [ref=e25]: ESTADO
+            - generic [ref=e26]: 30 inversiones activas
+        - generic [ref=e27]:
+          - button "Registrar evento" [ref=e28] [cursor=pointer]
+          - button "Crear inversión" [active] [ref=e30] [cursor=pointer]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - heading "Crear inversión" [level=2] [ref=e35]
+            - paragraph [ref=e36]: Define un proyecto de inversión. Sin inversión creada, no se pueden registrar eventos.
+          - button "✕" [ref=e37] [cursor=pointer]
+        - generic [ref=e38]:
+          - generic [ref=e39]:
+            - generic [ref=e40]: Nombre
+            - 'textbox "Ej: Fondo Renta Variable" [ref=e41]': Inversión-1767753359668-188
+          - generic [ref=e42]:
+            - generic [ref=e43]: Tipo
+            - generic [ref=e44]:
+              - button "Financiera" [ref=e45] [cursor=pointer]
+              - button "Inmobiliaria (Proyecto)" [ref=e46] [cursor=pointer]
+          - generic [ref=e47]:
+            - generic [ref=e48]: Fecha de inicio
+            - textbox [ref=e49]: 2026-01-07
+          - generic [ref=e50]:
+            - generic [ref=e51]: Monto objetivo (USD)
+            - textbox "0" [ref=e52]
+            - generic [ref=e53]: Monto objetivo total del proyecto en USD
+          - generic [ref=e54]:
+            - generic [ref=e55]: Plazo estimado (meses)
+            - spinbutton [ref=e56]: "100000"
+            - generic [ref=e57]: Horizonte estimado del proyecto en meses
+          - generic [ref=e58]:
+            - generic [ref=e59]: Tipo de retorno
+            - combobox [ref=e60]:
+              - option "Renta" [selected]
+              - option "Capitalización"
+              - option "Mixta"
+            - generic [ref=e61]: "Renta: ingresos periódicos. Capitalización: crecimiento del capital. Mixta: ambos."
+          - generic [ref=e62]:
+            - generic [ref=e63]: Estado fiscal *
+            - generic [ref=e64]:
+              - button "Declarado" [ref=e65] [cursor=pointer]
+              - button "No declarado" [ref=e66] [cursor=pointer]
+            - generic [ref=e67]: Impacta en patrimonio declarado y Vista Contador
+          - generic [ref=e68]:
+            - generic [ref=e69]: Observaciones (opcional)
+            - textbox "Notas adicionales sobre la inversión..." [ref=e70]
+          - generic [ref=e71]:
+            - button "Cancelar" [ref=e72] [cursor=pointer]
+            - button "Crear inversión" [ref=e73] [cursor=pointer]
+  - alert [ref=e74]
+```

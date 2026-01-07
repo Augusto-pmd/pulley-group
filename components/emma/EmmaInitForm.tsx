@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Card from '../Card';
-import { formatNumberWithSeparators, parseFormattedNumber, formatCurrency } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseNumberAR, formatCurrencyAR } from '@/utils/number-format';
 import { saveEmma, getConcepts, getOrCreateMonth, createMovement } from '@/lib/api';
 
 interface EmmaInitFormProps {
@@ -40,6 +40,7 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('[Emma] SUBMIT_HANDLER_CALLED', { capitalInicialFormatted, aportePeriodicoFormatted, tasaEsperada, fechaInicio });
     e.preventDefault();
     setError(null);
     setLoading(true);
@@ -56,7 +57,7 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
       }
 
       // Validar capital inicial
-      const capitalInicialNum = parseFormattedNumber(capitalInicialFormatted);
+      const capitalInicialNum = parseNumberAR(capitalInicialFormatted) ?? 0;
       if (capitalInicialNum < 0) {
         setError('El capital inicial debe ser mayor o igual a 0');
         setLoading(false);
@@ -64,7 +65,7 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
       }
 
       // Validar aporte periódico
-      const aportePeriodicoNum = parseFormattedNumber(aportePeriodicoFormatted);
+      const aportePeriodicoNum = parseNumberAR(aportePeriodicoFormatted) ?? 0;
       if (aportePeriodicoNum < 0) {
         setError('El aporte periódico debe ser mayor o igual a 0');
         setLoading(false);
@@ -72,8 +73,8 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
       }
 
       // Validar tasa esperada
-      const tasaEsperadaNum = parseFloat(tasaEsperada);
-      if (isNaN(tasaEsperadaNum) || tasaEsperadaNum < 0 || tasaEsperadaNum > 100) {
+      const tasaEsperadaNum = parseNumberAR(tasaEsperada);
+      if (tasaEsperadaNum === null || tasaEsperadaNum < 0 || tasaEsperadaNum > 100) {
         setError('La tasa esperada debe ser un número entre 0 y 100');
         setLoading(false);
         return;
@@ -90,6 +91,8 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
       // 1. Guardar configuración de Emma (supuestos)
       await saveEmma({
         startDate: fechaInicio,
+        capitalInicial: capitalInicialNum,
+        aportePeriodico: aportePeriodicoNum > 0 ? aportePeriodicoNum : undefined,
         expectedRate: tasaEsperadaNum,
         horizon: horizonteNum,
         contributionFrequency: frecuencia,
@@ -97,6 +100,7 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
 
       // 2. Si capital inicial > 0, crear Movement real
       if (capitalInicialNum > 0) {
+        console.log('[Emma] PRE_API_CALL: createMovement (capital inicial > 0)', { capitalInicialNum });
         // Obtener concepto "Aporte fondo Emma"
         const concepts = await getConcepts();
         const emmaConcept = concepts.find(c => c.name === 'Aporte fondo Emma');
@@ -112,16 +116,21 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
         const monthRecord = await getOrCreateMonth(year, month);
 
         // Crear Movement real
-        await createMovement({
-          type: 'ingreso',
+        const movementData = {
+          type: 'ingreso' as const,
           amountUSD: capitalInicialNum,
-          currencyOriginal: 'USD',
+          currencyOriginal: 'USD' as const,
           exchangeRate: null,
           date: fechaInicio,
-          status: 'pagado',
+          status: 'pagado' as const,
           conceptId: emmaConcept.id,
           monthId: monthRecord.id,
-        });
+        };
+        console.log('[Emma] POST_API_CALL: createMovement', movementData);
+        const response = await createMovement(movementData);
+        console.log('[Emma] POST_API_RESPONSE', response);
+      } else {
+        console.log('[Emma] SKIP_API_CALL: capital inicial es 0', { capitalInicialNum });
       }
 
       // 3. Completar (refrescar página)
@@ -153,7 +162,7 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form noValidate onSubmit={handleSubmit} className="space-y-6" data-testid="modal-form">
         {/* Fecha de inicio */}
         <div>
           <label className="block text-body-small text-text-secondary mb-2">
@@ -164,7 +173,6 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
             max={new Date().toISOString().split('T')[0]}
-            required
             className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',
@@ -189,10 +197,10 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
           </label>
           <input
             type="text"
+            inputMode="decimal"
             value={capitalInicialFormatted}
             onChange={handleCapitalInicialChange}
             placeholder="0"
-            required
             className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',
@@ -220,6 +228,7 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
           </label>
           <input
             type="text"
+            inputMode="decimal"
             value={aportePeriodicoFormatted}
             onChange={handleAportePeriodicoChange}
             placeholder="0"
@@ -275,14 +284,15 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             <span className="ml-2 text-caption text-text-secondary">(supuesto)</span>
           </label>
           <input
-            type="number"
+            type="text"
             value={tasaEsperada}
-            onChange={(e) => setTasaEsperada(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '' || /^[\d,\.]+$/.test(value)) {
+                setTasaEsperada(value);
+              }
+            }}
             placeholder="0"
-            min="0"
-            max="100"
-            step="0.1"
-            required
             className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',
@@ -306,12 +316,15 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             Horizonte (años) <span className="text-red-500">*</span>
           </label>
           <input
-            type="number"
+            type="text"
             value={horizonte}
-            onChange={(e) => setHorizonte(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '' || /^\d+$/.test(value)) {
+                setHorizonte(value);
+              }
+            }}
             placeholder="25"
-            min="1"
-            required
             className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',

@@ -1,5 +1,5 @@
 import Card from '../Card';
-import { formatCurrency, formatPercentage } from '@/utils/number-format';
+import { formatCurrencyAR, formatPercentAR } from '@/utils/number-format';
 import type { Investment } from '@/mock/data';
 
 interface InvestmentSummaryProps {
@@ -9,7 +9,7 @@ interface InvestmentSummaryProps {
 export default function InvestmentSummary({ investment }: InvestmentSummaryProps) {
   const formatSignedValue = (value: number) => {
     const sign = value >= 0 ? '+' : '';
-    return `${sign}${formatCurrency(value)}`;
+    return `${sign}${formatCurrencyAR(value, 2)}`;
   };
 
   // Calcular valor actual desde datos reales
@@ -42,7 +42,7 @@ export default function InvestmentSummary({ investment }: InvestmentSummaryProps
             CAPITAL INVERTIDO
           </div>
           <div className="text-[28px] font-semibold font-mono-numbers text-black leading-[1.2]">
-            {formatCurrency(investment.capital)}
+            {formatCurrencyAR(investment.capital, 2)}
           </div>
         </div>
 
@@ -51,7 +51,7 @@ export default function InvestmentSummary({ investment }: InvestmentSummaryProps
             VALOR ACTUAL
           </div>
           <div className="text-[28px] font-semibold font-mono-numbers text-black leading-[1.2]">
-            {formatCurrency(currentValue)}
+            {formatCurrencyAR(currentValue, 2)}
           </div>
         </div>
 
@@ -70,7 +70,7 @@ export default function InvestmentSummary({ investment }: InvestmentSummaryProps
             ROI NOMINAL
           </div>
           <div className="text-[24px] font-semibold font-mono-numbers text-black leading-[1.2]">
-            {formatPercentage(investment.roiNominal)}
+            {formatPercentAR(investment.roiNominal, 1)}
           </div>
         </div>
 
@@ -80,7 +80,7 @@ export default function InvestmentSummary({ investment }: InvestmentSummaryProps
             ROI REAL
           </div>
           <div className="text-[20px] font-semibold font-mono-numbers text-black leading-[1.2]">
-            {formatPercentage(investment.roiReal)}
+            {formatPercentAR(investment.roiReal, 1)}
           </div>
         </div>
 

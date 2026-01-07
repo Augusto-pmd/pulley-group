@@ -76,24 +76,32 @@ export async function POST(request: NextRequest) {
     
     const { name, type, nature } = body;
 
-    // Verificar si el concepto ya existe
-    const existing = await prisma.concept.findFirst({
-      where: {
-        name: name,
-        type: type,
-      },
-    });
+    // Normalizar type a string literal válido (la columna es TEXT, no enum)
+    const normalizedType = type === 'ingreso' || type === 'egreso' ? type : 'egreso';
+    const normalizedNature = nature === 'fijo' || nature === 'variable' || nature === 'extraordinario' 
+      ? nature 
+      : 'variable';
 
-    if (existing) {
-      return NextResponse.json(existing, { status: 200 });
+    // Verificar si el concepto ya existe
+    // Usar string literal en lugar de enum para compatibilidad con columna TEXT
+    // Prisma espera ConceptType enum pero la columna es TEXT, así que usamos cast explícito
+    const existing = await prisma.$queryRaw<Array<{ id: string; name: string; type: string; nature: string }>>`
+      SELECT * FROM "Concept" 
+      WHERE "name" = ${name} AND "type" = ${normalizedType}
+      LIMIT 1
+    `;
+
+    if (existing && existing.length > 0) {
+      return NextResponse.json(existing[0], { status: 200 });
     }
 
-    // Crear nuevo concepto
+    // Crear nuevo concepto usando create con cast explícito
+    // La columna es TEXT pero Prisma espera enum, así que usamos cast
     const concept = await prisma.concept.create({
       data: {
         name,
-        type,
-        nature: nature || 'variable',
+        type: normalizedType as any, // Cast necesario: columna TEXT vs enum ConceptType
+        nature: normalizedNature as any, // Cast necesario: columna TEXT vs enum ConceptNature
       },
     });
 

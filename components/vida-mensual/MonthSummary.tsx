@@ -2,7 +2,7 @@
 
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatPercentage } from '@/utils/number-format';
+import { formatPercentAR } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface MonthSummaryProps {
@@ -88,7 +88,7 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
               <div className="flex items-center gap-3">
                 <CurrencyDisplay value={porTipo.fijo} size="regular" showSecondary={false} />
                 <span className="text-body-small text-text-secondary w-12 text-right">
-                  {formatPercentage(porcentajesPorTipo.fijo)}
+                  {formatPercentAR(porcentajesPorTipo.fijo, 1)}
                 </span>
               </div>
             </div>
@@ -97,7 +97,7 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
               <div className="flex items-center gap-3">
                 <CurrencyDisplay value={porTipo.variable} size="regular" showSecondary={false} />
                 <span className="text-body-small text-text-secondary w-12 text-right">
-                  {formatPercentage(porcentajesPorTipo.variable)}
+                  {formatPercentAR(porcentajesPorTipo.variable, 1)}
                 </span>
               </div>
             </div>
@@ -106,7 +106,7 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
               <div className="flex items-center gap-3">
                 <CurrencyDisplay value={porTipo.extraordinario} size="regular" showSecondary={false} />
                 <span className="text-body-small text-text-secondary w-12 text-right">
-                  {formatPercentage(porcentajesPorTipo.extraordinario)}
+                  {formatPercentAR(porcentajesPorTipo.extraordinario, 1)}
                 </span>
               </div>
             </div>

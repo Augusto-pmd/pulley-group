@@ -26,11 +26,11 @@ export default function RootLayout({
             <BackgroundBlobs />
           
           {/* Contenedor principal flotante */}
-          <div className="relative z-10 min-h-screen">
+          <div className="relative min-h-screen">
             <CommandPalette />
             <CommandPaletteHint />
             <Ring />
-            <main className="relative z-10 min-h-screen">
+            <main className="relative z-20 min-h-screen">
               {children}
             </main>
           </div>

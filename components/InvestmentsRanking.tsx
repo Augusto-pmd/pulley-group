@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Card from './Card';
-import { formatCurrency, formatPercentage } from '@/utils/number-format';
+import { formatCurrencyAR, formatPercentAR } from '@/utils/number-format';
 import type { Investment } from '@/mock/data';
 
 interface InvestmentsRankingProps {
@@ -46,7 +46,7 @@ export default function InvestmentsRanking({ investments }: InvestmentsRankingPr
 
   const formatSignedValue = (value: number) => {
     const sign = value >= 0 ? '+' : '';
-    return `${sign}${formatCurrency(value)}`;
+    return `${sign}${formatCurrencyAR(value, 2)}`;
   };
 
   // Si no hay inversiones con capital real, mostrar estado vacío
@@ -139,7 +139,7 @@ export default function InvestmentsRanking({ investments }: InvestmentsRankingPr
             <div className="flex-1 text-body-large text-text-primary">{investment.name}</div>
             <div className="w-[120px] text-body text-text-secondary">{investment.type}</div>
             <div className="w-[160px] text-right text-body-large font-mono-numbers text-text-primary">
-              {formatCurrency(investment.capital)}
+              {formatCurrencyAR(investment.capital, 2)}
             </div>
             <div className="w-[140px] text-right text-body-large font-mono-numbers text-text-primary">
               {formatSignedValue(investment.result)}
@@ -149,14 +149,14 @@ export default function InvestmentsRanking({ investments }: InvestmentsRankingPr
                 sortBy === 'roiNominal' ? 'font-semibold text-text-primary' : 'font-normal text-text-primary'
               }`}
             >
-              {formatPercentage(investment.roiNominal)}
+              {formatPercentAR(investment.roiNominal, 1)}
             </div>
             <div
               className={`w-[120px] text-right text-body-large font-mono-numbers ${
                 sortBy === 'roiReal' ? 'font-semibold text-text-primary' : 'font-normal text-text-secondary'
               }`}
             >
-              {formatPercentage(investment.roiReal)}
+              {formatPercentAR(investment.roiReal, 1)}
             </div>
           </div>
         ))}

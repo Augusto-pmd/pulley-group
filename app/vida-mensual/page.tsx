@@ -288,7 +288,7 @@ export default function VidaMensualPage() {
       }
       
       // Crear movimiento en la API
-      const newMovement = await createMovement({
+      const movementData = {
         type: tipo,
         amountUSD: montoUsdFinal,
         currencyOriginal: monedaFinal,
@@ -297,7 +297,10 @@ export default function VidaMensualPage() {
         status: estadoFinal,
         conceptId: finalConceptId,
         monthId: monthRecord.id,
-      });
+      };
+      console.log('[VidaMensual] POST_API_CALL: createMovement', movementData);
+      const newMovement = await createMovement(movementData);
+      console.log('[VidaMensual] POST_API_RESPONSE', newMovement);
       
       // Notificar cambio para actualizar dashboard
       window.dispatchEvent(new CustomEvent('movement-changed'));

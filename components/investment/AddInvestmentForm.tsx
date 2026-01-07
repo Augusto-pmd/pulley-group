@@ -20,6 +20,7 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
   const [tipoRetorno, setTipoRetorno] = useState<TipoRetorno>('mixta');
   const [estadoFiscal, setEstadoFiscal] = useState<EstadoFiscalInversion>('no_declarado');
   const [observaciones, setObservaciones] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const montoInputRef = useRef<HTMLInputElement>(null);
 
   const handleMontoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,24 +29,54 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('[Inversiones] SUBMIT_HANDLER_CALLED', { nombre, montoObjetivoFormatted, plazoEstimado, tipo, fechaInicio });
     e.preventDefault();
+    setError(null);
     
-    if (!nombre || !montoObjetivoFormatted || !plazoEstimado) return;
+    // Validación JS
+    if (!nombre || nombre.trim() === '') {
+      setError('El nombre es obligatorio');
+      console.log('[Inversiones] EARLY_RETURN: Validación fallida - nombre vacío');
+      return;
+    }
+    
+    if (!montoObjetivoFormatted || montoObjetivoFormatted.trim() === '') {
+      setError('El monto objetivo es obligatorio');
+      console.log('[Inversiones] EARLY_RETURN: Validación fallida - monto vacío');
+      return;
+    }
+    
+    if (!plazoEstimado || plazoEstimado.trim() === '') {
+      setError('El plazo estimado es obligatorio');
+      console.log('[Inversiones] EARLY_RETURN: Validación fallida - plazo vacío');
+      return;
+    }
 
     const montoObjetivo = parseFormattedNumber(montoObjetivoFormatted);
     const plazoNum = parseInt(plazoEstimado);
     
-    if (isNaN(montoObjetivo) || montoObjetivo <= 0) return;
-    if (isNaN(plazoNum) || plazoNum <= 0) return;
+    if (isNaN(montoObjetivo) || montoObjetivo <= 0) {
+      setError('El monto objetivo debe ser mayor a 0');
+      console.log('[Inversiones] EARLY_RETURN: montoObjetivo inválido', { montoObjetivo });
+      return;
+    }
+    if (isNaN(plazoNum) || plazoNum <= 0) {
+      setError('El plazo estimado debe ser mayor a 0');
+      console.log('[Inversiones] EARLY_RETURN: plazoNum inválido', { plazoNum });
+      return;
+    }
 
     try {
       // Crear la inversión en la API
-      await createInvestment({
+      const investmentData = {
         name: nombre,
         type: tipo,
         startDate: fechaInicio,
         targetAmountUSD: montoObjetivo,
-      });
+      };
+      console.log('[Inversiones] POST_API_CALL: createInvestment', investmentData);
+      const response = await createInvestment(investmentData);
+      console.log('[Inversiones] POST_API_RESPONSE', response);
 
       onSave();
     } catch (err: any) {
@@ -71,7 +102,7 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form noValidate onSubmit={handleSubmit} className="space-y-4" data-testid="modal-form">
         {/* Nombre */}
         <div>
           <label className="block text-body text-gray-text-primary mb-1.5">Nombre</label>
@@ -81,7 +112,6 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
             onChange={(e) => setNombre(e.target.value)}
             className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
             placeholder="Ej: Fondo Renta Variable"
-            required
           />
         </div>
 
@@ -122,7 +152,6 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
             className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
-            required
           />
         </div>
 
@@ -137,7 +166,6 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
             onChange={handleMontoChange}
             className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast font-mono"
             placeholder="0"
-            required
           />
           <div className="mt-1.5 text-body-small text-gray-text-disabled">
             Monto objetivo total del proyecto en USD
@@ -148,13 +176,16 @@ export default function AddInvestmentForm({ onClose, onSave }: AddInvestmentForm
         <div>
           <label className="block text-body text-gray-text-primary mb-1.5">Plazo estimado (meses)</label>
           <input
-            type="number"
+            type="text"
             value={plazoEstimado}
-            onChange={(e) => setPlazoEstimado(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value === '' || /^\d+$/.test(value)) {
+                setPlazoEstimado(value);
+              }
+            }}
             className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
             placeholder="60"
-            min="1"
-            required
           />
           <div className="mt-1.5 text-body-small text-gray-text-disabled">
             Horizonte estimado del proyecto en meses

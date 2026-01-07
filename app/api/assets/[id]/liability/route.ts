@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { parseNumberAR } from '@/utils/number-format';
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -44,7 +45,7 @@ export async function GET(
   }
 }
 
-// Función helper para normalizar números de forma segura
+// Función helper para normalizar números de forma segura (acepta formato argentino)
 function normalizeNumber(value: any): number {
   if (typeof value === 'number') {
     return value;
@@ -54,17 +55,10 @@ function normalizeNumber(value: any): number {
     throw new Error(`Invalid number format: expected string or number, got ${typeof value}`);
   }
 
-  // Rechazar valores con coma como separador decimal (ej: "123,45")
-  if (value.includes(',') && !value.match(/^\d{1,3}(?:,\d{3})*(?:\.\d+)?$/)) {
-    throw new Error(`Invalid number format: comma used as decimal separator. Use dot instead (e.g., "123.45" instead of "123,45")`);
-  }
-
-  // Remover separadores de miles (comas) si existen
-  const cleaned = value.replace(/,/g, '');
+  // Usar parseNumberAR que acepta formato argentino (punto para miles, coma para decimales)
+  const parsed = parseNumberAR(value);
   
-  const parsed = parseFloat(cleaned);
-  
-  if (isNaN(parsed)) {
+  if (parsed === null) {
     throw new Error(`Invalid number format: "${value}" cannot be parsed as a number`);
   }
   

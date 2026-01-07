@@ -6,7 +6,7 @@ import CurrencyDisplay from '../CurrencyDisplay';
 import FeedbackPulse from '../animations/FeedbackPulse';
 import { getConcepts } from '@/lib/api';
 import { convertArsToUsdCurrent, getCurrentExchangeRate, getInitialExchangeRate, setLastUsedExchangeRate } from '@/mock/exchange-rates';
-import { formatNumberWithSeparators, parseFormattedNumber, getCursorPosition, formatNumber, formatCurrency } from '@/utils/number-format';
+import { formatNumberWithSeparators, parseNumberAR, getCursorPosition, formatNumberAR, formatCurrencyAR } from '@/utils/number-format';
 
 interface QuickAddFormProps {
   onAdd: (
@@ -36,6 +36,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
   const [filteredConcepts, setFilteredConcepts] = useState<Array<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' }>>([]);
   const [selectedConcept, setSelectedConcept] = useState<{ id: string; nombre: string; tipo: 'ingreso' | 'egreso'; categoria: 'fijo' | 'variable' | 'extraordinario' } | null>(null);
   const [justAdded, setJustAdded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Cargar conceptos desde la API
@@ -96,12 +97,29 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
   };
 
   const handleSubmit = (e: React.FormEvent) => {
+    console.log('[VidaMensual] SUBMIT_HANDLER_CALLED', { concepto, montoFormatted, tipoMovimiento });
     e.preventDefault();
+    setError(null);
     
-    if (!concepto || !montoFormatted) return;
+    // Validación JS
+    if (!concepto || concepto.trim() === '') {
+      setError('El concepto es obligatorio');
+      console.log('[VidaMensual] EARLY_RETURN: Validación fallida - concepto vacío');
+      return;
+    }
+    
+    if (!montoFormatted || montoFormatted.trim() === '') {
+      setError('El monto es obligatorio');
+      console.log('[VidaMensual] EARLY_RETURN: Validación fallida - monto vacío');
+      return;
+    }
 
-    const montoNum = parseFormattedNumber(montoFormatted);
-    if (isNaN(montoNum) || montoNum <= 0) return;
+    const montoNum = parseNumberAR(montoFormatted) ?? 0;
+    if (isNaN(montoNum) || montoNum <= 0) {
+      setError('El monto debe ser mayor a 0');
+      console.log('[VidaMensual] EARLY_RETURN: Validación fallida - monto inválido', { montoNum });
+      return;
+    }
     
     // Guardar TC usado
     if (moneda === 'ARS') {
@@ -132,6 +150,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
 
     // Si hay concepto seleccionado, usar ese (hereda naturaleza automáticamente)
     if (selectedConcept) {
+      console.log('[VidaMensual] PRE_API_CALL: onAdd with selectedConcept', { selectedConcept: selectedConcept.nombre, montoArs, montoUsd });
       onAdd(
         selectedConcept.id, 
         selectedConcept.nombre,
@@ -152,6 +171,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         categoria: naturaleza, // Naturaleza definida por el usuario
         recurrente: false,
       };
+      console.log('[VidaMensual] PRE_API_CALL: onAdd with newConcept', { nuevoConcepto, montoArs, montoUsd });
       onAdd(
         nuevoConcepto.id, 
         nuevoConcepto.nombre,
@@ -180,7 +200,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
   };
 
   // Calcular monto en USD para preview usando el TC editado
-  const montoNum = parseFormattedNumber(montoFormatted);
+  const montoNum = parseNumberAR(montoFormatted) ?? 0;
   const montoUsdPreview = montoFormatted && !isNaN(montoNum) && montoNum > 0
     ? (moneda === 'ARS' ? montoNum / tipoCambio : montoNum)
     : 0;
@@ -221,7 +241,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
           </p>
         </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form noValidate onSubmit={handleSubmit} className="space-y-4">
         {/* Tipo de Movimiento: Ingreso / Egreso */}
         <div>
           <label className="block text-body text-text-primary mb-1.5">Tipo de movimiento</label>
@@ -319,8 +339,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
               handleConceptBlur();
             }}
             placeholder="Escribe el concepto o busca uno existente..."
-            required
-          />
+            />
           {/* Sugerencias livianas - No bloquean escritura */}
           {showSuggestions && filteredConcepts.length > 0 && (
             <div className="absolute z-10 w-full mt-1 rounded-card max-h-48 overflow-y-auto" style={{
@@ -377,14 +396,13 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                 e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
               }}
               placeholder="0"
-              required
-            />
+              />
             {/* Feedback de tipo de cambio cuando moneda = ARS */}
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
               <div className="mt-1.5 text-body-small text-text-secondary">
-                ≈ <span className="font-medium">{formatCurrency(montoUsdPreview)}</span>
+                ≈ <span className="font-medium">{formatCurrencyAR(montoUsdPreview, 2)}</span>
                 {' '}
-                <span style={{ opacity: 0.6 }}>(con TC {formatNumber(tipoCambio)})</span>
+                <span style={{ opacity: 0.6 }}>(con TC {formatNumberAR(tipoCambio, 2)})</span>
               </div>
             )}
           </div>
@@ -421,13 +439,15 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
               TC aplicado
             </label>
             <input
-              type="number"
-              value={tipoCambio}
+              type="text"
+              value={tipoCambio.toString()}
               onChange={(e) => {
-                const value = parseFloat(e.target.value);
-                if (!isNaN(value) && value > 0) {
+                const value = parseNumberAR(e.target.value);
+                if (value !== null && value > 0) {
                   setTipoCambio(value);
                   setLastUsedExchangeRate(value);
+                } else if (e.target.value === '') {
+                  // Permitir campo vacío temporalmente
                 }
               }}
               className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
@@ -445,8 +465,6 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                 e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
               }}
               placeholder="1000"
-              min="1"
-              step="1"
             />
             <div className="mt-1.5 text-body-small text-text-secondary" style={{ opacity: 0.6 }}>
               Precargado con el TC sugerido del día. Puedes editarlo.

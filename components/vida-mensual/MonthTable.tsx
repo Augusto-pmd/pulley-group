@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
-import { formatCurrency, formatNumber } from '@/utils/number-format';
+import { formatCurrencyAR, formatNumberAR } from '@/utils/number-format';
 import type { EventoMensual } from '@/types/vida-mensual';
 
 interface MonthTableProps {
@@ -86,11 +86,11 @@ export default function MonthTable({
             <div className="flex items-center justify-end">
               <div className="text-right">
                 <div className="text-body-small text-text-secondary">
-                  {formatCurrency(evento.monto)}
+                  {formatCurrencyAR(evento.monto, 2)}
                 </div>
                 {evento.tipoCambioAplicado && (
                   <div className="text-caption text-text-secondary" style={{ opacity: 0.6 }}>
-                    TC: {formatNumber(evento.tipoCambioAplicado)}
+                    TC: {formatNumberAR(evento.tipoCambioAplicado, 2)}
                   </div>
                 )}
               </div>

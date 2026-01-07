@@ -1,0 +1,21 @@
+=== RESUMEN FINAL E2E ===
+
+Build: PASS
+API QA: PASS
+E2E Tests: 6 failed, 22 passed, 4 skipped
+
+ERRORES BLOQUEANTES DETECTADOS:
+1. Activos: Formulario no dispara POST /api/assets
+2. Vida Mensual: Formulario no dispara POST /api/movements
+3. Inversiones: Formulario no dispara POST /api/investments
+4. Inversiones Events: Formulario no dispara POST /api/investments/[id]/events
+5. Inversiones Events: No existe boton eliminar
+
+ERRORES ALTA:
+6. Emma: Boton interceptado por Ring overlay
+
+ERRORES MEDIA:
+7. Concepts: Bootstrap incompleto (3 en lugar de 8+)
+
+Reporte completo: qa-e2e/report.md
+

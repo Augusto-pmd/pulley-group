@@ -36,15 +36,33 @@ export async function POST(request: NextRequest) {
     
     const {
       startDate,
+      capitalInicial,
+      aportePeriodico,
       expectedRate,
       horizon,
       contributionFrequency,
     } = body;
 
     // Validar campos requeridos
-    if (expectedRate === undefined || horizon === undefined || !contributionFrequency) {
+    if (!startDate || expectedRate === undefined || horizon === undefined || !contributionFrequency) {
       return NextResponse.json(
-        { error: 'expectedRate, horizon, and contributionFrequency are required' },
+        { error: 'startDate, expectedRate, horizon, and contributionFrequency are required' },
+        { status: 400 }
+      );
+    }
+
+    // Validar capitalInicial (debe ser >= 0)
+    if (capitalInicial === undefined || capitalInicial < 0) {
+      return NextResponse.json(
+        { error: 'capitalInicial must be a number >= 0' },
+        { status: 400 }
+      );
+    }
+
+    // Validar aportePeriodico (opcional, pero si existe debe ser >= 0)
+    if (aportePeriodico !== undefined && aportePeriodico < 0) {
+      return NextResponse.json(
+        { error: 'aportePeriodico must be a number >= 0 if provided' },
         { status: 400 }
       );
     }
@@ -82,7 +100,9 @@ export async function POST(request: NextRequest) {
       emma = await prisma.emma.update({
         where: { id: existing.id },
         data: {
-          startDate: startDate ? new Date(startDate) : null,
+          startDate: new Date(startDate),
+          capitalInicial: capitalInicial ?? 0,
+          aportePeriodico: aportePeriodico ?? null,
           expectedRate,
           horizon,
           contributionFrequency,
@@ -92,7 +112,9 @@ export async function POST(request: NextRequest) {
       // Crear nueva configuración
       emma = await prisma.emma.create({
         data: {
-          startDate: startDate ? new Date(startDate) : null,
+          startDate: new Date(startDate),
+          capitalInicial: capitalInicial ?? 0,
+          aportePeriodico: aportePeriodico ?? null,
           expectedRate,
           horizon,
           contributionFrequency,

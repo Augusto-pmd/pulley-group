@@ -4,8 +4,7 @@ import Card from '../Card';
 import CurrencyDisplay from '../CurrencyDisplay';
 import SlideTransition from '../animations/SlideTransition';
 import FadeIn from '../animations/FadeIn';
-import { formatPercentage } from '@/utils/number-format';
-import { formatCurrency } from '@/utils/number-format';
+import { formatPercentAR, formatCurrencyAR } from '@/utils/number-format';
 import type { EventoMensual } from '@/mock/eventos';
 
 interface MonthClosingViewProps {
@@ -111,7 +110,7 @@ export default function MonthClosingView({
                 </div>
                 <CurrencyDisplay value={totalEgresos} size="medium" showSecondary={false} />
                 <div className="text-body-small text-text-secondary mt-2">
-                  vs Promedio: {variacion >= 0 ? '+' : ''}{formatPercentage(variacion)}
+                  vs Promedio: {variacion >= 0 ? '+' : ''}{formatPercentAR(variacion, 1)}
                 </div>
               </div>
             </div>
@@ -126,21 +125,21 @@ export default function MonthClosingView({
                   <div className="text-body text-text-secondary mb-2">Fijos</div>
                   <CurrencyDisplay value={totalPorCategoria.fijo} size="medium" showSecondary={false} />
                   <div className="text-body-small text-text-secondary mt-1">
-                    {formatPercentage(porcentajePorCategoria.fijo)} del total
+                    {formatPercentAR(porcentajePorCategoria.fijo, 1)} del total
                   </div>
                 </div>
                 <div>
                   <div className="text-body text-text-secondary mb-2">Variables</div>
                   <CurrencyDisplay value={totalPorCategoria.variable} size="medium" showSecondary={false} />
                   <div className="text-body-small text-text-secondary mt-1">
-                    {formatPercentage(porcentajePorCategoria.variable)} del total
+                    {formatPercentAR(porcentajePorCategoria.variable, 1)} del total
                   </div>
                 </div>
                 <div>
                   <div className="text-body text-text-secondary mb-2">Extraordinarios</div>
                   <CurrencyDisplay value={totalPorCategoria.extraordinario} size="medium" showSecondary={false} />
                   <div className="text-body-small text-text-secondary mt-1">
-                    {formatPercentage(porcentajePorCategoria.extraordinario)} del total
+                    {formatPercentAR(porcentajePorCategoria.extraordinario, 1)} del total
                   </div>
                 </div>
               </div>
@@ -157,7 +156,7 @@ export default function MonthClosingView({
                     Atención: Hay eventos pendientes
                   </div>
                       <div className="text-body text-text-secondary">
-                        {eventosPendientes.length} eventos por un total de {formatCurrency(totalPendiente)} aún no están marcados como pagados.
+                        {eventosPendientes.length} eventos por un total de {formatCurrencyAR(totalPendiente, 2)} aún no están marcados como pagados.
                       </div>
                 </div>
               </div>
@@ -170,7 +169,7 @@ export default function MonthClosingView({
                 border: '1px solid rgba(142, 142, 138, 0.2)',
               }}>
                 <div className="text-body text-text-secondary">
-                  Este mes está {formatPercentage(variacion)} por encima del promedio mensual.
+                  Este mes está {formatPercentAR(variacion, 1)} por encima del promedio mensual.
                 </div>
               </div>
             )}
@@ -181,7 +180,7 @@ export default function MonthClosingView({
                 border: '1px solid rgba(142, 142, 138, 0.2)',
               }}>
                 <div className="text-body text-text-secondary">
-                  Este mes está {formatPercentage(Math.abs(variacion))} por debajo del promedio mensual.
+                  Este mes está {formatPercentAR(Math.abs(variacion), 1)} por debajo del promedio mensual.
                 </div>
               </div>
             )}
