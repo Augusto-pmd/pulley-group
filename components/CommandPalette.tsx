@@ -53,7 +53,7 @@ export default function CommandPalette() {
     return acc;
   }, {} as Record<string, Command[]>);
 
-  // Atajos de teclado
+  // Atajos de teclado y eventos personalizados
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Abrir con ⌘K (Mac) o Ctrl+K (Windows/Linux) o /
@@ -87,8 +87,16 @@ export default function CommandPalette() {
       }
     };
 
+    const handleOpenCommandPalette = () => {
+      setIsOpen(true);
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('open-command-palette', handleOpenCommandPalette);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('open-command-palette', handleOpenCommandPalette);
+    };
   }, [isOpen, search, selectedIndex, filteredCommands]);
 
   // Focus en input cuando se abre

@@ -1,17 +1,29 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useMode } from '@/contexts/ModeContext';
 import { useRingData } from '@/contexts/RingDataContext';
 import { useRouter, usePathname } from 'next/navigation';
 import CurrencyDisplay from './CurrencyDisplay';
 
+// Opciones de navegación radial (fijas)
+const radialOptions = [
+  { id: 'estado', label: 'Estado', icon: '○', path: '/' },
+  { id: 'mes', label: 'Mes', icon: '◐', path: '/vida-mensual' },
+  { id: 'fondo', label: 'Fondo', icon: '◑', path: '/emma' },
+  { id: 'detalle', label: 'Detalle', icon: '◒', path: '/activos' },
+  { id: 'comando', label: 'Comando', icon: '⌘', path: null }, // Abre command palette
+];
+
 export default function Ring() {
-  const { mode } = useMode();
+  const { mode, setMode } = useMode();
   const { ringData } = useRingData();
   const router = useRouter();
   const pathname = usePathname();
   const [isPulsing, setIsPulsing] = useState(false);
+  const [showRadialNav, setShowRadialNav] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
 
   const { patrimonioTotal = 0, mesResultado, emmaCapital } = ringData;
 
@@ -44,7 +56,7 @@ export default function Ring() {
   const getRingSize = () => {
     switch (mode) {
       case 'estado':
-        return 'w-64 h-64'; // Grande, centrado
+        return 'w-96 h-96'; // MUY GRANDE, dominante, protagonista
       case 'mes':
         return 'w-32 h-32'; // Reducido, arriba
       case 'fondo':
@@ -68,16 +80,58 @@ export default function Ring() {
     }
   };
 
+  // Manejar activación de navegación radial
   const handleRingClick = () => {
-    // Abrir selector radial de modos
-    const event = new CustomEvent('open-mode-selector');
-    window.dispatchEvent(event);
+    setShowRadialNav(!showRadialNav);
   };
+
+  // Hover prolongado para activar navegación
+  const handleRingMouseEnter = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setShowRadialNav(true);
+    }, 500); // 500ms de hover para activar
+  };
+
+  const handleRingMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    // No cerrar inmediatamente, solo si no hay hover sobre opciones radiales
+  };
+
+  // Seleccionar opción radial
+  const handleSelectRadialOption = (option: typeof radialOptions[0]) => {
+    if (option.id === 'comando') {
+      // Abrir command palette mediante evento personalizado
+      const event = new CustomEvent('open-command-palette');
+      window.dispatchEvent(event);
+    } else if (option.path) {
+      setMode(option.id as 'estado' | 'mes' | 'fondo' | 'detalle');
+      router.push(option.path);
+    }
+    setShowRadialNav(false);
+  };
+
+  // Cerrar navegación radial al hacer click fuera
+  useEffect(() => {
+    if (showRadialNav) {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (ringRef.current && !ringRef.current.contains(e.target as Node)) {
+          setShowRadialNav(false);
+        }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showRadialNav]);
 
   return (
     <div
+      ref={ringRef}
       className={`${getRingPosition()} z-[100] pointer-events-auto`}
-      onClick={handleRingClick}
+      onMouseEnter={handleRingMouseEnter}
+      onMouseLeave={handleRingMouseLeave}
     >
       {/* Halo exterior - luz cálida filtrada */}
       <div
@@ -92,6 +146,7 @@ export default function Ring() {
       {/* Anillo principal - translúcido, iluminado desde dentro */}
       <div
         className={`${getRingSize()} rounded-full flex items-center justify-center transition-all duration-1000 cursor-pointer group relative`}
+        onClick={handleRingClick}
         style={{
           // Borde con reflejo de oro
           border: `2px solid rgba(181, 154, 106, ${mode === 'fondo' && emmaCapital && emmaCapital > 0 ? '0.5' : '0.3'})`,
@@ -138,9 +193,7 @@ export default function Ring() {
         <div className="text-center relative z-10">
           {mode === 'estado' && (
             <>
-              <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
-                PATRIMONIO
-              </div>
+              {/* SOLO el patrimonio total - sin labels, sin explicaciones */}
               <CurrencyDisplay value={displayValue} size="display" showSecondary={false} />
             </>
           )}
@@ -168,12 +221,68 @@ export default function Ring() {
         </div>
       </div>
 
-      {/* Indicador de click */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-        <div className="text-caption text-text-secondary opacity-60">
-          Click para cambiar modo
-        </div>
-      </div>
+      {/* Navegación radial - aparece solo por intención */}
+      {showRadialNav && (
+        <>
+          {/* Opciones radiales alrededor del anillo */}
+          {radialOptions.map((option, index) => {
+            const angle = (index * 360) / radialOptions.length - 90; // Empezar arriba
+            const radius = 140; // Distancia desde el centro del anillo
+            const x = Math.cos((angle * Math.PI) / 180) * radius;
+            const y = Math.sin((angle * Math.PI) / 180) * radius;
+            const isActive = mode === option.id;
+
+            return (
+              <button
+                key={option.id}
+                onClick={() => handleSelectRadialOption(option)}
+                className="absolute w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 pointer-events-auto"
+                style={{
+                  left: `calc(50% + ${x}px - 1.5rem)`,
+                  top: `calc(50% + ${y}px - 1.5rem)`,
+                  // Material translúcido - opacidad baja, sin fondo sólido
+                  backgroundColor: isActive 
+                    ? 'rgba(181, 154, 106, 0.15)' 
+                    : 'rgba(31, 42, 51, 0.6)',
+                  backgroundImage: isActive
+                    ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.2) 0%, transparent 70%)'
+                    : 'none',
+                  border: `1px solid ${isActive ? 'rgba(181, 154, 106, 0.4)' : 'rgba(181, 154, 106, 0.15)'}`,
+                  color: '#F5F2EC',
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: isActive
+                    ? 'inset 0 0 10px rgba(181, 154, 106, 0.1), 0 0 20px rgba(181, 154, 106, 0.15)'
+                    : 'inset 0 0 5px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.2)',
+                  opacity: showRadialNav ? 1 : 0,
+                  transform: showRadialNav ? 'scale(1)' : 'scale(0.8)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
+                  e.currentTarget.style.backgroundImage = 'radial-gradient(circle at center, rgba(181, 154, 106, 0.25) 0%, transparent 70%)';
+                  e.currentTarget.style.borderColor = 'rgba(181, 154, 106, 0.5)';
+                  e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 0 25px rgba(181, 154, 106, 0.2)';
+                  e.currentTarget.style.transform = 'scale(1.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = isActive 
+                    ? 'rgba(181, 154, 106, 0.15)' 
+                    : 'rgba(31, 42, 51, 0.6)';
+                  e.currentTarget.style.backgroundImage = isActive
+                    ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.2) 0%, transparent 70%)'
+                    : 'none';
+                  e.currentTarget.style.borderColor = isActive ? 'rgba(181, 154, 106, 0.4)' : 'rgba(181, 154, 106, 0.15)';
+                  e.currentTarget.style.boxShadow = isActive
+                    ? 'inset 0 0 10px rgba(181, 154, 106, 0.1), 0 0 20px rgba(181, 154, 106, 0.15)'
+                    : 'inset 0 0 5px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.2)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+              >
+                <div className="text-lg" style={{ opacity: 0.9 }}>{option.icon}</div>
+              </button>
+            );
+          })}
+        </>
+      )}
     </div>
   );
 }

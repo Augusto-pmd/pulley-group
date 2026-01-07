@@ -3,8 +3,7 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
-import { getAssets, getInvestments, getMovements, getMonths, type ApiAsset, type ApiInvestment, type ApiMovement } from '@/lib/api';
-import { getCurrentMonth } from '@/mock/month-status';
+import { getAssets, getInvestments, type ApiAsset, type ApiInvestment } from '@/lib/api';
 
 export default function Dashboard() {
   useModeFromPath();
@@ -78,52 +77,11 @@ export default function Dashboard() {
     return patrimonioNetoActivos + capitalInversiones;
   }, [patrimonioNetoActivos, capitalInversiones]);
 
-  // Cargar movimientos para calcular resultados mensuales/anuales
-  const [allMovements, setAllMovements] = useState<ApiMovement[]>([]);
-  
-  useEffect(() => {
-    async function loadAllMovements() {
-      try {
-        const months = await getMonths();
-        const movementsPromises = months.map(async (month) => {
-          const movements = await getMovements(month.year, month.month);
-          return Array.isArray(movements) ? movements : [];
-        });
-        const allMovs = await Promise.all(movementsPromises);
-        setAllMovements(allMovs.flat());
-      } catch (error) {
-        console.error('Error loading all movements:', error);
-        setAllMovements([]);
-      }
-    }
-    loadAllMovements();
-  }, []);
+  // No cargar movimientos en el dashboard
+  // El dashboard solo muestra patrimonio total
 
-  // Calcular resultados mensuales y anuales
-  const currentMonth = getCurrentMonth();
-  const [currentYear, currentMonthNum] = currentMonth.split('-').map(Number);
-  
-  const monthlyResult = useMemo(() => {
-    return allMovements
-      .filter((m) => {
-        const [year, month] = m.date.split('T')[0].split('-').map(Number);
-        return year === currentYear && month === currentMonthNum;
-      })
-      .reduce((sum, m) => {
-        return sum + (m.type === 'ingreso' ? m.amountUSD : -m.amountUSD);
-      }, 0);
-  }, [allMovements, currentYear, currentMonthNum]);
-
-  const annualResult = useMemo(() => {
-    return allMovements
-      .filter((m) => {
-        const [year] = m.date.split('T')[0].split('-').map(Number);
-        return year === currentYear;
-      })
-      .reduce((sum, m) => {
-        return sum + (m.type === 'ingreso' ? m.amountUSD : -m.amountUSD);
-      }, 0);
-  }, [allMovements, currentYear]);
+  // No calcular resultados mensuales/anuales aquí
+  // El dashboard solo muestra patrimonio total
 
   // Actualizar datos del Ring
   useEffect(() => {
@@ -132,88 +90,12 @@ export default function Dashboard() {
     });
   }, [totalPatrimony, setRingData]);
 
-  // Datos para Distribution
-  const distributionData = useMemo(() => ({
-    productive: capitalInversiones || 0, // Inversiones productivas
-    passive: 0, // Por ahora no hay inversiones pasivas separadas
-    liquidity: 0, // Liquidez (por ahora 0, se puede calcular desde movimientos)
-    longTerm: 0, // Fondo Emma (por ahora 0)
-  }), [capitalInversiones]);
-
-  // Datos para EmmaFund (cero por ahora)
-  const emmaFundData = useMemo(() => ({
-    currentCapital: 0,
-    progress: 0,
-    projection18: 0,
-    projection25: 0,
-    monthlyContribution: 0,
-  }), []);
-
-  // Transformar inversiones para InvestmentsRanking
-  // SOLO mostrar inversiones con eventos reales (capital > 0)
-  const investmentsForRanking = useMemo(() => {
-    try {
-      return investments
-        .map((inv) => {
-          const events = inv.events || [];
-          let capital = 0;
-          let result = 0;
-
-          // SOLO calcular desde eventos reales
-          events.forEach((event) => {
-            if (event.type === 'aporte') {
-              capital += event.amountUSD;
-              result += event.amountUSD;
-            } else if (event.type === 'retiro') {
-              capital -= event.amountUSD;
-              result -= event.amountUSD;
-            } else if (event.type === 'ajuste') {
-              result += event.amountUSD;
-            }
-          });
-
-          // Si no hay capital real (sin eventos), no incluir en ranking
-          if (capital === 0) {
-            return null;
-          }
-
-          // ROI solo se calcula si hay capital real
-          const roiNominal = capital > 0 ? (result / capital) * 100 : 0;
-          // ROI Real requiere IPC real, no supuestos - por ahora 0 hasta que haya backend de IPC
-          const roiReal = 0;
-
-          return {
-            id: inv.id,
-            name: inv.name || 'Sin nombre',
-            type: inv.type === 'financiera' ? 'Financiera' : 'Inmobiliaria',
-            capital,
-            result,
-            roiNominal,
-            roiReal,
-            status: 'active' as const,
-          };
-        })
-        .filter((inv): inv is NonNullable<typeof inv> => inv !== null);
-    } catch (error) {
-      console.error('Error transforming investments:', error);
-      return [];
-    }
-  }, [investments]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-body text-gray-text-tertiary">Cargando dashboard...</div>
-      </div>
-    );
-  }
-
-  // Si no hay datos reales, mostrar estado inicial limpio
-  const hasAnyData = totalPatrimony > 0 || monthlyResult !== 0 || annualResult !== 0 || 
-                     assets.length > 0 || investments.length > 0;
+  // El dashboard NO renderiza componentes adicionales
+  // Solo actualiza los datos del Ring
 
   // MODO ESTADO: Solo el anillo, nada más visible
-  // El sistema "respira" - contenido mínimo, máximo espacio
+  // El dashboard ES el anillo
+  // No renderizar nada - el anillo es el único protagonista
   return null;
 }
 

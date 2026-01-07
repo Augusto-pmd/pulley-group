@@ -1,12 +1,9 @@
 import type { Metadata } from 'next';
 import { ModeProvider } from '@/contexts/ModeContext';
 import { RingDataProvider } from '@/contexts/RingDataContext';
-import ProjectionsBar from '@/components/ProjectionsBar';
 import CommandPalette from '@/components/CommandPalette';
-import FloatingNav from '@/components/FloatingNav';
 import CommandPaletteHint from '@/components/CommandPaletteHint';
 import Ring from '@/components/Ring';
-import ModeSelector from '@/components/ModeSelector';
 import BackgroundBlobs from '@/components/BackgroundBlobs';
 import '@/styles/globals.css';
 
@@ -30,12 +27,9 @@ export default function RootLayout({
           
           {/* Contenedor principal flotante */}
           <div className="relative z-10 min-h-screen">
-            <ProjectionsBar />
             <CommandPalette />
-            <FloatingNav />
             <CommandPaletteHint />
             <Ring />
-            <ModeSelector />
             <main className="relative z-10 min-h-screen">
               {children}
             </main>
