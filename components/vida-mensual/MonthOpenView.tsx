@@ -166,30 +166,39 @@ export default function MonthOpenView({
   };
 
   return (
-    <div className="space-y-12">
-      {/* PLACA CENTRAL DOMINANTE - Resumen del mes */}
-      {eventosMes.length > 0 && (
-        <FadeIn delay={0} duration={300}>
-          <MonthSummary eventos={eventosMes} />
-        </FadeIn>
-      )}
+    <div className="relative">
+      {/* ESTRUCTURA RADIAL: El resultado del mes es el centro (núcleo del anillo) */}
+      <div className="flex flex-col items-center min-h-[60vh]">
+        {/* CENTRO: Resultado del mes - Núcleo del anillo */}
+        {eventosMes.length > 0 && (
+          <div className="mb-16">
+            <FadeIn delay={0} duration={300}>
+              <MonthSummary eventos={eventosMes} />
+            </FadeIn>
+          </div>
+        )}
 
-      {/* Movimientos - Secundario discreto, no planilla */}
-      {eventosMes.length > 0 && (
-        <FadeIn delay={100} duration={300}>
-          <MonthTable
-            eventos={eventosMes}
-            onSelectEvent={handleSelectEvent}
-            onToggleEstado={onToggleEstado}
-            selectedEventId={selectedEvent?.id}
-          />
-        </FadeIn>
-      )}
+        {/* ORBITA 1: Movimientos alrededor del centro - Layout radial */}
+        {eventosMes.length > 0 && (
+          <div className="w-full max-w-3xl">
+            <FadeIn delay={100} duration={300}>
+              <MonthTable
+                eventos={eventosMes}
+                onSelectEvent={handleSelectEvent}
+                onToggleEstado={onToggleEstado}
+                selectedEventId={selectedEvent?.id}
+              />
+            </FadeIn>
+          </div>
+        )}
 
-      {/* Zona de carga rápida - Discreta */}
-      <FadeIn delay={200} duration={300}>
-        <QuickAddForm onAdd={handleQuickAdd} />
-      </FadeIn>
+        {/* ORBITA 2: Zona de carga rápida - Periferia discreta */}
+        <div className="w-full max-w-2xl mt-12">
+          <FadeIn delay={200} duration={300}>
+            <QuickAddForm onAdd={handleQuickAdd} />
+          </FadeIn>
+        </div>
+      </div>
 
       {/* Panel lateral de edición */}
       <EventEditPanel

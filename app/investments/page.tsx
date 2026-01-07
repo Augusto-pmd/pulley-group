@@ -7,6 +7,7 @@ import ModuleHeader from '@/components/ModuleHeader';
 import InvestmentEventForm from '@/components/investment/InvestmentEventForm';
 import AddInvestmentForm from '@/components/investment/AddInvestmentForm';
 import Card from '@/components/Card';
+import CurrencyDisplay from '@/components/CurrencyDisplay';
 import { type Inversion } from '@/mock/inversiones';
 import type { Investment } from '@/mock/data';
 import {
@@ -191,6 +192,9 @@ export default function InvestmentsPage() {
         : [];
       setInversiones(transformedInvestments);
       
+      // Notificar cambio para actualizar dashboard
+      window.dispatchEvent(new CustomEvent('investment-changed'));
+      
       // Recargar también para InvestmentCard
       if (Array.isArray(apiInvestments) && apiInvestments.length > 0) {
         const transformed = await Promise.all(
@@ -217,6 +221,9 @@ export default function InvestmentsPage() {
         ? apiInvestments.map(apiInvestmentToInversion)
         : [];
       setInversiones(transformedInvestments);
+      
+      // Notificar cambio para actualizar dashboard
+      window.dispatchEvent(new CustomEvent('investment-changed'));
       
       // Recargar también para InvestmentCard
       if (Array.isArray(apiInvestments) && apiInvestments.length > 0) {
@@ -302,15 +309,36 @@ export default function InvestmentsPage() {
       {/* CAPA 3: CONTEXTO Y RESULTADO - Solo cuando no se está editando */}
       {!showEventForm && !showAddForm && (
         <>
-          {/* Filtros y orden */}
-          {inversiones.length > 0 && (
-            <div className="mb-6">
-              <InvestmentFilters />
-            </div>
-          )}
+          {/* ESTRUCTURA RADIAL: Capital total en el centro, inversiones orbitan */}
+          <div className="relative min-h-[60vh] flex flex-col items-center">
+            {/* CENTRO: Capital total de inversiones - Núcleo del anillo */}
+            {investmentsForCard.length > 0 && (
+              <div className="mb-12 w-full max-w-2xl">
+                <div className="flex flex-col items-center justify-center mb-8">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
+                    CAPITAL TOTAL INVERSIONES
+                  </div>
+                  <div className="text-center">
+                    <CurrencyDisplay 
+                      value={investmentsForCard.reduce((sum, inv) => sum + inv.capital, 0)} 
+                      size="display" 
+                      showSecondary={false}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
-          {/* Lista de inversiones */}
-          {inversiones.length === 0 ? (
+            {/* ORBITA: Lista de inversiones - Orbitan alrededor del centro */}
+            <div className="w-full max-w-3xl space-y-4">
+              {/* Filtros discretos - No compiten con el centro */}
+              {inversiones.length > 0 && (
+                <div className="mb-6" style={{ opacity: 0.6 }}>
+                  <InvestmentFilters />
+                </div>
+              )}
+
+              {inversiones.length === 0 ? (
             <Card padding="large">
               <div className="text-center py-12">
                 <p className="text-body-large text-gray-text-primary mb-2">
@@ -328,30 +356,30 @@ export default function InvestmentsPage() {
               </div>
             </Card>
           ) : (
-            <div className="space-y-4">
-              {investmentsForCard
-                .filter((investment) => investment.capital > 0) // Solo mostrar inversiones con capital real
-                .map((investment) => (
-                  <InvestmentCard 
-                    key={investment.id} 
-                    investment={investment}
-                    onDelete={handleDeleteInvestment}
-                  />
-                ))}
-              {investmentsForCard.filter((investment) => investment.capital === 0).length > 0 && (
-                <Card padding="large">
-                  <div className="text-center py-8">
-                    <p className="text-body text-gray-text-tertiary mb-2">
-                      {investmentsForCard.filter((investment) => investment.capital === 0).length} inversión(es) sin eventos registrados
-                    </p>
-                    <p className="text-body-small text-gray-text-disabled">
-                      Registra aportes o retiros para ver estas inversiones en el listado.
-                    </p>
-                  </div>
-                </Card>
+                <div className="space-y-3">
+                  {investmentsForCard
+                    .filter((investment) => investment.capital > 0) // Solo mostrar inversiones con capital real
+                    .map((investment) => (
+                      <InvestmentCard 
+                        key={investment.id} 
+                        investment={investment}
+                        onDelete={handleDeleteInvestment}
+                      />
+                    ))}
+                  {investmentsForCard.filter((investment) => investment.capital === 0).length > 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-body text-text-secondary mb-2" style={{ opacity: 0.6 }}>
+                        {investmentsForCard.filter((investment) => investment.capital === 0).length} inversión(es) sin eventos registrados
+                      </p>
+                      <p className="text-body-small text-text-secondary" style={{ opacity: 0.4 }}>
+                        Registra aportes o retiros para ver estas inversiones en el listado.
+                      </p>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
-          )}
+          </div>
         </>
       )}
     </>

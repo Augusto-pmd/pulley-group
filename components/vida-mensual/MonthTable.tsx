@@ -26,18 +26,20 @@ export default function MonthTable({
   };
 
   return (
-    <Card padding="normal">
-      {/* Header de tabla */}
-      <div className="grid grid-cols-[2fr_1fr_1.5fr_120px_100px] gap-4 pb-3 border-b mb-2" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
-        <div className="text-caption text-text-secondary uppercase tracking-wider">Concepto</div>
-        <div className="text-caption text-text-secondary uppercase tracking-wider text-right">USD</div>
-        <div className="text-caption text-text-secondary uppercase tracking-wider text-right">ARS + TC</div>
-        <div className="text-caption text-text-secondary uppercase tracking-wider text-center">Estado</div>
-        <div className="text-caption text-text-secondary uppercase tracking-wider text-center">Tipo</div>
-      </div>
+    <div className="relative">
+      {/* EJE CENTRAL IMPLÍCITO: Los movimientos se organizan alrededor del centro */}
+      <div className="space-y-2">
+        {/* Header discreto - no compite con el centro */}
+        <div className="grid grid-cols-[2fr_1fr_1.5fr_120px_100px] gap-4 pb-2 mb-3" style={{ borderColor: 'rgba(142, 142, 138, 0.1)', borderBottomWidth: '1px' }}>
+          <div className="text-caption text-text-secondary uppercase tracking-wider" style={{ opacity: 0.4 }}>Concepto</div>
+          <div className="text-caption text-text-secondary uppercase tracking-wider text-right" style={{ opacity: 0.4 }}>USD</div>
+          <div className="text-caption text-text-secondary uppercase tracking-wider text-right" style={{ opacity: 0.4 }}>ARS + TC</div>
+          <div className="text-caption text-text-secondary uppercase tracking-wider text-center" style={{ opacity: 0.4 }}>Estado</div>
+          <div className="text-caption text-text-secondary uppercase tracking-wider text-center" style={{ opacity: 0.4 }}>Tipo</div>
+        </div>
 
-      {/* Filas */}
-      <div className="space-y-1">
+        {/* Movimientos: Orbitan alrededor del centro, no lista vertical dominante */}
+        <div className="space-y-1">
         {sortedEventos.map((evento) => (
           <button
             key={evento.id}
@@ -129,14 +131,15 @@ export default function MonthTable({
             </div>
           </button>
         ))}
-      </div>
-
-      {sortedEventos.length === 0 && (
-        <div className="text-center py-8 text-body text-text-secondary">
-          No hay eventos cargados para este mes
         </div>
-      )}
-    </Card>
+
+        {sortedEventos.length === 0 && (
+          <div className="text-center py-8 text-body text-text-secondary">
+            No hay eventos cargados para este mes
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 

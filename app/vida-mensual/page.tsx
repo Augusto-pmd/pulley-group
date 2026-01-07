@@ -229,6 +229,9 @@ export default function VidaMensualPage() {
         conceptId: eventoActualizado.conceptoId,
       });
       
+      // Notificar cambio para actualizar dashboard
+      window.dispatchEvent(new CustomEvent('movement-changed'));
+      
       // Recargar movimientos del mes para reflejar cambios (incluye cambio de mes si cambió la fecha)
       const [year, month] = selectedMonth.split('-').map(Number);
       const movements = await getMovements(year, month);
@@ -296,6 +299,9 @@ export default function VidaMensualPage() {
         monthId: monthRecord.id,
       });
       
+      // Notificar cambio para actualizar dashboard
+      window.dispatchEvent(new CustomEvent('movement-changed'));
+      
       // Convertir a EventoMensual y agregar a la lista
       const nuevoEvento = apiMovementToEvento(newMovement);
       setEventos([...eventos, nuevoEvento]);
@@ -345,9 +351,11 @@ export default function VidaMensualPage() {
     try {
       await deleteMovement(id);
       setEventos(eventos.filter(e => e.id !== id));
+      // Notificar cambio para actualizar dashboard
+      window.dispatchEvent(new CustomEvent('movement-changed'));
     } catch (error) {
       console.error('Error deleting movement:', error);
-      // No eliminar del estado local si falla
+      alert('Error al eliminar el movimiento. Por favor, intenta nuevamente.');
     }
   };
 

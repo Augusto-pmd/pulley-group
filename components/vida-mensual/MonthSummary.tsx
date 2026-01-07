@@ -48,18 +48,21 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
   };
 
   return (
-    <Card padding="large">
-      <div className="flex flex-col items-center text-center py-8">
-        {/* Resultado del Mes - Protagonista absoluto - Plano focal */}
-        <div className="mb-12">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
+    <div className="relative">
+      {/* CENTRO ABSOLUTO: Resultado del mes como núcleo del anillo */}
+      <div className="flex flex-col items-center justify-center">
+        {/* Núcleo: Resultado del mes */}
+        <div className="mb-8">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
             RESULTADO DEL MES
           </div>
-          <CurrencyDisplay value={resultadoMes} size="display" showSecondary={false} />
+          <div className="text-center">
+            <CurrencyDisplay value={resultadoMes} size="display" showSecondary={false} />
+          </div>
         </div>
 
-        {/* Ingresos y Egresos - Secundarios discretos - Plano secundario */}
-        <div className="flex items-center justify-center gap-16 mb-12" style={{ opacity: 0.7 }}>
+        {/* Primera órbita: Ingresos y Egresos - Simétricos alrededor del centro */}
+        <div className="flex items-center justify-center gap-20" style={{ opacity: 0.6 }}>
           <div className="flex flex-col items-center">
             <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               INGRESOS
@@ -74,14 +77,14 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
           </div>
         </div>
 
-        {/* Distribución por Tipo - Secundario discreto - Plano terciario */}
-        <div className="w-full max-w-md" style={{ opacity: 0.6 }}>
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
+        {/* Segunda órbita: Distribución por tipo - Periferia más lejana */}
+        <div className="mt-12 w-full max-w-md" style={{ opacity: 0.5 }}>
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
             POR TIPO
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-body text-text-secondary">Fijos</span>
+              <span className="text-body-small text-text-secondary">Fijos</span>
               <div className="flex items-center gap-3">
                 <CurrencyDisplay value={porTipo.fijo} size="regular" showSecondary={false} />
                 <span className="text-body-small text-text-secondary w-12 text-right">
@@ -90,7 +93,7 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-body text-text-secondary">Variables</span>
+              <span className="text-body-small text-text-secondary">Variables</span>
               <div className="flex items-center gap-3">
                 <CurrencyDisplay value={porTipo.variable} size="regular" showSecondary={false} />
                 <span className="text-body-small text-text-secondary w-12 text-right">
@@ -99,7 +102,7 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-body text-text-secondary">Extraordinarios</span>
+              <span className="text-body-small text-text-secondary">Extraordinarios</span>
               <div className="flex items-center gap-3">
                 <CurrencyDisplay value={porTipo.extraordinario} size="regular" showSecondary={false} />
                 <span className="text-body-small text-text-secondary w-12 text-right">
@@ -110,7 +113,7 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
 

@@ -5,7 +5,7 @@ import Card from '../Card';
 import MovementEditModal from '../MovementEditModal';
 import CurrencyDisplay from '../CurrencyDisplay';
 import { formatCurrency } from '@/utils/number-format';
-import { getEmmaMovements, type ApiMovement } from '@/lib/api';
+import { getEmmaMovements, deleteMovement, type ApiMovement } from '@/lib/api';
 
 export default function EmmaMovementsList() {
   const [movements, setMovements] = useState<ApiMovement[]>([]);
@@ -32,25 +32,37 @@ export default function EmmaMovementsList() {
   }, [editingMovement]);
 
   const handleSaveMovement = async (updatedMovement: ApiMovement) => {
-    // Recargar movimientos
+    // Actualizar estado local
+    setMovements(movements.map(m => m.id === updatedMovement.id ? updatedMovement : m).sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    ));
+    setEditingMovement(null);
+    
+    // Recargar movimientos para sincronizar con estado de Emma
     const emmaMovements = await getEmmaMovements();
     setMovements(emmaMovements.sort((a, b) => 
       new Date(b.date).getTime() - new Date(a.date).getTime()
     ));
-    setEditingMovement(null);
-    // Refrescar página para actualizar estado de Emma
-    window.location.reload();
   };
 
   const handleDeleteMovement = async (id: string) => {
-    // Recargar movimientos
-    const emmaMovements = await getEmmaMovements();
-    setMovements(emmaMovements.sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    ));
-    setEditingMovement(null);
-    // Refrescar página para actualizar estado de Emma
-    window.location.reload();
+    try {
+      // Llamar a la API para eliminar
+      await deleteMovement(id);
+      
+      // Actualizar estado local
+      setMovements(movements.filter(m => m.id !== id));
+      setEditingMovement(null);
+      
+      // Recargar movimientos para sincronizar con estado de Emma
+      const emmaMovements = await getEmmaMovements();
+      setMovements(emmaMovements.sort((a, b) => 
+        new Date(b.date).getTime() - new Date(a.date).getTime()
+      ));
+    } catch (error) {
+      console.error('Error deleting movement:', error);
+      alert('Error al eliminar el movimiento. Por favor, intenta nuevamente.');
+    }
   };
 
   if (loading) {

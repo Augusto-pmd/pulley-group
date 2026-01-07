@@ -12,26 +12,51 @@ export default function Dashboard() {
   const [investments, setInvestments] = useState<ApiInvestment[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar datos reales
-  useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        const [apiAssets, apiInvestments] = await Promise.all([
-          getAssets(),
-          getInvestments(),
-        ]);
-        setAssets(Array.isArray(apiAssets) ? apiAssets : []);
-        setInvestments(Array.isArray(apiInvestments) ? apiInvestments : []);
-      } catch (error) {
-        console.error('Error loading dashboard data:', error);
-        setAssets([]);
-        setInvestments([]);
-      } finally {
-        setLoading(false);
-      }
+  // Función para cargar datos
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      const [apiAssets, apiInvestments] = await Promise.all([
+        getAssets(),
+        getInvestments(),
+      ]);
+      setAssets(Array.isArray(apiAssets) ? apiAssets : []);
+      setInvestments(Array.isArray(apiInvestments) ? apiInvestments : []);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      setAssets([]);
+      setInvestments([]);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Cargar datos al montar
+  useEffect(() => {
     loadData();
+  }, []);
+
+  // Escuchar cambios en assets, investments y movements para re-sincronizar
+  useEffect(() => {
+    const handleAssetChanged = () => {
+      loadData();
+    };
+    const handleInvestmentChanged = () => {
+      loadData();
+    };
+    const handleMovementChanged = () => {
+      loadData();
+    };
+
+    window.addEventListener('asset-changed', handleAssetChanged);
+    window.addEventListener('investment-changed', handleInvestmentChanged);
+    window.addEventListener('movement-changed', handleMovementChanged);
+
+    return () => {
+      window.removeEventListener('asset-changed', handleAssetChanged);
+      window.removeEventListener('investment-changed', handleInvestmentChanged);
+      window.removeEventListener('movement-changed', handleMovementChanged);
+    };
   }, []);
 
   // Calcular patrimonio neto de activos (valor - pasivos)

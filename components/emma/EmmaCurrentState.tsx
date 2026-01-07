@@ -58,23 +58,26 @@ export default function EmmaCurrentState() {
   };
 
   return (
-    <Card padding="large">
-      <div className="flex flex-col items-center text-center py-8">
-        {/* Capital Acumulado - Protagonista absoluto - Plano focal */}
-        <div className="mb-12">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
+    <div className="relative">
+      {/* CENTRO ABSOLUTO: Capital acumulado como núcleo del anillo */}
+      <div className="flex flex-col items-center justify-center">
+        {/* Núcleo: Capital acumulado */}
+        <div className="mb-8">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
             CAPITAL ACUMULADO
           </div>
-          <CurrencyDisplay 
-            value={state.currentCapital} 
-            size="display" 
-            showSecondary={false}
-            originalCurrency="USD"
-          />
+          <div className="text-center">
+            <CurrencyDisplay 
+              value={state.currentCapital} 
+              size="display" 
+              showSecondary={false}
+              originalCurrency="USD"
+            />
+          </div>
         </div>
 
-        {/* Secundarios discretos - Plano secundario */}
-        <div className="flex items-center justify-center gap-16" style={{ opacity: 0.7 }}>
+        {/* Primera órbita: Aporte mensual y tiempo - Simétricos alrededor del centro */}
+        <div className="flex items-center justify-center gap-20" style={{ opacity: 0.6 }}>
           <div className="flex flex-col items-center">
             <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               APORTE MENSUAL
@@ -97,6 +100,6 @@ export default function EmmaCurrentState() {
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

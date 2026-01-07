@@ -21,6 +21,7 @@ import {
   getAssetLiability,
   updateAsset,
   deleteAsset,
+  deleteAssetValuation,
   type ApiAssetValuation,
 } from '@/lib/api';
 
@@ -398,18 +399,46 @@ export default function AssetEditPanel({ activo, onUpdateAsset, onClose, onDelet
                     {valuaciones.map((valuacion) => (
                       <div
                         key={valuacion.id}
-                        className="p-3 rounded-lg bg-white/30 border border-gray-divider"
+                        className="p-3 rounded-lg bg-white/30 border border-gray-divider group"
                       >
                         <div className="flex items-center justify-between mb-1">
                           <div className="text-body text-gray-text-primary font-medium">
                             {formatDate(valuacion.fecha)}
                           </div>
-                          <CurrencyDisplay 
-                            value={valuacion.valorUsd} 
-                            size="regular" 
-                            showSecondary={false}
-                            originalCurrency="USD"
-                          />
+                          <div className="flex items-center gap-3">
+                            <CurrencyDisplay 
+                              value={valuacion.valorUsd} 
+                              size="regular" 
+                              showSecondary={false}
+                              originalCurrency="USD"
+                            />
+                            <button
+                              onClick={async () => {
+                                if (confirm('¿Estás seguro de que deseas eliminar esta valuación?')) {
+                                  try {
+                                    await deleteAssetValuation(activo!.id, valuacion.id);
+                                    // Recargar valuaciones
+                                    const updatedValuations = await getAssetValuations(activo!.id);
+                                    setValuaciones(updatedValuations.map(v => ({
+                                      id: v.id,
+                                      activoId: v.assetId,
+                                      fecha: v.date.split('T')[0],
+                                      valorUsd: v.valueUSD,
+                                      fechaCreacion: v.date.split('T')[0],
+                                    })));
+                                    // Notificar cambio para actualizar dashboard
+                                    window.dispatchEvent(new CustomEvent('asset-changed'));
+                                  } catch (error) {
+                                    console.error('Error deleting valuation:', error);
+                                    alert('Error al eliminar la valuación. Por favor, intenta nuevamente.');
+                                  }
+                                }
+                              }}
+                              className="px-2 py-1 text-body-small text-red-600 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              Eliminar
+                            </button>
+                          </div>
                         </div>
                         {valuacion.nota && (
                           <div className="text-body-small text-gray-text-tertiary mt-1">

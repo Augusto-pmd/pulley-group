@@ -635,6 +635,78 @@ export async function createAssetValuation(
   }
 }
 
+export interface UpdateAssetValuationData {
+  valueUSD?: number;
+  date?: string;
+}
+
+/**
+ * Actualizar una valuación de activo
+ */
+export async function updateAssetValuation(
+  assetId: string,
+  valuationId: string,
+  data: UpdateAssetValuationData
+): Promise<ApiAssetValuation> {
+  try {
+    const response = await fetch(`/api/assets/${assetId}/valuations/${valuationId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error in updateAssetValuation:', error);
+    throw error;
+  }
+}
+
+/**
+ * Eliminar una valuación de activo
+ */
+export async function deleteAssetValuation(
+  assetId: string,
+  valuationId: string
+): Promise<void> {
+  try {
+    const response = await fetch(`/api/assets/${assetId}/valuations/${valuationId}`, {
+      method: 'DELETE',
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+  } catch (error: any) {
+    console.error('Error in deleteAssetValuation:', error);
+    throw error;
+  }
+}
+
 /**
  * Obtener pasivo de un activo
  */
@@ -1206,6 +1278,80 @@ export async function createInvestmentEvent(
     return await response.json();
   } catch (error: any) {
     console.error('Error in createInvestmentEvent:', error);
+    throw error;
+  }
+}
+
+export interface UpdateInvestmentEventData {
+  type?: 'aporte' | 'retiro' | 'ajuste';
+  amountUSD?: number;
+  date?: string;
+  note?: string | null;
+}
+
+/**
+ * Actualizar un evento de inversión
+ */
+export async function updateInvestmentEvent(
+  investmentId: string,
+  eventId: string,
+  data: UpdateInvestmentEventData
+): Promise<ApiInvestmentEvent> {
+  try {
+    const response = await fetch(`/api/investments/${investmentId}/events/${eventId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    console.error('Error in updateInvestmentEvent:', error);
+    throw error;
+  }
+}
+
+/**
+ * Eliminar un evento de inversión
+ */
+export async function deleteInvestmentEvent(
+  investmentId: string,
+  eventId: string
+): Promise<void> {
+  try {
+    const response = await fetch(`/api/investments/${investmentId}/events/${eventId}`, {
+      method: 'DELETE',
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API error: ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        const errorText = await response.text().catch(() => '');
+        errorMessage = errorText || errorMessage;
+      }
+      throw new Error(errorMessage);
+    }
+  } catch (error: any) {
+    console.error('Error in deleteInvestmentEvent:', error);
     throw error;
   }
 }

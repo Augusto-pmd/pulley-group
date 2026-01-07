@@ -7,6 +7,7 @@ import Card from '@/components/Card';
 import EmmaInitForm from '@/components/emma/EmmaInitForm';
 import EmmaContributionForm from '@/components/emma/EmmaContributionForm';
 import EmmaMovementsList from '@/components/emma/EmmaMovementsList';
+import EmmaCurrentState from '@/components/emma/EmmaCurrentState';
 import { getEmmaMovements, getEmmaState, getEmma } from '@/lib/api';
 
 export default function EmmaPage() {
@@ -132,10 +133,16 @@ export default function EmmaPage() {
 
   // MODO FONDO: Anillo con pulso lento, contenido mínimo
   // Sin proyecciones gritadas, simboliza largo plazo
+  // ESTRUCTURA RADIAL: El capital es el centro, movimientos orbitan
   return (
-    <div className="pt-32">
-      <div className="max-w-2xl mx-auto">
-        {/* MOVIMIENTOS - Secundario discreto */}
+    <div className="relative min-h-[70vh] flex flex-col items-center justify-center pt-32">
+      {/* CENTRO: Capital acumulado - Núcleo del anillo */}
+      <div className="mb-16">
+        <EmmaCurrentState />
+      </div>
+
+      {/* ORBITA: Movimientos alrededor del centro */}
+      <div className="w-full max-w-2xl">
         <EmmaMovementsList />
       </div>
     </div>

@@ -14,6 +14,7 @@ import {
   getAssetLiability,
   createAssetLiability,
   updateAssetLiability,
+  deleteAsset,
   type ApiAsset,
   type ApiAssetValuation,
   type ApiLiability,
@@ -132,20 +133,27 @@ export default function ActivosPage() {
 
   const handleDeleteAsset = async (id: string) => {
     try {
-      // Recargar activos desde la API
-      const apiAssets = await getAssets();
-      const transformedAssets = Array.isArray(apiAssets) 
-        ? apiAssets.map(apiAssetToActivo)
-        : [];
-      setActivos(transformedAssets);
+      // Llamar a la API para eliminar
+      await deleteAsset(id);
+      
+      // Actualizar estado local
+      setActivos(activos.filter(a => a.id !== id));
       
       // Cerrar panel si el activo eliminado estaba seleccionado
       if (selectedAsset?.id === id) {
         setSelectedAsset(null);
       }
+      
+      // Recargar activos desde la API para sincronizar
+      const apiAssets = await getAssets();
+      const transformedAssets = Array.isArray(apiAssets) 
+        ? apiAssets.map(apiAssetToActivo)
+        : [];
+      setActivos(transformedAssets);
     } catch (err: any) {
       console.error('Error deleting asset:', err);
       setError(err.message || 'Error al eliminar activo');
+      alert('Error al eliminar el activo. Por favor, intenta nuevamente.');
     }
   };
 
@@ -163,6 +171,9 @@ export default function ActivosPage() {
       if (updated) {
         setSelectedAsset(updated);
       }
+      
+      // Notificar cambio para actualizar dashboard
+      window.dispatchEvent(new CustomEvent('asset-changed'));
     } catch (err: any) {
       console.error('Error refreshing assets:', err);
     }
@@ -221,13 +232,18 @@ export default function ActivosPage() {
       {/* CAPA 3: CONTEXTO Y RESULTADO - Solo cuando no se está editando */}
       {!showAddForm && (
         <>
-          {/* Lista de Activos */}
-          <AssetList
-            activos={activos}
-            totalUsd={totalActivos}
-            onSelectAsset={handleSelectAsset}
-            selectedAssetId={selectedAsset?.id || null}
-          />
+          {/* ESTRUCTURA RADIAL: Patrimonio neto en el centro, activos orbitan */}
+          <div className="relative min-h-[60vh] flex flex-col items-center">
+            {/* CENTRO: Patrimonio neto total - Núcleo del anillo */}
+            <div className="mb-12 w-full max-w-2xl">
+              <AssetList
+                activos={activos}
+                totalUsd={totalActivos}
+                onSelectAsset={handleSelectAsset}
+                selectedAssetId={selectedAsset?.id || null}
+              />
+            </div>
+          </div>
 
           {/* Panel Lateral de Edición (fijo) */}
           <AssetEditPanel
