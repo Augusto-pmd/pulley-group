@@ -295,12 +295,6 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                 setNaturaleza('variable'); // Resetear a sugerencia por defecto
               }
             }}
-            onFocus={() => {
-              if (filteredConcepts.length > 0 && concepto.length >= 2) {
-                setShowSuggestions(true);
-              }
-            }}
-            onBlur={handleConceptBlur}
             className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',
@@ -308,12 +302,16 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
               backgroundColor: 'rgba(31, 42, 51, 0.1)',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#B59A6A';
-              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              if (filteredConcepts.length > 0 && concepto.length >= 2) {
+                setShowSuggestions(true);
+              }
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
-              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              handleConceptBlur();
             }}
             placeholder="Escribe el concepto o busca uno existente..."
             required
