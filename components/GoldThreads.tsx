@@ -106,6 +106,22 @@ export default function GoldThreads() {
     router.push('/');
   };
 
+  // Obtener dimensiones de la ventana
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
+
   // Calcular posición del anillo reducido (arriba, centrado)
   const ringPos = {
     x: dimensions.width / 2,
@@ -119,9 +135,6 @@ export default function GoldThreads() {
   };
 
   if (!shouldShow) return null;
-
-  const ringPos = getRingPosition();
-  const targetPos = getTargetPosition();
 
   return (
     <div
