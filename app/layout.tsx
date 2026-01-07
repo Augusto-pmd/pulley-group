@@ -5,10 +5,8 @@ import { CircularNavigationProvider } from '@/contexts/CircularNavigationContext
 import { NavigationStateProvider } from '@/contexts/NavigationStateContext';
 import CommandPalette from '@/components/CommandPalette';
 import CommandPaletteHint from '@/components/CommandPaletteHint';
-import Ring from '@/components/Ring';
+import Shell from '@/components/Shell';
 import BackgroundBlobs from '@/components/BackgroundBlobs';
-import MainContent from '@/components/MainContent';
-import ViewportOverlay from '@/components/ViewportOverlay';
 import '@/styles/globals.css';
 
 export const metadata: Metadata = {
@@ -31,27 +29,12 @@ export default function RootLayout({
                 {/* Fondo vivo con blobs flotantes */}
                 <BackgroundBlobs />
               
-              {/* VIEWPORT FRAME - Marco cerrado que contiene todo el sistema */}
-              <div 
-                className="relative"
-                style={{
-                  width: '100vw',
-                  height: '100vh',
-                  overflow: 'hidden',
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                }}
-              >
-                <CommandPalette />
-                <CommandPaletteHint />
-                <ViewportOverlay />
-                <Ring />
-                {/* Contenido principal - controla overflow según estado */}
-                <MainContent>
+                {/* Shell único del sistema */}
+                <Shell>
+                  <CommandPalette />
+                  <CommandPaletteHint />
                   {children}
-                </MainContent>
-              </div>
+                </Shell>
               </NavigationStateProvider>
             </CircularNavigationProvider>
           </RingDataProvider>

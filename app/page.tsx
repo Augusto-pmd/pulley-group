@@ -123,22 +123,8 @@ export default function Dashboard() {
     });
   }, [totalPatrimony, setRingData]);
 
-  // Renderizar dashboard - el Ring es decorativo pero el contenido debe ser visible
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        {loading ? (
-          <div className="text-body text-text-secondary">Cargando...</div>
-        ) : (
-          <div className="space-y-4">
-            <div className="text-caption text-text-secondary uppercase tracking-wider" style={{ opacity: 0.6 }}>
-              PATRIMONIO TOTAL
-            </div>
-            <CurrencyDisplay value={totalPatrimony} size="display" showSecondary={true} />
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  // Dashboard en estado OBSERVACIÓN - no renderiza contenido visible
+  // El CenterCore (anillo) es el único protagonista
+  return null;
 }
 
