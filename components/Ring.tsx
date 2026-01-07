@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useMode } from '@/contexts/ModeContext';
 import { useRingData } from '@/contexts/RingDataContext';
 import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import { useRouter, usePathname } from 'next/navigation';
 import CurrencyDisplay from './CurrencyDisplay';
 import CircularDomain from './circular/CircularDomain';
@@ -22,6 +23,7 @@ export default function Ring() {
   const { mode, setMode } = useMode();
   const { ringData } = useRingData();
   const { activeDomain, setActiveDomain, domainContent } = useCircularNavigation();
+  const { state: navState, enterObservacion, enterNavegacion, enterContexto } = useNavigationState();
   const router = useRouter();
   const pathname = usePathname();
   const [isPulsing, setIsPulsing] = useState(false);
@@ -56,51 +58,70 @@ export default function Ring() {
     }
   }, [mode, emmaCapital]);
 
-  // Determinar tamaño según modo
+  // Determinar tamaño según estado de navegación
   const getRingSize = () => {
-    switch (mode) {
-      case 'estado':
-        return 'w-96 h-96'; // MUY GRANDE, dominante, protagonista
-      case 'mes':
-        return 'w-32 h-32'; // Reducido, arriba
-      case 'fondo':
-        return 'w-40 h-40'; // Mediano
+    switch (navState) {
+      case 'observacion':
+        return 'w-96 h-96'; // MUY GRANDE, dominante
+      case 'navegacion':
+        return 'w-96 h-96'; // GRANDE, con menú radial
+      case 'contexto':
+        return 'w-16 h-16'; // MÍNIMO, solo símbolo
+      case 'accion':
+        return 'w-0 h-0'; // OCULTO durante acciones
       default:
-        return 'w-40 h-40';
+        return 'w-96 h-96';
     }
   };
 
-  // Determinar posición según modo
+  // Determinar posición según estado de navegación
   const getRingPosition = () => {
-    switch (mode) {
-      case 'estado':
+    switch (navState) {
+      case 'observacion':
+      case 'navegacion':
         return 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
-      case 'mes':
-        return 'fixed top-24 left-1/2 -translate-x-1/2';
-      case 'fondo':
+      case 'contexto':
+        return 'fixed top-4 right-4'; // Esquina superior derecha
+      case 'accion':
         return 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
       default:
         return 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
     }
   };
 
-  // Manejar activación de dominios
+  // Determinar si el anillo debe ser visible
+  const isRingVisible = navState !== 'accion';
+  
+  // Determinar si los dominios deben mostrarse (solo en estado navegacion)
+  const shouldShowDomains = navState === 'navegacion' && showDomains;
+
+  // Manejar activación de dominios según estado
   const handleRingClick = () => {
-    if (activeDomain) {
-      // Si hay contenido activo, cerrarlo primero
-      setActiveDomain(null);
+    if (navState === 'observacion') {
+      // Observación → Navegación
+      enterNavegacion();
+      setShowDomains(true);
+    } else if (navState === 'navegacion') {
+      // Navegación → Observación
+      enterObservacion();
       setShowDomains(false);
-    } else {
-      // Si no hay contenido, toggle de dominios
-      setShowDomains(!showDomains);
+      setActiveDomain(null);
+    } else if (navState === 'contexto') {
+      // Contexto → Observación
+      enterObservacion();
+      setActiveDomain(null);
+      router.push('/');
     }
   };
 
-  // Hover prolongado para activar dominios
+  // Hover solo funciona en estado observación
   const handleRingMouseEnter = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setShowDomains(true);
-    }, 500); // 500ms de hover para activar
+    if (navState === 'observacion') {
+      hoverTimeoutRef.current = setTimeout(() => {
+        enterNavegacion();
+        setShowDomains(true);
+      }, 500);
+    }
   };
 
   const handleRingMouseLeave = () => {
@@ -108,52 +129,59 @@ export default function Ring() {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
     }
-    // No cerrar inmediatamente, solo si no hay hover sobre dominios
   };
 
-  // Seleccionar dominio
+  // Seleccionar dominio - Navegación → Contexto
   const handleSelectDomain = (domain: typeof systemDomains[0]) => {
     if (domain.id === 'comando') {
-      // Abrir command palette mediante evento personalizado
       const event = new CustomEvent('open-command-palette');
       window.dispatchEvent(event);
+      enterObservacion();
       setShowDomains(false);
     } else {
-      // Activar dominio - el contenido emerge desde el círculo
-      setActiveDomain(domain.id);
-      setMode(domain.id as 'estado' | 'mes' | 'fondo' | 'detalle');
-      // PROHIBIDO navegar a otra pantalla - el contenido SIEMPRE emerge desde el núcleo
-      // El contenido se inyecta desde las páginas usando el contexto
-      // NO usar router.push() - el sistema es circular, no lineal
+      // Navegación → Contexto: navegar a la página
+      enterContexto();
+      setShowDomains(false);
+      setActiveDomain(null);
+      if (domain.path) {
+        router.push(domain.path);
+      }
     }
   };
 
-  // Cerrar contenido de dominio
+  // Cerrar contenido de dominio - Contexto → Observación
   const handleCloseDomainContent = () => {
+    enterObservacion();
     setActiveDomain(null);
     setShowDomains(false);
+    router.push('/');
   };
 
-  // Cerrar dominios al hacer click fuera
+  // Cerrar dominios al hacer click fuera - Navegación → Observación
   useEffect(() => {
-    if (showDomains && !activeDomain) {
+    if (navState === 'navegacion' && showDomains) {
       const handleClickOutside = (e: MouseEvent) => {
         if (ringRef.current && !ringRef.current.contains(e.target as Node)) {
+          enterObservacion();
           setShowDomains(false);
         }
       };
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [showDomains, activeDomain]);
+  }, [navState, showDomains, enterObservacion]);
 
   // Determinar si el Ring debe interceptar eventos
   // Siempre clickeable cuando está visible, especialmente en modo estado
   const shouldInterceptEvents = true; // El Ring siempre debe ser interactivo
 
-  // Ajustar z-index: solo alto cuando está en modo estado o mostrando dominios
-  // En otros modos, debe estar por debajo del contenido
-  const ringZIndex = mode === 'estado' || showDomains || activeDomain !== null ? 100 : 10;
+  // Ajustar z-index según estado
+  const ringZIndex = navState === 'observacion' || navState === 'navegacion' ? 100 : navState === 'contexto' ? 50 : 0;
+
+  // No renderizar en estado acción
+  if (!isRingVisible) {
+    return null;
+  }
 
   return (
     <div
@@ -162,9 +190,11 @@ export default function Ring() {
       style={{
         pointerEvents: 'auto',
         zIndex: ringZIndex,
+        opacity: navState === 'contexto' ? 0.6 : 1,
+        transition: 'opacity 300ms ease-in-out',
       }}
-      onMouseEnter={handleRingMouseEnter}
-      onMouseLeave={handleRingMouseLeave}
+      onMouseEnter={navState === 'observacion' ? handleRingMouseEnter : undefined}
+      onMouseLeave={navState === 'observacion' ? handleRingMouseLeave : undefined}
     >
       {/* Halo exterior - luz cálida filtrada - DECORATIVO, no intercepta */}
       <div
@@ -225,40 +255,24 @@ export default function Ring() {
           `;
         }}
       >
-        {/* Contenido del anillo - Plano focal con luz */}
+        {/* Contenido del anillo - según estado */}
         <div className="text-center relative z-10">
-          {mode === 'estado' && (
+          {navState === 'observacion' || navState === 'navegacion' ? (
             <>
               {/* SOLO el patrimonio total - sin labels, sin explicaciones */}
               <CurrencyDisplay value={displayValue} size="display" showSecondary={false} />
             </>
-          )}
-          {mode === 'mes' && (
+          ) : navState === 'contexto' ? (
             <>
-              <div className="text-caption text-text-secondary uppercase tracking-wider mb-1 text-xs" style={{ opacity: 0.5 }}>
-                MES
-              </div>
-              <CurrencyDisplay value={displayValue} size="large" showSecondary={false} />
+              {/* Símbolo mínimo en contexto */}
+              <div className="text-2xl" style={{ opacity: 0.7 }}>○</div>
             </>
-          )}
-          {mode === 'fondo' && (
-            <>
-              <div className="text-caption text-text-secondary uppercase tracking-wider mb-1 text-xs" style={{ opacity: 0.5 }}>
-                EMMA
-              </div>
-              <CurrencyDisplay value={displayValue} size="large" showSecondary={false} />
-            </>
-          )}
-          {mode === 'detalle' && (
-            <div className="text-caption text-text-secondary" style={{ opacity: 0.5 }}>
-              DETALLE
-            </div>
-          )}
+          ) : null}
         </div>
       </div>
 
-      {/* Dominios del sistema - subcírculos que orbitan el núcleo */}
-      {showDomains && (
+      {/* Dominios del sistema - SOLO en estado navegacion */}
+      {shouldShowDomains && (
         <>
           {systemDomains.map((domain, index) => {
             const angle = (index * 360) / systemDomains.length - 90; // Empezar arriba

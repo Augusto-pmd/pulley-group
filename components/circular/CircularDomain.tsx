@@ -166,9 +166,9 @@ export default function CircularDomain({
               transformOrigin: 'center center',
               pointerEvents: 'auto',
               transition: 'transform 500ms cubic-bezier(0.4, 0, 0.2, 1)',
-              width: '90vw',
-              maxWidth: '1200px',
-              maxHeight: '85vh',
+              width: 'min(90vw, 1200px)',
+              maxWidth: 'calc(100vw - 32px)', // Asegurar padding de 16px a cada lado
+              maxHeight: 'calc(100vh - 32px)', // Asegurar padding de 16px arriba y abajo
             }}
           >
             {/* Círculo de expansión - efecto visual */}

@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QuickAddForm from './QuickAddForm';
 import MonthTable from './MonthTable';
 import EventEditPanel from './EventEditPanel';
 import MonthSummary from './MonthSummary';
 import MovementEditModal from '../MovementEditModal';
 import FadeIn from '../animations/FadeIn';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import { getMovements, type ApiMovement } from '@/lib/api';
 import type { EventoMensual } from '@/types/vida-mensual';
 
@@ -50,6 +51,16 @@ export default function MonthOpenView({
   const [selectedEvent, setSelectedEvent] = useState<EventoMensual | null>(null);
   // Estado para modal de edición universal
   const [editingMovement, setEditingMovement] = useState<ApiMovement | null>(null);
+  const { enterAccion, enterContexto } = useNavigationState();
+
+  // Activar estado ACCIÓN cuando hay modal abierto
+  useEffect(() => {
+    if (editingMovement) {
+      enterAccion();
+    } else {
+      enterContexto();
+    }
+  }, [editingMovement, enterAccion, enterContexto]);
 
   const handleQuickAdd = (
     conceptoId: string, 

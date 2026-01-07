@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
 import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import RadialCard from '@/components/circular/RadialCard';
 import MonthSelector from '@/components/vida-mensual/MonthSelector';
 import MonthOpenView from '@/components/vida-mensual/MonthOpenView';
@@ -66,6 +67,7 @@ export default function VidaMensualPage() {
   useModeFromPath();
   const { setRingData } = useRingData();
   const { activeDomain, setDomainContent } = useCircularNavigation();
+  const { enterContexto, enterAccion } = useNavigationState();
   const [eventos, setEventos] = useState<EventoMensual[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiMonths, setApiMonths] = useState<ApiMonth[]>([]);
@@ -74,6 +76,20 @@ export default function VidaMensualPage() {
   const [selectedMonth, setSelectedMonth] = useState<string>(currentMonth);
   const [monthStateData, setMonthStateData] = useState<MonthStateType | undefined>();
   const [isClosing, setIsClosing] = useState(false);
+
+  // Activar estado CONTEXTO al montar
+  useEffect(() => {
+    enterContexto();
+  }, [enterContexto]);
+
+  // Activar estado ACCIÓN cuando se está cerrando mes
+  useEffect(() => {
+    if (isClosing) {
+      enterAccion();
+    } else {
+      enterContexto();
+    }
+  }, [isClosing, enterAccion, enterContexto]);
   
   // Cargar datos desde API al montar
   useEffect(() => {
@@ -496,7 +512,14 @@ export default function VidaMensualPage() {
 
   // Renderizar contenido directamente - el Ring es decorativo pero el contenido debe ser visible
   return (
-    <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>
+    <div 
+      className="w-full h-full overflow-y-auto" 
+      style={{ 
+        maxHeight: '100vh',
+        height: '100vh',
+        overflow: 'auto',
+      }}
+    >
       <div className="p-8">
         <div className="mb-8 flex justify-center">
           <MonthSelector

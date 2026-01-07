@@ -3,15 +3,22 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import { getAssets, getInvestments, type ApiAsset, type ApiInvestment } from '@/lib/api';
 import CurrencyDisplay from '@/components/CurrencyDisplay';
 
 export default function Dashboard() {
   useModeFromPath();
   const { setRingData } = useRingData();
+  const { enterObservacion } = useNavigationState();
   const [assets, setAssets] = useState<ApiAsset[]>([]);
   const [investments, setInvestments] = useState<ApiInvestment[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Dashboard siempre en estado OBSERVACIÓN
+  useEffect(() => {
+    enterObservacion();
+  }, [enterObservacion]);
 
   // Función para cargar datos
   const loadData = async () => {

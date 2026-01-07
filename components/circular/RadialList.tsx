@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState, useRef } from 'react';
 import RadialItem from './RadialItem';
 
 interface RadialListItem {
@@ -32,8 +32,46 @@ export default function RadialList({
   centerRadius = 0,
   className = '',
 }: RadialListProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [maxRadius, setMaxRadius] = useState(200);
+
+  // Calcular radio máximo basado en viewport disponible
+  useEffect(() => {
+    const calculateMaxRadius = () => {
+      if (!containerRef.current) return;
+      
+      const container = containerRef.current;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      
+      // Radio máximo = 45% del menor lado, menos el tamaño del item más grande
+      const minDimension = Math.min(width, height);
+      const maxItemSize = Math.max(...items.map(item => item.size || 120));
+      const calculatedMaxRadius = Math.max(100, (minDimension * 0.45) - (maxItemSize / 2));
+      
+      setMaxRadius(calculatedMaxRadius);
+    };
+
+    calculateMaxRadius();
+    window.addEventListener('resize', calculateMaxRadius);
+    return () => window.removeEventListener('resize', calculateMaxRadius);
+  }, [items]);
+
+  // Limitar radios de items al máximo calculado
+  const constrainedItems = items.map(item => ({
+    ...item,
+    radius: Math.min(item.radius, maxRadius),
+  }));
+
   return (
-    <div className={`relative w-full h-full min-h-[60vh] flex items-center justify-center ${className}`}>
+    <div 
+      ref={containerRef}
+      className={`relative w-full h-full flex items-center justify-center ${className}`}
+      style={{
+        minHeight: '60vh',
+        overflow: 'hidden', // Contener items dentro del contenedor
+      }}
+    >
       {/* Contenido central - núcleo */}
       {centerContent && (
         <div 
@@ -48,7 +86,7 @@ export default function RadialList({
       )}
 
       {/* Items que orbitan alrededor del centro */}
-      {items.map((item) => (
+      {constrainedItems.map((item) => (
         <RadialItem
           key={item.id}
           angle={item.angle}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import AssetList from '@/components/activos/AssetList';
 import AssetEditPanel from '@/components/activos/AssetEditPanel';
 import AddAssetForm from '@/components/activos/AddAssetForm';
@@ -67,11 +68,26 @@ function apiValuationToValuacionActivo(apiValuation: ApiAssetValuation): Valuaci
 
 export default function ActivosPage() {
   const { activeDomain, setDomainContent } = useCircularNavigation();
+  const { enterContexto, enterAccion } = useNavigationState();
   const [activos, setActivos] = useState<Activo[]>([]);
   const [selectedAsset, setSelectedAsset] = useState<Activo | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Activar estado CONTEXTO al montar
+  useEffect(() => {
+    enterContexto();
+  }, [enterContexto]);
+
+  // Activar estado ACCIÓN cuando se abre formulario
+  useEffect(() => {
+    if (showAddForm) {
+      enterAccion();
+    } else {
+      enterContexto();
+    }
+  }, [showAddForm, enterAccion, enterContexto]);
 
   // Cargar activos desde la API
   useEffect(() => {
@@ -459,12 +475,14 @@ export default function ActivosPage() {
             <RadialList
               items={activos.map((activo, index) => {
                 const angle = (index * 360) / activos.length;
-                const radius = 200 + (index % 3) * 50;
+                // Radio base más conservador para evitar desbordes
+                const baseRadius = 150;
+                const radius = baseRadius + (index % 3) * 30; // Incremento menor
                 return {
                   id: activo.id,
                   angle,
                   radius,
-                  size: 140,
+                  size: 120, // Tamaño más pequeño para mejor contención
                   isActive: selectedAsset?.id === activo.id,
                   onClick: () => handleSelectAsset(activo),
                   label: activo.nombre,
@@ -480,17 +498,24 @@ export default function ActivosPage() {
                   ),
                 };
               })}
-              centerRadius={180}
+              centerRadius={120} // Radio central más pequeño
             />
           )}
         </div>
-        <div className="fixed bottom-8 right-8 z-[200]">
+        <div 
+          className="absolute bottom-4 right-4 z-[200]"
+          style={{
+            // Asegurar que esté dentro del viewport
+            bottom: '16px',
+            right: '16px',
+          }}
+        >
           <button
             onClick={() => {
               setShowAddForm(true);
               setSelectedAsset(null);
             }}
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300"
             style={{
               backgroundColor: 'rgba(181, 154, 106, 0.25)',
               backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
@@ -504,7 +529,7 @@ export default function ActivosPage() {
               `,
             }}
           >
-            <span className="text-2xl">+</span>
+            <span className="text-xl">+</span>
           </button>
         </div>
         <AssetEditPanel
@@ -517,6 +542,17 @@ export default function ActivosPage() {
     );
   };
 
-  return <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>{renderContent()}</div>;
+  return (
+    <div 
+      className="w-full h-full overflow-y-auto" 
+      style={{ 
+        maxHeight: '100vh',
+        height: '100vh',
+        overflow: 'auto',
+      }}
+    >
+      {renderContent()}
+    </div>
+  );
 }
 

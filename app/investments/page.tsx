@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import InvestmentCard from '@/components/InvestmentCard';
 import InvestmentFilters from '@/components/InvestmentFilters';
 import InvestmentEventForm from '@/components/investment/InvestmentEventForm';
@@ -76,9 +77,24 @@ async function apiInvestmentToInvestment(apiInvestment: ApiInvestment): Promise<
 
 export default function InvestmentsPage() {
   const { activeDomain, setDomainContent } = useCircularNavigation();
+  const { enterContexto, enterAccion } = useNavigationState();
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEventForm, setShowEventForm] = useState(false);
   const [selectedInvestmentId, setSelectedInvestmentId] = useState<string | null>(null);
+
+  // Activar estado CONTEXTO al montar
+  useEffect(() => {
+    enterContexto();
+  }, [enterContexto]);
+
+  // Activar estado ACCIÓN cuando se abre formulario
+  useEffect(() => {
+    if (showAddForm || showEventForm) {
+      enterAccion();
+    } else {
+      enterContexto();
+    }
+  }, [showAddForm, showEventForm, enterAccion, enterContexto]);
   const [inversiones, setInversiones] = useState<Inversion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -484,11 +500,18 @@ export default function InvestmentsPage() {
             </div>
           )}
         </div>
-        <div className="fixed bottom-8 right-8 z-[200] flex flex-col gap-3">
+        <div 
+          className="absolute bottom-4 right-4 z-[200] flex flex-col gap-3"
+          style={{
+            // Asegurar que esté dentro del viewport
+            bottom: '16px',
+            right: '16px',
+          }}
+        >
           {inversiones.length > 0 && (
             <button
               onClick={handleRegisterEvent}
-              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+              className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300"
               style={{
                 backgroundColor: 'rgba(181, 154, 106, 0.25)',
                 backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
@@ -498,12 +521,12 @@ export default function InvestmentsPage() {
               }}
               title="Registrar evento"
             >
-              <span className="text-xl">📊</span>
+              <span className="text-lg">📊</span>
             </button>
           )}
           <button
             onClick={handleCreateInvestment}
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300"
             style={{
               backgroundColor: 'rgba(181, 154, 106, 0.25)',
               backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
@@ -513,13 +536,24 @@ export default function InvestmentsPage() {
             }}
             title="Crear inversión"
           >
-            <span className="text-2xl">+</span>
+            <span className="text-xl">+</span>
           </button>
         </div>
       </div>
     );
   };
 
-  return <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>{renderContent()}</div>;
+  return (
+    <div 
+      className="w-full h-full overflow-y-auto" 
+      style={{ 
+        maxHeight: '100vh',
+        height: '100vh',
+        overflow: 'auto',
+      }}
+    >
+      {renderContent()}
+    </div>
+  );
 }
 

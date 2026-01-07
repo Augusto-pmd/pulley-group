@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
 import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import RadialCard from '@/components/circular/RadialCard';
 import EmmaInitForm from '@/components/emma/EmmaInitForm';
 import EmmaContributionForm from '@/components/emma/EmmaContributionForm';
@@ -15,9 +16,24 @@ export default function EmmaPage() {
   useModeFromPath();
   const { setRingData } = useRingData();
   const { activeDomain, setDomainContent } = useCircularNavigation();
+  const { enterContexto, enterAccion } = useNavigationState();
   const [hasMovements, setHasMovements] = useState<boolean | null>(null);
   const [showInitForm, setShowInitForm] = useState(false);
   const [showContributionForm, setShowContributionForm] = useState(false);
+
+  // Activar estado CONTEXTO al montar
+  useEffect(() => {
+    enterContexto();
+  }, [enterContexto]);
+
+  // Activar estado ACCIÓN cuando se abre formulario
+  useEffect(() => {
+    if (showInitForm || showContributionForm) {
+      enterAccion();
+    } else {
+      enterContexto();
+    }
+  }, [showInitForm, showContributionForm, enterAccion, enterContexto]);
   const [loading, setLoading] = useState(true);
   const [emmaState, setEmmaState] = useState<any>(null);
 
@@ -220,10 +236,17 @@ export default function EmmaPage() {
             <EmmaMovementsList />
           </div>
         </div>
-        <div className="fixed bottom-8 right-8 z-[200]">
+        <div 
+          className="absolute bottom-4 right-4 z-[200]"
+          style={{
+            // Asegurar que esté dentro del viewport
+            bottom: '16px',
+            right: '16px',
+          }}
+        >
           <button
             onClick={() => setShowContributionForm(true)}
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300"
             style={{
               backgroundColor: 'rgba(181, 154, 106, 0.25)',
               backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
@@ -233,12 +256,23 @@ export default function EmmaPage() {
             }}
             title="Agregar aporte"
           >
-            <span className="text-2xl">+</span>
+            <span className="text-xl">+</span>
           </button>
         </div>
       </div>
     );
   };
 
-  return <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>{renderContent()}</div>;
+  return (
+    <div 
+      className="w-full h-full overflow-y-auto" 
+      style={{ 
+        maxHeight: '100vh',
+        height: '100vh',
+        overflow: 'auto',
+      }}
+    >
+      {renderContent()}
+    </div>
+  );
 }
