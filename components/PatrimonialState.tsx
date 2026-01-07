@@ -69,7 +69,7 @@ export default function PatrimonialState({ data }: PatrimonialStateProps) {
       <div className="grid grid-cols-3 gap-8">
         {/* Patrimonio Total - Principal */}
         <div className="flex flex-col">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
             PATRIMONIO TOTAL
           </div>
           <CurrencyDisplay value={totalPatrimony} size="display" showSecondary={false} />
@@ -77,7 +77,7 @@ export default function PatrimonialState({ data }: PatrimonialStateProps) {
 
         {/* Ingresos del Mes - Secundario */}
         <div className="flex flex-col">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
             INGRESOS DEL MES
           </div>
           <CurrencyDisplay value={ingresosMes} size="large" showSecondary={false} />
@@ -85,7 +85,7 @@ export default function PatrimonialState({ data }: PatrimonialStateProps) {
 
         {/* Resultado del Mes - Secundario */}
         <div className="flex flex-col">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
             RESULTADO DEL MES
           </div>
           <CurrencyDisplaySigned value={resultadoMes} size="large" showSecondary={false} />

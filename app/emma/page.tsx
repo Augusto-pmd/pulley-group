@@ -37,7 +37,7 @@ export default function EmmaPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <Card padding="large">
-          <div className="text-center text-body text-gray-text-tertiary">
+          <div className="text-center text-body text-text-secondary">
             Cargando...
           </div>
         </Card>
@@ -51,15 +51,18 @@ export default function EmmaPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <Card padding="large">
           <div className="text-center">
-            <h2 className="text-heading-2 text-gray-text-primary mb-4">
+            <h2 className="text-heading-2 text-text-primary mb-4">
               Este fondo aún no fue iniciado
             </h2>
-            <p className="text-body text-gray-text-tertiary mb-6">
+            <p className="text-body text-text-secondary mb-6">
               Configura los supuestos del fondo y registra el capital inicial para comenzar.
             </p>
             <button
               onClick={() => setShowInitForm(true)}
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-button text-body font-medium hover:bg-blue-700 transition-colors duration-fast"
+              className="px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast"
+              style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
             >
               Iniciar fondo
             </button>

@@ -56,7 +56,7 @@ export default function EmmaMovementsList() {
   if (loading) {
     return (
       <Card padding="large">
-        <div className="text-center text-body text-gray-text-tertiary">
+        <div className="text-center text-body text-text-secondary">
           Cargando movimientos...
         </div>
       </Card>
@@ -66,7 +66,7 @@ export default function EmmaMovementsList() {
   if (movements.length === 0) {
     return (
       <Card padding="large">
-        <div className="text-center text-body text-gray-text-tertiary">
+        <div className="text-center text-body text-text-secondary">
           No hay movimientos registrados
         </div>
       </Card>
@@ -77,10 +77,10 @@ export default function EmmaMovementsList() {
     <>
       <Card padding="large">
         <div className="mb-6">
-          <h3 className="text-heading-3 text-gray-text-primary mb-2">
+          <h3 className="text-heading-3 text-text-primary mb-2">
             Movimientos de Emma
           </h3>
-          <p className="text-body-small text-gray-text-tertiary">
+          <p className="text-body-small text-text-secondary">
             Historial completo de aportes al fondo
           </p>
         </div>
@@ -90,17 +90,20 @@ export default function EmmaMovementsList() {
             <button
               key={movement.id}
               onClick={() => setEditingMovement(movement)}
-              className="w-full flex items-center justify-between p-4 rounded-lg bg-white/30 hover:bg-white/50 transition-colors duration-fast text-left"
+              className="w-full flex items-center justify-between p-4 rounded-lg transition-colors duration-fast text-left"
+              style={{ backgroundColor: 'rgba(31, 42, 51, 0.1)' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.2)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)'}
             >
               <div className="flex-1">
-                <div className="text-body text-gray-text-primary font-medium mb-1">
+                <div className="text-body text-text-primary font-medium mb-1">
                   {new Date(movement.date).toLocaleDateString('es-AR', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
                   })}
                 </div>
-                <div className="text-body-small text-gray-text-tertiary">
+                <div className="text-body-small text-text-secondary">
                   {movement.concept?.name || 'Sin concepto'}
                 </div>
               </div>

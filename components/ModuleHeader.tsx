@@ -37,10 +37,10 @@ export default function ModuleHeader({
   secondaryActions,
 }: ModuleHeaderProps) {
   const statusColors = {
-    default: 'text-gray-text-primary',
-    success: 'text-green-success',
-    warning: 'text-orange-warning',
-    info: 'text-blue-system',
+    default: 'text-text-primary',
+    success: 'text-text-primary',
+    warning: 'text-text-primary',
+    info: 'text-text-primary',
   };
 
   return (
@@ -49,15 +49,15 @@ export default function ModuleHeader({
         <div className="flex-1">
           <div className="flex items-center gap-4 mb-3">
             <div>
-              <h1 className="text-display-3 text-gray-text-primary mb-1">{title}</h1>
-              <p className="text-body-large text-gray-text-tertiary">{description}</p>
+              <h1 className="text-display-3 text-text-primary mb-1">{title}</h1>
+              <p className="text-body-large text-text-secondary">{description}</p>
             </div>
             
             {status && (
               <>
-                <div className="h-10 w-px bg-gray-divider" />
+                <div className="h-10 w-px" style={{ backgroundColor: 'rgba(142, 142, 138, 0.2)' }} />
                 <div>
-                  <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-1">
                     ESTADO
                   </div>
                   <div className={`text-heading-2 font-semibold ${statusColors[status.color || 'default']}`}>
@@ -76,14 +76,20 @@ export default function ModuleHeader({
               {primaryAction.href ? (
                 <Link
                   href={primaryAction.href}
-                  className="px-4 py-2 bg-blue-600 text-white text-body font-medium rounded-button hover:bg-blue-700 transition-colors duration-fast"
+                  className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
+                  style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
                 >
                   {primaryAction.label}
                 </Link>
               ) : (
                 <button
                   onClick={primaryAction.onClick}
-                  className="px-4 py-2 bg-blue-600 text-white text-body font-medium rounded-button hover:bg-blue-700 transition-colors duration-fast"
+                  className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
+                  style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
                 >
                   {primaryAction.label}
                 </button>
@@ -96,14 +102,20 @@ export default function ModuleHeader({
               {secondaryAction.href ? (
                 <Link
                   href={secondaryAction.href}
-                  className="px-3 py-1.5 text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+                  className="px-3 py-1.5 text-body text-text-secondary transition-colors duration-fast"
+                  style={{ color: '#8E8E8A' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
                 >
                   {secondaryAction.label}
                 </Link>
               ) : (
                 <button
                   onClick={secondaryAction.onClick}
-                  className="px-3 py-1.5 text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+                  className="px-3 py-1.5 text-body text-text-secondary transition-colors duration-fast"
+                  style={{ color: '#8E8E8A' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
                 >
                   {secondaryAction.label}
                 </button>
@@ -118,14 +130,20 @@ export default function ModuleHeader({
                   {action.href ? (
                     <Link
                       href={action.href}
-                      className="px-3 py-1.5 text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+                      className="px-3 py-1.5 text-body text-text-secondary transition-colors duration-fast"
+                  style={{ color: '#8E8E8A' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
                     >
                       {action.label}
                     </Link>
                   ) : (
                     <button
                       onClick={action.onClick}
-                      className="px-3 py-1.5 text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+                      className="px-3 py-1.5 text-body text-text-secondary transition-colors duration-fast"
+                  style={{ color: '#8E8E8A' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
                     >
                       {action.label}
                     </button>

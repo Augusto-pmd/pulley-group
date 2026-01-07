@@ -142,7 +142,10 @@ export default function EmmaContributionForm({ onComplete, onCancel }: EmmaContr
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-button text-body font-medium hover:bg-blue-700 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#A0885A')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#B59A6A')}
           >
             {loading ? 'Agregando...' : 'Agregar aporte'}
           </button>
@@ -150,7 +153,14 @@ export default function EmmaContributionForm({ onComplete, onCancel }: EmmaContr
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="px-6 py-2.5 border border-gray-border rounded-button text-body text-gray-text-primary hover:bg-gray-50 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-button text-body transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ 
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'transparent',
+            }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             Cancelar
           </button>

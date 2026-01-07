@@ -21,20 +21,10 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 h-16 z-[100]">
       <div 
-        className="h-full flex items-center justify-between px-6 max-w-[1920px] mx-auto mx-4 mt-2 rounded-capsule backdrop-blur-bar border border-white/30"
+        className="h-full flex items-center justify-between px-6 max-w-[1920px] mx-auto mx-4 mt-2 rounded-capsule"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.65)',
-          // Gradiente interno sutil + tinte azul apenas perceptible
-          backgroundImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.75) 0%, rgba(252, 253, 255, 0.6) 100%)',
-          // Ambient shadow grande y difusa + borde luminoso azul muy sutil
-          boxShadow: `
-            0px 8px 40px rgba(0, 0, 0, 0.03),
-            0px 2px 12px rgba(0, 0, 0, 0.015),
-            0px 0px 0px 1px rgba(255, 255, 255, 0.3),
-            0px 0px 0px 0.5px rgba(100, 150, 200, 0.07),
-            inset 0px 1px 0px rgba(255, 255, 255, 0.5),
-            inset 0px -1px 0px rgba(255, 255, 255, 0.3)
-          `,
+          backgroundColor: '#1F2A33', // Azul petróleo muy oscuro - fondo técnico/headers
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.3)',
         }}
       >
         {/* Logo/Título izquierda - 24px desde el borde */}
@@ -59,12 +49,9 @@ export default function Header() {
                 href={item.href}
         className={`text-body transition-all duration-fast ${
           isActive
-            ? 'text-gray-text-primary font-medium relative'
-            : 'text-gray-text-tertiary hover:text-gray-text-primary'
+            ? 'text-text-primary font-medium relative'
+            : 'text-text-secondary hover:text-text-primary'
         }`}
-        style={isActive ? {
-          textShadow: '0px 0px 8px rgba(100, 150, 200, 0.15)',
-        } : {}}
               >
                 {item.label}
               </Link>

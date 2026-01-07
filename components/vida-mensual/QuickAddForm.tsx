@@ -215,8 +215,8 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
     <FeedbackPulse trigger={justAdded} color="green" duration={250}>
       <Card padding="large">
         <div className="mb-4">
-          <h2 className="text-heading-2 text-gray-text-primary mb-1">CARGAR GASTO / INGRESO</h2>
-          <p className="text-body text-gray-text-tertiary mb-2">
+          <h2 className="text-heading-2 text-text-primary mb-1">CARGAR GASTO / INGRESO</h2>
+          <p className="text-body text-text-secondary mb-2">
             Ingresos y egresos de tu vida se cargan acá.
           </p>
         </div>
@@ -224,7 +224,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Tipo de Movimiento: Ingreso / Egreso */}
         <div>
-          <label className="block text-body text-gray-text-primary mb-1.5">Tipo de movimiento</label>
+          <label className="block text-body text-text-primary mb-1.5">Tipo de movimiento</label>
           <div className="flex gap-3">
             <button
               type="button"
@@ -233,13 +233,24 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                 setConcepto('');
                 setSelectedConcept(null);
               }}
-              className={`flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-all duration-fast ${
-                tipoMovimiento === 'ingreso'
-                  ? 'bg-green-success text-white shadow-sm'
-                  : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary hover:border-gray-border-visible'
-              }`}
+              className="flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-all duration-fast"
+              style={{
+                backgroundColor: tipoMovimiento === 'ingreso' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                color: '#F5F2EC',
+                border: tipoMovimiento === 'ingreso' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (tipoMovimiento !== 'ingreso') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (tipoMovimiento !== 'ingreso') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }
+              }}
             >
-              ◉ Ingreso
+              Ingreso
             </button>
             <button
               type="button"
@@ -248,19 +259,30 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                 setConcepto('');
                 setSelectedConcept(null);
               }}
-              className={`flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-all duration-fast ${
-                tipoMovimiento === 'egreso'
-                  ? 'bg-red-error text-white shadow-sm'
-                  : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary hover:border-gray-border-visible'
-              }`}
+              className="flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-all duration-fast"
+              style={{
+                backgroundColor: tipoMovimiento === 'egreso' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                color: '#F5F2EC',
+                border: tipoMovimiento === 'egreso' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (tipoMovimiento !== 'egreso') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (tipoMovimiento !== 'egreso') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }
+              }}
             >
-              ◯ Egreso
+              Egreso
             </button>
           </div>
         </div>
         {/* Concepto híbrido: escribir libremente + sugerencias */}
         <div className="relative">
-          <label className="block text-body text-gray-text-primary mb-1.5">Concepto</label>
+          <label className="block text-body text-text-primary mb-1.5">Concepto</label>
           <input
             ref={inputRef}
             type="text"
@@ -279,23 +301,43 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
               }
             }}
             onBlur={handleConceptBlur}
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#B59A6A';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
             placeholder="Escribe el concepto o busca uno existente..."
             required
           />
           {/* Sugerencias livianas - No bloquean escritura */}
           {showSuggestions && filteredConcepts.length > 0 && (
-            <div className="absolute z-10 w-full mt-1 bg-white/95 backdrop-blur-subtle border border-gray-border rounded-card shadow-card max-h-48 overflow-y-auto">
+            <div className="absolute z-10 w-full mt-1 rounded-card max-h-48 overflow-y-auto" style={{
+              backgroundColor: '#1F2A33',
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
+            }}>
               {filteredConcepts.slice(0, 5).map((c) => (
                 <button
                   key={c.id}
                   type="button"
                   onClick={() => handleConceptSelect(c)}
                   onMouseDown={(e) => e.preventDefault()} // Prevenir blur antes del click
-                  className="w-full text-left px-4 py-2.5 hover:bg-blue-50/30 transition-colors duration-fast"
+                  className="w-full text-left px-4 py-2.5 transition-colors duration-fast"
+                  style={{ color: '#F5F2EC' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.3)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
-                  <div className="text-body text-gray-text-primary font-medium">{c.nombre}</div>
-                  <div className="text-body-small text-gray-text-tertiary capitalize">
+                  <div className="text-body font-medium">{c.nombre}</div>
+                  <div className="text-body-small text-text-secondary capitalize">
                     {c.categoria}
                   </div>
                 </button>
@@ -307,35 +349,61 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         {/* Monto y Moneda */}
         <div className="grid grid-cols-[1fr_auto] gap-3">
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">Monto</label>
+            <label className="block text-body text-text-primary mb-1.5">Monto</label>
             <input
               ref={montoInputRef}
               type="text"
               inputMode="decimal"
               value={montoFormatted}
               onChange={handleMontoChange}
-              className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast font-mono"
+              className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast font-mono"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#B59A6A';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
               placeholder="0"
               required
             />
             {/* Feedback de tipo de cambio cuando moneda = ARS */}
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
-              <div className="mt-1.5 text-body-small text-gray-text-tertiary">
-                ≈ <span className="font-medium text-gray-text-secondary">{formatCurrency(montoUsdPreview)}</span>
+              <div className="mt-1.5 text-body-small text-text-secondary">
+                ≈ <span className="font-medium">{formatCurrency(montoUsdPreview)}</span>
                 {' '}
-                <span className="text-gray-text-disabled">(con TC {formatNumber(tipoCambio)})</span>
+                <span style={{ opacity: 0.6 }}>(con TC {formatNumber(tipoCambio)})</span>
               </div>
             )}
           </div>
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">Moneda</label>
+            <label className="block text-body text-text-primary mb-1.5">Moneda</label>
             <select
               value={moneda}
               onChange={(e) => setMoneda(e.target.value as 'ARS' | 'USD')}
-              className="px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
+              className="px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#B59A6A';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
             >
-              <option value="ARS">ARS</option>
-              <option value="USD">USD</option>
+              <option value="ARS" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>ARS</option>
+              <option value="USD" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>USD</option>
             </select>
           </div>
         </div>
@@ -343,7 +411,7 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         {/* TC aplicado cuando moneda = ARS */}
         {moneda === 'ARS' && (
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">
+            <label className="block text-body text-text-primary mb-1.5">
               TC aplicado
             </label>
             <input
@@ -356,12 +424,25 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
                   setLastUsedExchangeRate(value);
                 }
               }}
-              className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
+              className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#B59A6A';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
               placeholder="1000"
               min="1"
               step="1"
             />
-            <div className="mt-1.5 text-body-small text-gray-text-disabled">
+            <div className="mt-1.5 text-body-small text-text-secondary" style={{ opacity: 0.6 }}>
               Precargado con el TC sugerido del día. Puedes editarlo.
             </div>
           </div>
@@ -370,19 +451,32 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         {/* Naturaleza - Solo para conceptos nuevos */}
         {!selectedConcept && (
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">
+            <label className="block text-body text-text-primary mb-1.5">
               Naturaleza
             </label>
             <select
               value={naturaleza}
               onChange={(e) => setNaturaleza(e.target.value as 'fijo' | 'variable' | 'extraordinario')}
-              className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast"
+              className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = '#B59A6A';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
             >
-              <option value="fijo">Fijo</option>
-              <option value="variable">Variable</option>
-              <option value="extraordinario">Extraordinario</option>
+              <option value="fijo" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Fijo</option>
+              <option value="variable" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Variable</option>
+              <option value="extraordinario" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Extraordinario</option>
             </select>
-            <div className="mt-1.5 text-body-small text-gray-text-disabled">
+            <div className="mt-1.5 text-body-small text-text-secondary" style={{ opacity: 0.6 }}>
               Si usas un concepto existente, heredará su naturaleza automáticamente.
             </div>
           </div>
@@ -391,27 +485,49 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         {/* Estado: Pagado / Pendiente - Solo para egresos */}
         {tipoMovimiento === 'egreso' && (
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">Estado</label>
+            <label className="block text-body text-text-primary mb-1.5">Estado</label>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setEstado('pagado')}
-                className={`flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast ${
-                  estado === 'pagado'
-                    ? 'bg-green-success text-white'
-                    : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary'
-                }`}
+                className="flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast"
+                style={{
+                  backgroundColor: estado === 'pagado' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                  color: '#F5F2EC',
+                  border: estado === 'pagado' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  if (estado !== 'pagado') {
+                    e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (estado !== 'pagado') {
+                    e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                  }
+                }}
               >
                 Pagado
               </button>
               <button
                 type="button"
                 onClick={() => setEstado('pendiente')}
-                className={`flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast ${
-                  estado === 'pendiente'
-                    ? 'bg-orange-warning text-white'
-                    : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary'
-                }`}
+                className="flex-1 px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast"
+                style={{
+                  backgroundColor: estado === 'pendiente' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                  color: '#F5F2EC',
+                  border: estado === 'pendiente' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+                }}
+                onMouseEnter={(e) => {
+                  if (estado !== 'pendiente') {
+                    e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (estado !== 'pendiente') {
+                    e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                  }
+                }}
               >
                 Pendiente
               </button>
@@ -422,7 +538,10 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
         {/* Botón Agregar */}
         <button
           type="submit"
-          className="w-full px-4 py-2.5 bg-blue-600 text-white text-body font-medium rounded-button hover:bg-blue-700 transition-colors duration-fast"
+          className="w-full px-4 py-2.5 text-body font-medium rounded-button transition-colors duration-fast"
+          style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
         >
           {tipoMovimiento === 'ingreso' ? 'Agregar ingreso' : 'Agregar egreso'}
         </button>

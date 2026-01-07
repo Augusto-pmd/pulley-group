@@ -24,14 +24,11 @@ export default function UnclosedMonthsAlert({ mesesAtrasados, onSelectMonth }: U
     <FadeIn delay={0} duration={300}>
       <Card padding="normal">
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 w-6 h-6 rounded-full bg-orange-warning/20 flex items-center justify-center mt-0.5">
-            <span className="text-orange-warning text-body-small">!</span>
-          </div>
           <div className="flex-1">
-            <div className="text-body-large text-gray-text-primary font-medium mb-1">
+            <div className="text-body-large text-text-primary font-medium mb-1">
               Tenés {mesesAtrasados.length} {mesesAtrasados.length === 1 ? 'mes anterior sin cerrar' : 'meses anteriores sin cerrar'}
             </div>
-            <div className="text-body text-gray-text-tertiary mb-2">
+            <div className="text-body text-text-secondary mb-2">
               Podés seguir cargando eventos en el mes actual. Los meses anteriores permanecen abiertos hasta que los cierres manualmente.
             </div>
             <div className="flex flex-wrap gap-2">
@@ -39,7 +36,18 @@ export default function UnclosedMonthsAlert({ mesesAtrasados, onSelectMonth }: U
                 <button
                   key={mes.mes}
                   onClick={() => onSelectMonth?.(mes.mes)}
-                  className="px-2.5 py-1 bg-orange-50/30 text-orange-warning text-body-small rounded-button border border-orange-200/20 hover:bg-orange-50/50 hover:border-orange-300/30 transition-colors duration-fast cursor-pointer"
+                  className="px-2.5 py-1 text-body-small rounded-button transition-colors duration-fast cursor-pointer"
+                  style={{
+                    backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                    color: '#F5F2EC',
+                    border: '1px solid rgba(142, 142, 138, 0.2)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                  }}
                 >
                   {formatMonthName(mes.mes)}
                 </button>

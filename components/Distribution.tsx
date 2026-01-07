@@ -26,8 +26,8 @@ export default function Distribution({ data, total, activosNetos }: Distribution
   return (
     <Card>
       {/* Header */}
-      <div className="pb-6 border-b border-gray-divider mb-0">
-        <h3 className="text-heading-3 font-semibold text-black">DISTRIBUCIÓN DEL PATRIMONIO</h3>
+      <div className="pb-6 border-b mb-0" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
+        <h3 className="text-heading-3 font-semibold text-text-primary">DISTRIBUCIÓN DEL PATRIMONIO</h3>
       </div>
 
       {/* Lista de categorías */}
@@ -37,16 +37,21 @@ export default function Distribution({ data, total, activosNetos }: Distribution
           return (
             <div
               key={category.label}
-              className="flex items-center justify-between py-4 hover:bg-gray-bg transition-colors duration-fast cursor-pointer"
+              className="flex items-center justify-between py-4 transition-colors duration-fast cursor-pointer"
+              style={{ 
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
-              <div className="text-body-large font-medium text-black">{category.label}</div>
+              <div className="text-body-large font-medium text-text-primary">{category.label}</div>
               <div className="flex items-center gap-4">
                 <CurrencyDisplay 
                   value={category.value} 
                   size="regular" 
                   showSecondary={false}
                 />
-                <div className="text-body-large text-gray-text-tertiary">
+                <div className="text-body-large text-text-secondary">
                   {formatPercentage(percentage)}
                 </div>
               </div>

@@ -28,7 +28,7 @@ export default function EmmaCurrentState() {
   if (loading) {
     return (
       <Card padding="large">
-        <div className="text-center text-body text-gray-text-tertiary">
+        <div className="text-center text-body text-text-secondary">
           Cargando...
         </div>
       </Card>
@@ -39,7 +39,7 @@ export default function EmmaCurrentState() {
   if (!state || (state.currentCapital === 0 && state.initialContribution === 0)) {
     return (
       <Card padding="large">
-        <div className="text-center text-body text-gray-text-tertiary">
+        <div className="text-center text-body text-text-secondary">
           No hay datos del Fondo Emma disponibles
         </div>
       </Card>
@@ -62,7 +62,7 @@ export default function EmmaCurrentState() {
       <div className="grid grid-cols-2 gap-12">
         {/* Fila 1: Capital Acumulado y Aporte Mensual */}
         <div>
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-2">
             CAPITAL ACUMULADO
           </div>
           <CurrencyDisplay 
@@ -102,7 +102,7 @@ export default function EmmaCurrentState() {
           <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
             TIEMPO TRANSCURRIDO
           </div>
-          <div className="text-[24px] font-semibold font-mono-numbers text-black leading-[1.2]">
+          <div className="text-[24px] font-semibold font-mono-numbers text-text-primary leading-[1.2]">
             {formatTimeElapsed()}
           </div>
         </div>

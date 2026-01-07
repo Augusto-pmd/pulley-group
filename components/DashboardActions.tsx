@@ -33,16 +33,24 @@ export default function DashboardActions() {
   return (
     <Card padding="normal">
       <div className="flex items-center gap-3">
-        <span className="text-body-small text-gray-text-tertiary uppercase tracking-wider">Avisos:</span>
+        <span className="text-body-small text-text-secondary uppercase tracking-wider">Avisos:</span>
         <div className="flex items-center gap-4 flex-1">
           {actions.map((action, index) => (
             <Link
               key={index}
               href={action.href}
-              className="flex items-center gap-2 text-body text-gray-text-primary hover:text-blue-600 transition-colors duration-fast"
+              className="flex items-center gap-2 text-body text-text-primary transition-colors duration-fast"
+              style={{ 
+                color: '#F5F2EC',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#B59A6A'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#F5F2EC'}
             >
               {action.badge && (
-                <span className="px-1.5 py-0.5 bg-orange-warning/20 text-orange-warning text-caption rounded-full">
+                <span className="px-1.5 py-0.5 text-caption rounded-full" style={{
+                  backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                  color: '#B59A6A',
+                }}>
                   {action.badge}
                 </span>
               )}

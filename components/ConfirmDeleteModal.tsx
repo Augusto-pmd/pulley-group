@@ -40,41 +40,52 @@ export default function ConfirmDeleteModal({
     <>
       {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-subtle z-50"
+        className="fixed inset-0 z-50"
+        style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}
         onClick={onCancel}
       />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <Card padding="large" className="max-w-md w-full">
-          <h2 className="text-heading-2 text-gray-text-primary mb-4">
+          <h2 className="text-heading-2 text-text-primary mb-4">
             {title}
           </h2>
           
-          <p className="text-body text-gray-text-secondary mb-2">
+          <p className="text-body text-text-secondary mb-2">
             {message}
           </p>
           
           {itemName && (
-            <p className="text-body-large text-gray-text-primary font-medium mb-6">
+            <p className="text-body-large text-text-primary font-medium mb-6">
               "{itemName}"
             </p>
           )}
           
-          <div className="text-body-small text-gray-text-tertiary mb-6">
+          <div className="text-body-small text-text-secondary mb-6">
             Esta acción no se puede deshacer.
           </div>
 
           <div className="flex gap-3">
             <button
               onClick={onCancel}
-              className="flex-1 px-4 py-2.5 bg-white border border-gray-border text-body text-gray-text-primary rounded-button hover:bg-gray-50 transition-colors duration-fast"
+              className="flex-1 px-4 py-2.5 rounded-button text-body transition-colors duration-fast"
+              style={{ 
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'transparent',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
             >
               Cancelar
             </button>
             <button
               onClick={onConfirm}
-              className="flex-1 px-4 py-2.5 bg-red-600 text-white text-body font-medium rounded-button hover:bg-red-700 transition-colors duration-fast"
+              className="flex-1 px-4 py-2.5 rounded-button text-body font-medium transition-colors duration-fast"
+              style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.8)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1F2A33'}
             >
               Eliminar
             </button>

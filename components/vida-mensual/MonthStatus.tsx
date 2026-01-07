@@ -36,16 +36,7 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
   };
 
   const getStatusColor = () => {
-    switch (estado) {
-      case 'ABIERTO':
-        return 'text-blue-system';
-      case 'EN_CIERRE':
-        return 'text-orange-warning';
-      case 'CERRADO':
-        return 'text-gray-text-tertiary';
-      default:
-        return 'text-gray-text-primary';
-    }
+    return 'text-text-primary';
   };
 
   const getStatusLabel = () => {
@@ -67,25 +58,25 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-1">
               {isCurrentMonth ? 'MES ACTUAL' : 'MES SELECCIONADO'}
             </div>
-            <div className="text-display-3 text-gray-text-primary">
+            <div className="text-display-3 text-text-primary">
               {formatMonth(mes)}
             </div>
           </div>
           
-          <div className="h-10 w-px bg-gray-divider" />
+          <div className="h-10 w-px" style={{ backgroundColor: 'rgba(142, 142, 138, 0.2)' }} />
           
           <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-1">
               ESTADO
             </div>
             <div className={`text-heading-2 font-semibold ${getStatusColor()}`}>
               {getStatusLabel()}
             </div>
             {fechaApertura && estado === 'ABIERTO' && (
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 Abierto automáticamente el {formatDate(fechaApertura)}
               </div>
             )}
@@ -97,7 +88,10 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
           {estado === 'ABIERTO' && onStartClosing && (
             <button
               onClick={onStartClosing}
-              className="px-4 py-2 bg-blue-600 text-white text-body font-medium rounded-button hover:bg-blue-700 transition-colors duration-fast"
+              className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
+              style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
             >
               Cerrar mes
             </button>
@@ -105,13 +99,16 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
           {estado === 'EN_CIERRE' && onCloseMonth && (
             <button
               onClick={onCloseMonth}
-              className="px-4 py-2 bg-green-success text-white text-body font-medium rounded-button hover:opacity-90 transition-opacity duration-fast"
+              className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
+              style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
             >
               Confirmar cierre
             </button>
           )}
           {estado === 'CERRADO' && (
-            <div className="text-body text-gray-text-tertiary">
+            <div className="text-body text-text-secondary">
               Este mes está cerrado
             </div>
           )}

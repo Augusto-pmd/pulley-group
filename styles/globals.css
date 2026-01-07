@@ -21,7 +21,7 @@
   
   body {
     @apply antialiased;
-    color: rgba(0, 0, 0, 0.75); /* Texto base con alpha, no negro puro */
+    color: #F5F2EC; /* Texto principal claro - blanco cálido */
     font-family: var(--font-text);
     font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
     -webkit-font-smoothing: antialiased;
@@ -29,18 +29,10 @@
     text-rendering: optimizeLegibility;
     min-height: 100%;
     position: relative;
-    /* Fondo con gradiente orgánico más cálido y menos blanco + azul ambiental muy sutil */
-    background: linear-gradient(135deg, #F8F8F8 0%, #F3F3F3 50%, #F8F8F8 100%);
-    /* Variación radial sutil con tonos más cálidos + azul ambiental intermitente */
-    background-image: 
-      radial-gradient(circle at 20% 30%, rgba(248, 248, 252, 0.9) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(243, 245, 250, 0.7) 0%, transparent 50%),
-      radial-gradient(circle at 50% 50%, rgba(250, 251, 253, 0.3) 0%, transparent 60%),
-      radial-gradient(circle at 60% 40%, rgba(240, 245, 255, 0.15) 0%, transparent 40%);
+    /* Fondo general - grafito cálido profundo */
+    background: #2E2E2C;
     background-attachment: fixed;
     background-size: 100% 100%;
-    /* Animación lenta del gradiente (60s, casi imperceptible) */
-    animation: gradientShift 60s ease-in-out infinite;
   }
   
   @keyframes gradientShift {
@@ -63,13 +55,14 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-border rounded-full;
-    opacity: 0.5;
+    background: #8E8E8A;
+    border-radius: 9999px;
+    opacity: 0.3;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-text-tertiary;
-    opacity: 0.8;
+    background: #8E8E8A;
+    opacity: 0.5;
   }
 }
 
@@ -89,16 +82,9 @@
   /* Números como objetos flotantes - Con integración material */
   .number-object {
     @apply number-base;
-    /* Color luminoso, no negro puro */
-    color: rgba(0, 0, 0, 0.88);
-    /* Sombra ambiental leve para separación del fondo */
-    text-shadow: 
-      0px 0px 20px rgba(255, 255, 255, 0.3),
-      0px 0px 10px rgba(100, 150, 200, 0.08),
-      0px 1px 2px rgba(0, 0, 0, 0.02);
-    /* Borde de luz sutil (simulado con outline) */
-    -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.4);
-    text-stroke: 0.3px rgba(255, 255, 255, 0.4);
+    /* Color principal claro - blanco cálido */
+    color: #F5F2EC;
+    /* Sin sombras ni efectos decorativos */
   }
   
   /* Números grandes - Más presencia, más aire */
@@ -112,25 +98,16 @@
   /* Números en superficies glass - Integración con material */
   .number-glass {
     @apply number-object;
-    /* Tinte azul muy sutil para integración con glass */
-    color: rgba(0, 0, 0, 0.85);
-    text-shadow: 
-      0px 0px 24px rgba(255, 255, 255, 0.4),
-      0px 0px 12px rgba(100, 150, 200, 0.1),
-      0px 1px 3px rgba(0, 0, 0, 0.03);
-    -webkit-text-stroke: 0.4px rgba(255, 255, 255, 0.5);
-    text-stroke: 0.4px rgba(255, 255, 255, 0.5);
+    /* Color principal claro */
+    color: #F5F2EC;
   }
   
   /* Números secundarios - Más suaves */
   .number-soft {
     @apply number-base;
-    color: rgba(0, 0, 0, 0.75);
+    color: #8E8E8A; /* Texto secundario - gris suave */
     font-weight: 500;
     letter-spacing: 0.03em;
-    text-shadow: 
-      0px 0px 16px rgba(255, 255, 255, 0.25),
-      0px 0px 8px rgba(100, 150, 200, 0.06);
   }
   
   /* Display text - Tracking abierto, más presencia */

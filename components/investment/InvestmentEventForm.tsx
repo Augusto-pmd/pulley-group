@@ -98,14 +98,17 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
     <Card padding="large">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-heading-2 text-gray-text-primary mb-1">Registrar evento</h2>
-          <p className="text-body text-gray-text-tertiary">
+          <h2 className="text-heading-2 text-text-primary mb-1">Registrar evento</h2>
+          <p className="text-body text-text-secondary">
             Registra un cambio real en una inversión. Este evento impactará las proyecciones hacia adelante.
           </p>
         </div>
         <button
           onClick={onClose}
-          className="text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+          className="text-body transition-colors duration-fast"
+          style={{ color: '#8E8E8A' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
         >
           ✕
         </button>
@@ -114,49 +117,93 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Tipo de Evento */}
         <div>
-          <label className="block text-body text-gray-text-primary mb-1.5">Tipo de evento</label>
+          <label className="block text-body text-text-primary mb-1.5">Tipo de evento</label>
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
               onClick={() => setTipoEvento('aporte')}
-              className={`px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast ${
-                tipoEvento === 'aporte'
-                  ? 'bg-green-success text-white'
-                  : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary'
-              }`}
+              className="px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast"
+              style={{
+                backgroundColor: tipoEvento === 'aporte' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                color: '#F5F2EC',
+                border: tipoEvento === 'aporte' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (tipoEvento !== 'aporte') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (tipoEvento !== 'aporte') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }
+              }}
             >
               Aporte
             </button>
             <button
               type="button"
               onClick={() => setTipoEvento('retiro')}
-              className={`px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast ${
-                tipoEvento === 'retiro'
-                  ? 'bg-orange-warning text-white'
-                  : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary'
-              }`}
+              className="px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast"
+              style={{
+                backgroundColor: tipoEvento === 'retiro' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                color: '#F5F2EC',
+                border: tipoEvento === 'retiro' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (tipoEvento !== 'retiro') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (tipoEvento !== 'retiro') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }
+              }}
             >
               Retiro
             </button>
             <button
               type="button"
               onClick={() => setTipoEvento('ajuste')}
-              className={`px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast ${
-                tipoEvento === 'ajuste'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary'
-              }`}
+              className="px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast"
+              style={{
+                backgroundColor: tipoEvento === 'ajuste' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                color: '#F5F2EC',
+                border: tipoEvento === 'ajuste' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (tipoEvento !== 'ajuste') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (tipoEvento !== 'ajuste') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }
+              }}
             >
               Ajuste
             </button>
             <button
               type="button"
               onClick={() => setTipoEvento('resultado')}
-              className={`px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast ${
-                tipoEvento === 'resultado'
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-white/50 border border-gray-border text-gray-text-tertiary hover:text-gray-text-primary'
-              }`}
+              className="px-4 py-2.5 rounded-input text-body font-medium transition-colors duration-fast"
+              style={{
+                backgroundColor: tipoEvento === 'resultado' ? '#1F2A33' : 'rgba(31, 42, 51, 0.1)',
+                color: '#F5F2EC',
+                border: tipoEvento === 'resultado' ? 'none' : '1px solid rgba(142, 142, 138, 0.2)',
+              }}
+              onMouseEnter={(e) => {
+                if (tipoEvento !== 'resultado') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (tipoEvento !== 'resultado') {
+                  e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }
+              }}
             >
               Resultado
             </button>
@@ -165,23 +212,39 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
 
         {/* Inversión - REQUERIDA */}
         <div>
-          <label className="block text-body text-gray-text-primary mb-1.5">
-            Inversión <span className="text-orange-warning">*</span>
+          <label className="block text-body text-text-primary mb-1.5">
+            Inversión <span style={{ color: '#8E8E8A' }}>*</span>
           </label>
           {inversiones.length === 0 ? (
-            <div className="px-4 py-2.5 border border-orange-warning/30 bg-orange-warning/5 rounded-input text-body text-gray-text-primary">
+            <div className="px-4 py-2.5 rounded-input text-body text-text-primary" style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}>
               No hay inversiones creadas. Crea una inversión antes de registrar eventos.
             </div>
           ) : (
             <select
               value={inversion}
               onChange={(e) => setInversion(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+              className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#B59A6A';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
               required
             >
-              <option value="">Seleccionar inversión...</option>
+              <option value="" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Seleccionar inversión...</option>
               {inversiones.map((inv) => (
-                <option key={inv.id} value={inv.id}>
+                <option key={inv.id} value={inv.id} style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>
                   {inv.nombre} ({inv.tipo === 'financiera' ? 'Financiera' : 'Inmobiliaria'})
                 </option>
               ))}
@@ -191,12 +254,25 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
 
         {/* Fecha */}
         <div>
-          <label className="block text-body text-gray-text-primary mb-1.5">Fecha</label>
+          <label className="block text-body text-text-primary mb-1.5">Fecha</label>
           <input
             type="date"
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
             required
           />
         </div>
@@ -204,25 +280,38 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
         {/* Monto y Moneda */}
         <div className="grid grid-cols-[1fr_auto] gap-3">
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">Monto</label>
+            <label className="block text-body text-text-primary mb-1.5">Monto</label>
             <input
               ref={montoInputRef}
               type="text"
               inputMode="decimal"
               value={montoFormatted}
               onChange={handleMontoChange}
-              className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 font-mono"
+              className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#B59A6A';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
               placeholder="0"
               required
             />
             {moneda === 'ARS' && montoFormatted && montoNum > 0 && (
-              <div className="mt-1.5 text-body-small text-gray-text-tertiary">
+              <div className="mt-1.5 text-body-small text-text-secondary">
                 ≈ {formatCurrency(montoUsdPreview)} (con TC {formatNumber(tipoCambio)})
               </div>
             )}
           </div>
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">Moneda</label>
+            <label className="block text-body text-text-primary mb-1.5">Moneda</label>
             <select
               value={moneda}
               onChange={(e) => {
@@ -231,10 +320,23 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
                   setTipoCambio(getInitialExchangeRate());
                 }
               }}
-              className="px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+              className="px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#B59A6A';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
             >
-              <option value="ARS">ARS</option>
-              <option value="USD">USD</option>
+              <option value="ARS" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>ARS</option>
+              <option value="USD" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>USD</option>
             </select>
           </div>
         </div>
@@ -242,7 +344,7 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
         {/* TC aplicado (si ARS) */}
         {moneda === 'ARS' && (
           <div>
-            <label className="block text-body text-gray-text-primary mb-1.5">TC aplicado</label>
+            <label className="block text-body text-text-primary mb-1.5">TC aplicado</label>
             <input
               type="number"
               value={tipoCambio}
@@ -253,7 +355,20 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
                   setLastUsedExchangeRate(value);
                 }
               }}
-              className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+              className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+              style={{
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+                color: '#F5F2EC',
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#B59A6A';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              }}
               placeholder="1000"
               min="1"
               step="1"
@@ -263,28 +378,47 @@ export default function InvestmentEventForm({ investmentId, onClose, onSave }: I
 
         {/* Nota */}
         <div>
-          <label className="block text-body text-gray-text-primary mb-1.5">Nota (opcional)</label>
+          <label className="block text-body text-text-primary mb-1.5">Nota (opcional)</label>
           <textarea
             value={nota}
             onChange={(e) => setNota(e.target.value)}
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 resize-none"
+            className="w-full px-4 py-2.5 rounded-input text-body resize-none transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
             rows={3}
             placeholder="Contexto del evento..."
           />
         </div>
 
         {/* Botones */}
-        <div className="flex gap-3 pt-4 border-t border-gray-divider">
+        <div className="flex gap-3 pt-4 border-t" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 text-body text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+            className="flex-1 px-4 py-2.5 text-body transition-colors duration-fast"
+            style={{ color: '#8E8E8A' }}
+            onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+            onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-body font-medium rounded-button hover:bg-blue-700 transition-colors duration-fast"
+            className="flex-1 px-4 py-2.5 text-body font-medium rounded-button transition-colors duration-fast"
+            style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
           >
             Registrar evento
           </button>

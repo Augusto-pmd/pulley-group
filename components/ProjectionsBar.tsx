@@ -44,18 +44,10 @@ export default function ProjectionsBar() {
     <>
       <div className="fixed top-16 left-0 right-0 h-14 z-[99]">
         <div 
-          className="h-full flex items-center px-8 max-w-[1920px] mx-4 mt-2 rounded-capsule backdrop-blur-bar border border-white/30"
+          className="h-full flex items-center px-8 max-w-[1920px] mx-4 mt-2 rounded-capsule"
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backgroundImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 0%, rgba(252, 253, 255, 0.55) 100%)',
-            boxShadow: `
-              0px 8px 40px rgba(0, 0, 0, 0.03),
-              0px 2px 12px rgba(0, 0, 0, 0.015),
-              0px 0px 0px 1px rgba(255, 255, 255, 0.3),
-              0px 0px 0px 0.5px rgba(100, 150, 200, 0.07),
-              inset 0px 1px 0px rgba(255, 255, 255, 0.5),
-              inset 0px -1px 0px rgba(255, 255, 255, 0.3)
-            `,
+            backgroundColor: '#1F2A33', // Azul petróleo muy oscuro - fondo técnico/headers
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.3)',
           }}
         >
           {/* Selector de Escenario */}
@@ -66,12 +58,9 @@ export default function ProjectionsBar() {
                   onClick={() => setScenario(s)}
                   className={`text-body transition-all duration-fast ${
                     scenario === s
-                      ? 'text-gray-text-primary font-semibold relative'
-                      : 'text-gray-text-tertiary hover:text-gray-text-primary'
+                      ? 'text-text-primary font-semibold relative'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
-                  style={scenario === s ? {
-                    textShadow: '0px 0px 6px rgba(100, 150, 200, 0.12)',
-                  } : {}}
                 >
                   {s.charAt(0).toUpperCase() + s.slice(1)}
                 </button>
@@ -83,7 +72,7 @@ export default function ProjectionsBar() {
           </div>
 
           {/* Separador vertical */}
-          <div className="h-8 w-px bg-gray-divider my-3" />
+          <div className="h-8 w-px my-3" style={{ backgroundColor: 'rgba(142, 142, 138, 0.2)' }} />
 
           {/* Selector de Horizonte */}
           <div className="flex items-center h-full py-3 px-3">
@@ -93,12 +82,9 @@ export default function ProjectionsBar() {
                   onClick={() => setHorizon(h)}
                   className={`text-body transition-all duration-fast ${
                     horizon === h
-                      ? 'text-gray-text-primary font-semibold relative'
-                      : 'text-gray-text-tertiary hover:text-gray-text-primary'
+                      ? 'text-text-primary font-semibold relative'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
-                  style={horizon === h ? {
-                    textShadow: '0px 0px 6px rgba(100, 150, 200, 0.12)',
-                  } : {}}
                 >
                   {h} años
                 </button>
@@ -110,7 +96,7 @@ export default function ProjectionsBar() {
           </div>
 
           {/* Separador vertical */}
-          <div className="h-8 w-px bg-gray-divider my-3" />
+          <div className="h-8 w-px my-3" style={{ backgroundColor: 'rgba(142, 142, 138, 0.2)' }} />
 
           {/* Valor Principal: Patrimonio Neto Total Proyectado */}
           <div 
@@ -120,7 +106,7 @@ export default function ProjectionsBar() {
             onMouseLeave={() => setShowDetails(false)}
           >
             <div className="flex-1 min-w-0">
-              <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1">
+              <div className="text-caption text-text-secondary uppercase tracking-wider mb-1">
                 Patrimonio neto total
               </div>
               <div className="flex items-baseline gap-2">
@@ -134,7 +120,7 @@ export default function ProjectionsBar() {
                   />
                 </div>
                 <button
-                  className="text-body-small text-gray-text-disabled hover:text-gray-text-tertiary transition-all duration-fast opacity-0 group-hover:opacity-100 flex-shrink-0"
+                  className="text-body-small text-text-secondary hover:text-text-primary transition-all duration-fast opacity-0 group-hover:opacity-100 flex-shrink-0"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowDetails(!showDetails);
@@ -143,7 +129,7 @@ export default function ProjectionsBar() {
                   {showDetails ? '▼' : '▶'}
                 </button>
               </div>
-              <div className="text-body-small text-gray-text-tertiary mt-1 opacity-70 line-clamp-1">
+              <div className="text-body-small text-text-secondary mt-1 opacity-70 line-clamp-1">
                 Valor total estimado de tu patrimonio, sumando todas las posiciones y proyecciones.
               </div>
             </div>
@@ -166,7 +152,7 @@ export default function ProjectionsBar() {
               <div className="grid grid-cols-4 gap-6">
                 {/* USD Nominal */}
                 <div>
-                  <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-2">
                     USD Nominal
                   </div>
                   <CurrencyDisplay 
@@ -175,14 +161,14 @@ export default function ProjectionsBar() {
                     showSecondary={false}
                     originalCurrency="USD"
                   />
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     Sin ajuste por inflación
                   </div>
                 </div>
 
                 {/* USD Real */}
                 <div>
-                  <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-2">
                     USD Real
                   </div>
                   <CurrencyDisplay 
@@ -191,14 +177,14 @@ export default function ProjectionsBar() {
                     showSecondary={false}
                     originalCurrency="USD"
                   />
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     Ajustado por inflación (IPC)
                   </div>
                 </div>
 
                 {/* Diferencia */}
                 <div>
-                  <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-2">
                     Diferencia
                   </div>
                   <CurrencyDisplay 
@@ -207,23 +193,23 @@ export default function ProjectionsBar() {
                     showSecondary={false}
                     originalCurrency="USD"
                   />
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     Erosión por inflación
                   </div>
                 </div>
 
                 {/* Supuestos */}
                 <div>
-                  <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-2">
                     Supuestos
                   </div>
-                  <div className="text-body text-gray-text-primary mb-1">
+                  <div className="text-body text-text-primary mb-1">
                     Escenario: {scenario.charAt(0).toUpperCase() + scenario.slice(1)}
                   </div>
-                  <div className="text-body text-gray-text-primary mb-1">
+                  <div className="text-body text-text-primary mb-1">
                     Horizonte: {horizon} años
                   </div>
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     Basado en estado actual
                   </div>
                 </div>

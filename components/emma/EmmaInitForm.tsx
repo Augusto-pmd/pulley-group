@@ -136,24 +136,27 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
   return (
     <Card padding="large">
       <div className="mb-6">
-        <h2 className="text-heading-2 text-gray-text-primary mb-2">
+        <h2 className="text-heading-2 text-text-primary mb-2">
           Iniciar Fondo Emma
         </h2>
-        <p className="text-body text-gray-text-tertiary">
+        <p className="text-body text-text-secondary">
           Configura los supuestos del fondo. El capital inicial se registrará como un movimiento real en Vida Mensual.
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-body text-red-600">{error}</p>
+        <div className="mb-6 p-4 rounded-lg" style={{
+          backgroundColor: 'rgba(31, 42, 51, 0.1)',
+          border: '1px solid rgba(142, 142, 138, 0.2)',
+        }}>
+          <p className="text-body text-text-primary">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Fecha de inicio */}
         <div>
-          <label className="block text-body-small text-gray-text-secondary mb-2">
+          <label className="block text-body-small text-text-secondary mb-2">
             Fecha de inicio <span className="text-red-500">*</span>
           </label>
           <input
@@ -162,13 +165,26 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             onChange={(e) => setFechaInicio(e.target.value)}
             max={new Date().toISOString().split('T')[0]}
             required
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
           />
         </div>
 
         {/* Capital inicial */}
         <div>
-          <label className="block text-body-small text-gray-text-secondary mb-2">
+          <label className="block text-body-small text-text-secondary mb-2">
             Capital inicial (USD) <span className="text-red-500">*</span>
           </label>
           <input
@@ -177,16 +193,30 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             onChange={handleCapitalInicialChange}
             placeholder="0"
             required
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 font-mono"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#B59A6A';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
+            className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
           />
-          <p className="mt-1 text-caption text-gray-text-tertiary">
+          <p className="mt-1 text-caption text-text-secondary">
             Se creará un movimiento real en Vida Mensual
           </p>
         </div>
 
         {/* Aporte periódico */}
         <div>
-          <label className="block text-body-small text-gray-text-secondary mb-2">
+          <label className="block text-body-small text-text-secondary mb-2">
             Aporte periódico (USD)
           </label>
           <input
@@ -194,30 +224,57 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             value={aportePeriodicoFormatted}
             onChange={handleAportePeriodicoChange}
             placeholder="0"
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 font-mono"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#B59A6A';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
+            className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
           />
         </div>
 
         {/* Frecuencia */}
         <div>
-          <label className="block text-body-small text-gray-text-secondary mb-2">
+          <label className="block text-body-small text-text-secondary mb-2">
             Frecuencia
           </label>
           <select
             value={frecuencia}
             onChange={(e) => setFrecuencia(e.target.value as 'mensual' | 'anual')}
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
           >
-            <option value="mensual">Mensual</option>
-            <option value="anual">Anual</option>
+            <option value="mensual" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Mensual</option>
+            <option value="anual" style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}>Anual</option>
           </select>
         </div>
 
         {/* Tasa esperada */}
         <div>
-          <label className="block text-body-small text-gray-text-secondary mb-2">
+          <label className="block text-body-small text-text-secondary mb-2">
             Tasa esperada (% anual) <span className="text-red-500">*</span>
-            <span className="ml-2 text-caption text-gray-text-tertiary">(supuesto)</span>
+            <span className="ml-2 text-caption text-text-secondary">(supuesto)</span>
           </label>
           <input
             type="number"
@@ -228,13 +285,26 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             max="100"
             step="0.1"
             required
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
           />
         </div>
 
         {/* Horizonte */}
         <div>
-          <label className="block text-body-small text-gray-text-secondary mb-2">
+          <label className="block text-body-small text-text-secondary mb-2">
             Horizonte (años) <span className="text-red-500">*</span>
           </label>
           <input
@@ -244,7 +314,20 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             placeholder="25"
             min="1"
             required
-            className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
           />
         </div>
 
@@ -253,7 +336,10 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
           <button
             type="submit"
             disabled={loading}
-            className="px-6 py-2.5 bg-blue-600 text-white rounded-button text-body font-medium hover:bg-blue-700 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#A0885A')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#B59A6A')}
           >
             {loading ? 'Iniciando...' : 'Iniciar fondo'}
           </button>
@@ -261,7 +347,14 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="px-6 py-2.5 border border-gray-border rounded-button text-body text-gray-text-primary hover:bg-gray-50 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 rounded-button text-body transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ 
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'transparent',
+            }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             Cancelar
           </button>

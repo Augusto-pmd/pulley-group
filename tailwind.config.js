@@ -8,23 +8,30 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Paleta de grises (principal) - Con alpha para suavidad
-        'gray-bg': '#F8F8F8',
-        'gray-text-primary': 'rgba(0, 0, 0, 0.85)', // Texto principal, no negro puro
-        'gray-text-secondary': 'rgba(0, 0, 0, 0.65)', // Texto secundario
-        'gray-text-tertiary': 'rgba(0, 0, 0, 0.45)', // Texto terciario
-        'gray-text-disabled': 'rgba(0, 0, 0, 0.25)', // Texto deshabilitado
-        'gray-border': 'rgba(0, 0, 0, 0.08)', // Bordes suaves
-        'gray-border-visible': 'rgba(0, 0, 0, 0.12)',
-        'gray-divider': 'rgba(0, 0, 0, 0.05)',
-        // Azul sistema macOS - Más suave
-        'blue-system': 'rgba(0, 122, 255, 0.9)',
-        'blue-hover': 'rgba(0, 81, 213, 0.9)',
-        'blue-bg-hover': 'rgba(230, 242, 255, 0.5)',
-        // Estados de sistema - Con alpha
-        'red-error': 'rgba(255, 59, 48, 0.8)',
-        'green-success': 'rgba(52, 199, 89, 0.8)',
-        'orange-warning': 'rgba(255, 149, 0, 0.8)',
+        // Paleta oficial - Sistema de gobierno patrimonial
+        'sand-primary': '#D6C3A3', // Arena cálido mate - fondo cards protagonistas
+        'graphite-bg': '#2E2E2C', // Grafito cálido profundo - fondo general
+        'petrol-header': '#1F2A33', // Azul petróleo muy oscuro - fondo técnico/headers
+        'gold-accent': '#B59A6A', // Dorado/latón apagado - acento único
+        'text-primary': '#F5F2EC', // Blanco cálido - texto principal claro
+        'text-secondary': '#8E8E8A', // Gris suave - texto secundario
+        // Compatibilidad con código existente
+        'gray-bg': '#2E2E2C',
+        'gray-text-primary': '#F5F2EC',
+        'gray-text-secondary': '#8E8E8A',
+        'gray-text-tertiary': '#8E8E8A',
+        'gray-text-disabled': '#8E8E8A',
+        'gray-border': 'rgba(142, 142, 138, 0.2)',
+        'gray-border-visible': 'rgba(142, 142, 138, 0.3)',
+        'gray-divider': 'rgba(142, 142, 138, 0.15)',
+        // Acento único - dorado
+        'blue-system': '#B59A6A',
+        'blue-hover': '#A0885A',
+        'blue-bg-hover': 'rgba(181, 154, 106, 0.1)',
+        // Estados de sistema - sutiles
+        'red-error': 'rgba(181, 154, 106, 0.6)',
+        'green-success': 'rgba(181, 154, 106, 0.6)',
+        'orange-warning': 'rgba(181, 154, 106, 0.6)',
       },
       fontFamily: {
         // Familia principal: Humanista-futura, Apple-compatible
@@ -194,14 +201,14 @@ module.exports = {
         '8': '64px',
       },
       boxShadow: {
-        // Ambient shadows - grandes, difusas, con color suave
-        'card': '0px 8px 48px rgba(0, 0, 0, 0.04), 0px 2px 12px rgba(0, 0, 0, 0.02), 0px 0px 0px 1px rgba(0, 0, 0, 0.02)',
-        'card-hover': '0px 12px 64px rgba(0, 0, 0, 0.06), 0px 4px 16px rgba(0, 0, 0, 0.03), 0px 0px 0px 1px rgba(0, 0, 0, 0.03)',
-        'floating': '0px 4px 24px rgba(0, 0, 0, 0.03), 0px 2px 8px rgba(0, 0, 0, 0.015)',
-        'ambient': '0px 0px 80px rgba(0, 0, 0, 0.03), 0px 0px 40px rgba(0, 0, 0, 0.015)',
-        'ambient-light': '0px 0px 100px rgba(255, 255, 255, 0.15), 0px 0px 50px rgba(255, 255, 255, 0.08)',
-        'blob-soft': '0px 0px 120px rgba(0, 0, 0, 0.02), 0px 0px 60px rgba(0, 0, 0, 0.01)',
-        'blob-soft-color': '0px 0px 150px rgba(100, 120, 150, 0.03), 0px 0px 80px rgba(100, 120, 150, 0.015)',
+        // Sombras sutiles - sin efectos fuertes
+        'card': '0px 2px 8px rgba(0, 0, 0, 0.15)',
+        'card-hover': '0px 4px 12px rgba(0, 0, 0, 0.2)',
+        'floating': '0px 2px 6px rgba(0, 0, 0, 0.12)',
+        'ambient': '0px 0px 20px rgba(0, 0, 0, 0.1)',
+        'ambient-light': '0px 0px 20px rgba(0, 0, 0, 0.1)',
+        'blob-soft': '0px 0px 20px rgba(0, 0, 0, 0.1)',
+        'blob-soft-color': '0px 0px 20px rgba(0, 0, 0, 0.1)',
       },
       backdropBlur: {
         'card': '40px',

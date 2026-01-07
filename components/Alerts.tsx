@@ -29,7 +29,7 @@ export default function Alerts({ alerts }: AlertsProps) {
           }`}
         >
           {/* Mensaje */}
-          <div className="flex-1 text-body-large text-black">
+          <div className="flex-1 text-body-large text-text-primary">
             {alert.message}
           </div>
 
@@ -37,7 +37,10 @@ export default function Alerts({ alerts }: AlertsProps) {
           {alert.action && (
             <a
               href={alert.action.href}
-              className="text-body-large text-blue-system hover:text-blue-hover transition-colors duration-fast ml-4"
+              className="text-body-large transition-colors duration-fast ml-4"
+              style={{ color: '#B59A6A' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#A0885A'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#B59A6A'}
             >
               {alert.action.label}
             </a>

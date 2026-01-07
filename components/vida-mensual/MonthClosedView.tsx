@@ -65,16 +65,19 @@ export default function MonthClosedView({
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-heading-2 text-gray-text-primary mb-2">
+              <h2 className="text-heading-2 text-text-primary mb-2">
                 {formatMonth(mes)} — Cerrado
               </h2>
-              <p className="text-body text-gray-text-tertiary">
+              <p className="text-body text-text-secondary">
                 Este mes está cerrado. Puedes agregar correcciones como eventos nuevos.
               </p>
             </div>
             <button
               onClick={onAddCorrection}
-              className="px-6 py-2 text-body text-blue-600 hover:text-blue-700 transition-colors duration-fast"
+              className="px-6 py-2 text-body transition-colors duration-fast"
+              style={{ color: '#B59A6A' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#A0885A'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#B59A6A'}
             >
               + Agregar corrección
             </button>
@@ -84,7 +87,7 @@ export default function MonthClosedView({
         {/* Resumen Principal */}
         <div className="grid grid-cols-3 gap-8 mb-8">
           <div className="flex flex-col">
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-4">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-4">
               RESULTADO DEL MES
             </div>
             <CurrencyDisplay value={resultadoMes} size="display" showSecondary={false} />
@@ -102,7 +105,7 @@ export default function MonthClosedView({
               EGRESOS
             </div>
             <CurrencyDisplay value={totalEgresos} size="medium" showSecondary={false} />
-            <div className="text-body-small text-gray-text-tertiary mt-2">
+            <div className="text-body-small text-text-secondary mt-2">
               vs Promedio: {variacion >= 0 ? '+' : ''}{formatPercentage(variacion)}
             </div>
           </div>
@@ -114,45 +117,45 @@ export default function MonthClosedView({
             <div className="text-number-large number-glass">
               {formatNumber(eventos.length)}
             </div>
-            <div className="text-body-small text-gray-text-tertiary mt-2">
+            <div className="text-body-small text-text-secondary mt-2">
               eventos registrados
             </div>
           </div>
         </div>
 
         {/* Desglose por Categoría */}
-        <div className="pt-6 border-t border-gray-divider">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-4">
+        <div className="pt-6 border-t" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4">
             ANÁLISIS POR CATEGORÍA
           </div>
           <div className="grid grid-cols-3 gap-6">
             <div>
-              <div className="text-body text-gray-text-tertiary mb-2">Fijos</div>
+              <div className="text-body text-text-secondary mb-2">Fijos</div>
               <CurrencyDisplay value={totalPorCategoria.fijo} size="medium" showSecondary={false} />
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 {formatPercentage(porcentajePorCategoria.fijo)} del total
               </div>
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 {formatNumber(eventosPorCategoria.fijo.length)} eventos
               </div>
             </div>
             <div>
-              <div className="text-body text-gray-text-tertiary mb-2">Variables</div>
+              <div className="text-body text-text-secondary mb-2">Variables</div>
               <CurrencyDisplay value={totalPorCategoria.variable} size="medium" showSecondary={false} />
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 {formatPercentage(porcentajePorCategoria.variable)} del total
               </div>
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 {formatNumber(eventosPorCategoria.variable.length)} eventos
               </div>
             </div>
             <div>
-              <div className="text-body text-gray-text-tertiary mb-2">Extraordinarios</div>
+              <div className="text-body text-text-secondary mb-2">Extraordinarios</div>
               <CurrencyDisplay value={totalPorCategoria.extraordinario} size="medium" showSecondary={false} />
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 {formatPercentage(porcentajePorCategoria.extraordinario)} del total
               </div>
-              <div className="text-body-small text-gray-text-tertiary mt-1">
+              <div className="text-body-small text-text-secondary mt-1">
                 {formatNumber(eventosPorCategoria.extraordinario.length)} eventos
               </div>
             </div>
@@ -163,8 +166,8 @@ export default function MonthClosedView({
       {/* Lista de Eventos (Solo Lectura) */}
       <Card padding="large">
         <div className="mb-6">
-          <h3 className="text-heading-3 text-gray-text-primary mb-2">Eventos del Mes</h3>
-          <p className="text-body text-gray-text-tertiary">
+          <h3 className="text-heading-3 text-text-primary mb-2">Eventos del Mes</h3>
+          <p className="text-body text-text-secondary">
             Lista completa de eventos registrados para este mes
           </p>
         </div>

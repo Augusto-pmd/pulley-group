@@ -77,7 +77,7 @@ export default function CurrencyDisplay({
             {formatCurrency(usdValue)}
           </div>
           <span className={`${usdIndicatorSizes[size]} font-normal tracking-tight`} style={{
-            color: 'rgba(59, 130, 59, 0.55)', // Verde petróleo suave, más discreto
+            color: '#8E8E8A', // Texto secundario - gris suave
             lineHeight: '1',
             paddingTop: '0.125rem', // Ajuste fino para alineación
           }}>
@@ -85,7 +85,7 @@ export default function CurrencyDisplay({
           </span>
         </div>
         {/* Referencia secundaria ARS con indicador explícito */}
-        <div className="text-body-small text-gray-text-tertiary mt-1.5 opacity-70 flex items-baseline gap-1">
+        <div className="text-body-small text-text-secondary mt-1.5 opacity-70 flex items-baseline gap-1">
           {formatCurrency(arsValue)}
           <span className="text-caption">ars</span>
         </div>
@@ -164,11 +164,11 @@ export function CurrencyDisplaySigned(props: CurrencyDisplayProps) {
             display: 'block',
             textAlign: 'left',
           }}>
-            <span className="text-gray-text-primary opacity-70">{sign}</span>
+            <span className="text-text-primary opacity-70">{sign}</span>
             {formatCurrency(usdValue)}
           </div>
           <span className={`${usdIndicatorSizes[size]} font-normal tracking-tight`} style={{
-            color: 'rgba(59, 130, 59, 0.55)', // Verde petróleo suave, más discreto
+            color: '#8E8E8A', // Texto secundario - gris suave
             lineHeight: '1',
             paddingTop: '0.125rem', // Ajuste fino para alineación
           }}>
@@ -176,7 +176,7 @@ export function CurrencyDisplaySigned(props: CurrencyDisplayProps) {
           </span>
         </div>
         {/* Referencia secundaria ARS con indicador explícito */}
-        <div className="text-body-small text-gray-text-tertiary mt-1.5 opacity-70 flex items-baseline gap-1">
+        <div className="text-body-small text-text-secondary mt-1.5 opacity-70 flex items-baseline gap-1">
           {formatCurrency(arsValue)}
           <span className="text-caption">ars</span>
         </div>

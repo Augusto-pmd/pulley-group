@@ -63,10 +63,8 @@ export default function MonthSelector({ selectedMonth, onMonthChange, availableM
     return state.estado;
   };
   
-  const getStatusColor = (state?: MonthState) => {
-    if (!state || state.estado === 'ABIERTO') return 'text-blue-system';
-    if (state.estado === 'EN_CIERRE') return 'text-orange-warning';
-    return 'text-gray-text-tertiary';
+  const getStatusColor = () => {
+    return 'text-text-primary';
   };
   
   // Navegación prev/next
@@ -94,22 +92,26 @@ export default function MonthSelector({ selectedMonth, onMonthChange, availableM
           <button
             onClick={handlePrev}
             disabled={!hasPrev}
-            className={`px-3 py-1.5 rounded-input text-body transition-colors duration-fast ${
-              hasPrev
-                ? 'text-gray-text-primary hover:bg-white/50'
-                : 'text-gray-text-disabled cursor-not-allowed'
-            }`}
+            className="px-3 py-1.5 rounded-input text-body transition-colors duration-fast"
+            style={{ 
+              color: hasPrev ? '#F5F2EC' : '#8E8E8A',
+              cursor: hasPrev ? 'pointer' : 'not-allowed',
+            }}
+            onMouseEnter={(e) => hasPrev && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+            onMouseLeave={(e) => hasPrev && (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             ←
           </button>
           <button
             onClick={handleNext}
             disabled={!hasNext}
-            className={`px-3 py-1.5 rounded-input text-body transition-colors duration-fast ${
-              hasNext
-                ? 'text-gray-text-primary hover:bg-white/50'
-                : 'text-gray-text-disabled cursor-not-allowed'
-            }`}
+            className="px-3 py-1.5 rounded-input text-body transition-colors duration-fast"
+            style={{ 
+              color: hasNext ? '#F5F2EC' : '#8E8E8A',
+              cursor: hasNext ? 'pointer' : 'not-allowed',
+            }}
+            onMouseEnter={(e) => hasNext && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+            onMouseLeave={(e) => hasNext && (e.currentTarget.style.backgroundColor = 'transparent')}
           >
             →
           </button>
@@ -117,13 +119,26 @@ export default function MonthSelector({ selectedMonth, onMonthChange, availableM
         
         {/* Selector de Mes */}
         <div className="flex items-center gap-3 flex-1">
-          <label className="text-body text-gray-text-tertiary whitespace-nowrap">
+          <label className="text-body text-text-secondary whitespace-nowrap">
             Mes:
           </label>
           <select
             value={selectedMonth}
             onChange={(e) => onMonthChange(e.target.value)}
-            className="px-4 py-2 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 transition-colors duration-fast min-w-[200px]"
+            className="px-4 py-2 rounded-input text-body transition-colors duration-fast min-w-[200px]"
+            style={{
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+              color: '#F5F2EC',
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#B59A6A';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+            }}
           >
             {allMonths.map((mes) => {
               const state = getMonthState(mes);
@@ -141,11 +156,11 @@ export default function MonthSelector({ selectedMonth, onMonthChange, availableM
         {/* Estado del Mes */}
         <div className="flex items-center gap-3">
           {isCurrentMonth && (
-            <span className="text-body-small text-gray-text-disabled uppercase tracking-wider">
+            <span className="text-body-small text-text-secondary uppercase tracking-wider">
               Mes actual
             </span>
           )}
-          <div className={`text-body-small font-medium uppercase tracking-wider ${getStatusColor(monthState)}`}>
+          <div className="text-body-small font-medium uppercase tracking-wider text-text-primary">
             {getStatusLabel(monthState)}
           </div>
         </div>

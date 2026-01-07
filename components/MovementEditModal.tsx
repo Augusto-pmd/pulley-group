@@ -160,7 +160,20 @@ export default function MovementEditModal({
                 onChange={handleMontoChange}
                 placeholder="0"
                 required
-                className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70 font-mono"
+                className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
+                style={{
+                  border: '1px solid rgba(142, 142, 138, 0.2)',
+                  color: '#F5F2EC',
+                  backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#B59A6A';
+                  e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                  e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }}
               />
             </div>
 
@@ -175,7 +188,20 @@ export default function MovementEditModal({
                 onChange={(e) => setFecha(e.target.value)}
                 max={new Date().toISOString().split('T')[0]}
                 required
-                className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+                className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+                style={{
+                  border: '1px solid rgba(142, 142, 138, 0.2)',
+                  color: '#F5F2EC',
+                  backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#B59A6A';
+                  e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                  e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }}
               />
             </div>
 
@@ -188,7 +214,20 @@ export default function MovementEditModal({
                 value={conceptId}
                 onChange={(e) => setConceptId(e.target.value)}
                 required
-                className="w-full px-4 py-2.5 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600 bg-white/70"
+                className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast"
+                style={{
+                  border: '1px solid rgba(142, 142, 138, 0.2)',
+                  color: '#F5F2EC',
+                  backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#B59A6A';
+                  e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+                  e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+                }}
               >
                 <option value="">Seleccionar concepto</option>
                 {availableConcepts.map((concept) => (
@@ -204,7 +243,10 @@ export default function MovementEditModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-6 py-2.5 bg-blue-600 text-white rounded-button text-body font-medium hover:bg-blue-700 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#A0885A')}
+                onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#B59A6A')}
               >
                 {loading ? 'Guardando...' : 'Guardar'}
               </button>
@@ -213,7 +255,14 @@ export default function MovementEditModal({
                   type="button"
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={loading}
-                  className="px-6 py-2.5 border border-red-300 text-red-600 rounded-button text-body font-medium hover:bg-red-50 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ 
+                    border: '1px solid rgba(142, 142, 138, 0.2)',
+                    color: '#F5F2EC',
+                    backgroundColor: 'transparent',
+                  }}
+                  onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+                  onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = 'transparent')}
                 >
                   Eliminar
                 </button>
@@ -222,7 +271,14 @@ export default function MovementEditModal({
                 type="button"
                 onClick={onClose}
                 disabled={loading}
-                className="px-6 py-2.5 border border-gray-border rounded-button text-body text-gray-text-primary hover:bg-gray-50 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-button text-body transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ 
+                  border: '1px solid rgba(142, 142, 138, 0.2)',
+                  color: '#F5F2EC',
+                  backgroundColor: 'transparent',
+                }}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+                onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 Cancelar
               </button>
@@ -230,11 +286,14 @@ export default function MovementEditModal({
           </form>
         ) : (
           <div className="space-y-6">
-            <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-body text-red-600 font-medium mb-2">
+            <div className="p-4 rounded-lg" style={{
+              backgroundColor: 'rgba(31, 42, 51, 0.1)',
+              border: '1px solid rgba(142, 142, 138, 0.2)',
+            }}>
+              <p className="text-body font-medium mb-2" style={{ color: '#F5F2EC' }}>
                 ¿Estás seguro de eliminar este movimiento?
               </p>
-              <p className="text-body-small text-red-600">
+              <p className="text-body-small text-text-secondary">
                 Esta acción no se puede deshacer. El movimiento se eliminará permanentemente.
               </p>
             </div>
@@ -242,14 +301,24 @@ export default function MovementEditModal({
               <button
                 onClick={handleDelete}
                 disabled={loading}
-                className="flex-1 px-6 py-2.5 bg-red-600 text-white rounded-button text-body font-medium hover:bg-red-700 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ backgroundColor: '#1F2A33', color: '#F5F2EC' }}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.8)')}
+                onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#1F2A33')}
               >
                 {loading ? 'Eliminando...' : 'Sí, eliminar'}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 disabled={loading}
-                className="px-6 py-2.5 border border-gray-border rounded-button text-body text-gray-text-primary hover:bg-gray-50 transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-button text-body transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ 
+                  border: '1px solid rgba(142, 142, 138, 0.2)',
+                  color: '#F5F2EC',
+                  backgroundColor: 'transparent',
+                }}
+                onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)')}
+                onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = 'transparent')}
               >
                 Cancelar
               </button>

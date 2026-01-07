@@ -79,10 +79,10 @@ export default function MonthClosingView({
           {/* Resumen del Mes a Cerrar */}
           <Card padding="large">
             <div className="mb-8">
-              <h2 className="text-heading-2 text-gray-text-primary mb-2">
+              <h2 className="text-heading-2 text-text-primary mb-2">
                 Resumen de {formatMonth(mes)}
               </h2>
-              <p className="text-body text-gray-text-tertiary">
+              <p className="text-body text-text-secondary">
                 Revisa el resumen antes de cerrar el mes
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function MonthClosingView({
             <div className="grid grid-cols-3 gap-8 mb-8">
               {/* Resultado del Mes */}
               <div className="flex flex-col">
-                <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-4">
+                <div className="text-caption text-text-secondary uppercase tracking-wider mb-4">
                   RESULTADO DEL MES
                 </div>
                 <CurrencyDisplay value={resultadoMes} size="display" showSecondary={false} />
@@ -110,36 +110,36 @@ export default function MonthClosingView({
                   EGRESOS
                 </div>
                 <CurrencyDisplay value={totalEgresos} size="medium" showSecondary={false} />
-                <div className="text-body-small text-gray-text-tertiary mt-2">
+                <div className="text-body-small text-text-secondary mt-2">
                   vs Promedio: {variacion >= 0 ? '+' : ''}{formatPercentage(variacion)}
                 </div>
               </div>
             </div>
 
             {/* Desglose por Categoría */}
-            <div className="pt-6 border-t border-gray-divider">
-              <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-4">
+            <div className="pt-6 border-t" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
+              <div className="text-caption text-text-secondary uppercase tracking-wider mb-4">
                 DESGLOSE POR CATEGORÍA
               </div>
               <div className="grid grid-cols-3 gap-6">
                 <div>
-                  <div className="text-body text-gray-text-tertiary mb-2">Fijos</div>
+                  <div className="text-body text-text-secondary mb-2">Fijos</div>
                   <CurrencyDisplay value={totalPorCategoria.fijo} size="medium" showSecondary={false} />
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     {formatPercentage(porcentajePorCategoria.fijo)} del total
                   </div>
                 </div>
                 <div>
-                  <div className="text-body text-gray-text-tertiary mb-2">Variables</div>
+                  <div className="text-body text-text-secondary mb-2">Variables</div>
                   <CurrencyDisplay value={totalPorCategoria.variable} size="medium" showSecondary={false} />
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     {formatPercentage(porcentajePorCategoria.variable)} del total
                   </div>
                 </div>
                 <div>
-                  <div className="text-body text-gray-text-tertiary mb-2">Extraordinarios</div>
+                  <div className="text-body text-text-secondary mb-2">Extraordinarios</div>
                   <CurrencyDisplay value={totalPorCategoria.extraordinario} size="medium" showSecondary={false} />
-                  <div className="text-body-small text-gray-text-tertiary mt-1">
+                  <div className="text-body-small text-text-secondary mt-1">
                     {formatPercentage(porcentajePorCategoria.extraordinario)} del total
                   </div>
                 </div>
@@ -148,12 +148,15 @@ export default function MonthClosingView({
 
             {/* Estado de Pagos */}
             {hasPendientes && (
-              <div className="mt-6 pt-6 border-t border-gray-divider">
-                <div className="p-4 bg-orange-50/30 rounded-lg border border-orange-200/20">
-                  <div className="text-body-large text-orange-warning font-medium mb-1">
+              <div className="mt-6 pt-6 border-t" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
+                <div className="p-4 rounded-lg" style={{
+                  backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                  border: '1px solid rgba(142, 142, 138, 0.2)',
+                }}>
+                  <div className="text-body-large font-medium mb-1" style={{ color: '#F5F2EC' }}>
                     Atención: Hay eventos pendientes
                   </div>
-                      <div className="text-body text-gray-text-tertiary">
+                      <div className="text-body text-text-secondary">
                         {eventosPendientes.length} eventos por un total de {formatCurrency(totalPendiente)} aún no están marcados como pagados.
                       </div>
                 </div>
@@ -162,16 +165,22 @@ export default function MonthClosingView({
 
             {/* Alertas de Variación */}
             {isAboveAverage && (
-              <div className="mt-4 p-4 bg-blue-50/30 rounded-lg border border-blue-200/20">
-                <div className="text-body text-gray-text-tertiary">
+              <div className="mt-4 p-4 rounded-lg" style={{
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+              }}>
+                <div className="text-body text-text-secondary">
                   Este mes está {formatPercentage(variacion)} por encima del promedio mensual.
                 </div>
               </div>
             )}
 
             {isBelowAverage && (
-              <div className="mt-4 p-4 bg-green-50/30 rounded-lg border border-green-200/20">
-                <div className="text-body text-gray-text-tertiary">
+              <div className="mt-4 p-4 rounded-lg" style={{
+                backgroundColor: 'rgba(31, 42, 51, 0.1)',
+                border: '1px solid rgba(142, 142, 138, 0.2)',
+              }}>
+                <div className="text-body text-text-secondary">
                   Este mes está {formatPercentage(Math.abs(variacion))} por debajo del promedio mensual.
                 </div>
               </div>
@@ -183,22 +192,28 @@ export default function MonthClosingView({
         <FadeIn delay={150} duration={400}>
           <Card padding="large">
             <div className="text-center">
-              <h3 className="text-heading-2 text-gray-text-primary mb-4">
+              <h3 className="text-heading-2 text-text-primary mb-4">
                 ¿Cerrar este mes?
               </h3>
-              <p className="text-body text-gray-text-tertiary mb-8">
+              <p className="text-body text-text-secondary mb-8">
                 Una vez cerrado, el mes quedará congelado. Solo podrás hacer correcciones como eventos nuevos.
               </p>
               <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={onCancel}
-                  className="px-8 py-3 text-body-large text-gray-text-tertiary hover:text-gray-text-primary transition-colors duration-fast"
+                  className="px-8 py-3 text-body-large transition-colors duration-fast"
+                  style={{ color: '#8E8E8A' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#F5F2EC'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#8E8E8A'}
                 >
                   Cancelar
                 </button>
                 <button
                   onClick={onConfirmClose}
-                  className="px-8 py-3 bg-green-success text-white text-body-large font-medium rounded-button hover:opacity-90 transition-opacity duration-fast"
+                  className="px-8 py-3 text-body-large font-medium rounded-button transition-colors duration-fast"
+                  style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
                 >
                   Sí, cerrar este mes
                 </button>
