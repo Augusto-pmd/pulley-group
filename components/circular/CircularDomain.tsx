@@ -231,7 +231,7 @@ export default function CircularDomain({
               </button>
 
               {/* Contenido */}
-              <div className="relative z-10">
+              <div className="relative z-10" style={{ pointerEvents: 'auto' }}>
                 {children}
               </div>
             </div>

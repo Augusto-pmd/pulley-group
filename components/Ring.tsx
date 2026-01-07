@@ -86,9 +86,13 @@ export default function Ring() {
 
   // Manejar activación de dominios
   const handleRingClick = () => {
-    setShowDomains(!showDomains);
-    if (showDomains) {
+    if (activeDomain) {
+      // Si hay contenido activo, cerrarlo primero
       setActiveDomain(null);
+      setShowDomains(false);
+    } else {
+      // Si no hay contenido, toggle de dominios
+      setShowDomains(!showDomains);
     }
   };
 
@@ -144,18 +148,18 @@ export default function Ring() {
   }, [showDomains, activeDomain]);
 
   // Determinar si el Ring debe interceptar eventos
-  // Solo en modo estado o cuando los dominios están activos
-  const shouldInterceptEvents = mode === 'estado' || showDomains || activeDomain !== null;
+  // Siempre clickeable cuando está visible, especialmente en modo estado
+  const shouldInterceptEvents = true; // El Ring siempre debe ser interactivo
 
   return (
     <div
       ref={ringRef}
       className={`${getRingPosition()} z-[100]`}
       style={{
-        pointerEvents: shouldInterceptEvents ? 'auto' : 'none',
+        pointerEvents: 'auto',
       }}
-      onMouseEnter={shouldInterceptEvents ? handleRingMouseEnter : undefined}
-      onMouseLeave={shouldInterceptEvents ? handleRingMouseLeave : undefined}
+      onMouseEnter={handleRingMouseEnter}
+      onMouseLeave={handleRingMouseLeave}
     >
       {/* Halo exterior - luz cálida filtrada - DECORATIVO, no intercepta */}
       <div
@@ -171,9 +175,10 @@ export default function Ring() {
       {/* Anillo principal - translúcido, iluminado desde dentro */}
       <div
         className={`${getRingSize()} rounded-full flex items-center justify-center transition-all duration-1000 group relative`}
+        onClick={handleRingClick}
         style={{
-          cursor: shouldInterceptEvents ? 'pointer' : 'default',
-          pointerEvents: shouldInterceptEvents ? 'auto' : 'none',
+          cursor: 'pointer',
+          pointerEvents: 'auto',
           // Borde con reflejo de oro
           border: `2px solid rgba(181, 154, 106, ${mode === 'fondo' && emmaCapital && emmaCapital > 0 ? '0.5' : '0.3'})`,
           // Fondo translúcido con luz interna
