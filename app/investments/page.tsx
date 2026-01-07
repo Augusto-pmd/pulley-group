@@ -385,7 +385,141 @@ export default function InvestmentsPage() {
     }
   }, [activeDomain, inversiones, investmentsForCard, loading, error, showAddForm, showEventForm, selectedInvestmentId, totalCapital, setDomainContent]);
 
-  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
-  return null;
+  // Renderizar contenido directamente - el Ring es decorativo pero el contenido debe ser visible
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-body text-text-secondary">Cargando inversiones...</div>
+        </div>
+      );
+    }
+    if (error) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-body text-red-400">Error: {error}</div>
+        </div>
+      );
+    }
+    if (showAddForm) {
+      return (
+        <div className="p-8">
+          <AddInvestmentForm
+            onClose={handleCloseAddForm}
+            onSave={handleSaveInvestment}
+          />
+        </div>
+      );
+    }
+    if (showEventForm) {
+      return (
+        <div className="p-8">
+          <InvestmentEventForm
+            investmentId={selectedInvestmentId}
+            onClose={handleCloseEventForm}
+            onSave={handleSaveEvent}
+          />
+        </div>
+      );
+    }
+    return (
+      <div className="p-8">
+        <div className="relative min-h-[60vh] flex flex-col items-center">
+          {totalCapital > 0 && (
+            <RadialCard className="mb-12" padding="large">
+              <div className="flex flex-col items-center justify-center">
+                <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
+                  CAPITAL TOTAL INVERSIONES
+                </div>
+                <CurrencyDisplay 
+                  value={totalCapital} 
+                  size="display" 
+                  showSecondary={false}
+                />
+                <div className="text-body text-text-secondary text-center mt-4" style={{ opacity: 0.5 }}>
+                  {investmentsForCard.filter(inv => inv.capital > 0).length} {investmentsForCard.filter(inv => inv.capital > 0).length === 1 ? 'inversión' : 'inversiones'}
+                </div>
+              </div>
+            </RadialCard>
+          )}
+          {inversiones.length === 0 ? (
+            <RadialCard className="mt-8">
+              <div className="text-center py-8">
+                <div className="text-body text-text-secondary mb-2" style={{ opacity: 0.6 }}>
+                  No hay inversiones creadas
+                </div>
+                <button
+                  onClick={handleCreateInvestment}
+                  className="mt-4 px-6 py-3 rounded-full text-body font-medium transition-all duration-300"
+                  style={{
+                    backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                    backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                    border: '1px solid rgba(181, 154, 106, 0.4)',
+                    color: '#F5F2EC',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
+                  Crear primera inversión
+                </button>
+              </div>
+            </RadialCard>
+          ) : (
+            <div className="w-full max-w-3xl space-y-4">
+              {inversiones.length > 0 && (
+                <div className="mb-6" style={{ opacity: 0.6 }}>
+                  <InvestmentFilters />
+                </div>
+              )}
+              <div className="space-y-3">
+                {investmentsForCard
+                  .filter((investment) => investment.capital > 0)
+                  .map((investment) => (
+                    <InvestmentCard 
+                      key={investment.id} 
+                      investment={investment}
+                      onDelete={handleDeleteInvestment}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="fixed bottom-8 right-8 z-[200] flex flex-col gap-3">
+          {inversiones.length > 0 && (
+            <button
+              onClick={handleRegisterEvent}
+              className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+              style={{
+                backgroundColor: 'rgba(181, 154, 106, 0.25)',
+                backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
+                border: '2px solid rgba(181, 154, 106, 0.4)',
+                color: '#F5F2EC',
+                backdropFilter: 'blur(12px)',
+              }}
+              title="Registrar evento"
+            >
+              <span className="text-xl">📊</span>
+            </button>
+          )}
+          <button
+            onClick={handleCreateInvestment}
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{
+              backgroundColor: 'rgba(181, 154, 106, 0.25)',
+              backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
+              border: '2px solid rgba(181, 154, 106, 0.4)',
+              color: '#F5F2EC',
+              backdropFilter: 'blur(12px)',
+            }}
+            title="Crear inversión"
+          >
+            <span className="text-2xl">+</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  return <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>{renderContent()}</div>;
 }
 

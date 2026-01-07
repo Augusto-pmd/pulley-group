@@ -4,6 +4,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
 import { getAssets, getInvestments, type ApiAsset, type ApiInvestment } from '@/lib/api';
+import CurrencyDisplay from '@/components/CurrencyDisplay';
 
 export default function Dashboard() {
   useModeFromPath();
@@ -115,12 +116,22 @@ export default function Dashboard() {
     });
   }, [totalPatrimony, setRingData]);
 
-  // El dashboard NO renderiza componentes adicionales
-  // Solo actualiza los datos del Ring
-
-  // MODO ESTADO: Solo el anillo, nada más visible
-  // El dashboard ES el anillo
-  // No renderizar nada - el anillo es el único protagonista
-  return null;
+  // Renderizar dashboard - el Ring es decorativo pero el contenido debe ser visible
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        {loading ? (
+          <div className="text-body text-text-secondary">Cargando...</div>
+        ) : (
+          <div className="space-y-4">
+            <div className="text-caption text-text-secondary uppercase tracking-wider" style={{ opacity: 0.6 }}>
+              PATRIMONIO TOTAL
+            </div>
+            <CurrencyDisplay value={totalPatrimony} size="display" showSecondary={true} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 

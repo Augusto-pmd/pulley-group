@@ -151,12 +151,17 @@ export default function Ring() {
   // Siempre clickeable cuando está visible, especialmente en modo estado
   const shouldInterceptEvents = true; // El Ring siempre debe ser interactivo
 
+  // Ajustar z-index: solo alto cuando está en modo estado o mostrando dominios
+  // En otros modos, debe estar por debajo del contenido
+  const ringZIndex = mode === 'estado' || showDomains || activeDomain !== null ? 100 : 10;
+
   return (
     <div
       ref={ringRef}
-      className={`${getRingPosition()} z-[100]`}
+      className={`${getRingPosition()}`}
       style={{
         pointerEvents: 'auto',
+        zIndex: ringZIndex,
       }}
       onMouseEnter={handleRingMouseEnter}
       onMouseLeave={handleRingMouseLeave}

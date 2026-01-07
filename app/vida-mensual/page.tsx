@@ -494,6 +494,80 @@ export default function VidaMensualPage() {
     }
   }, [activeDomain, selectedMonth, eventos, monthState, isClosing, resultadoMes, promedioMensual, apiConcepts, mesesAtrasados, setDomainContent]);
 
-  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
-  return null;
+  // Renderizar contenido directamente - el Ring es decorativo pero el contenido debe ser visible
+  return (
+    <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>
+      <div className="p-8">
+        <div className="mb-8 flex justify-center">
+          <MonthSelector
+            selectedMonth={selectedMonth}
+            onMonthChange={setSelectedMonth}
+            availableMonths={availableMonths}
+          />
+        </div>
+        {mesesAtrasados.length > 0 && !mesesAtrasados.some(m => m.mes === selectedMonth) && (
+          <div className="mb-8 flex justify-center">
+            <UnclosedMonthsAlert 
+              mesesAtrasados={mesesAtrasados}
+              onSelectMonth={(mes) => setSelectedMonth(mes)}
+            />
+          </div>
+        )}
+        <div className="relative min-h-[60vh] flex flex-col items-center">
+          <RadialCard className="mb-12" padding="large">
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
+                RESULTADO DEL MES
+              </div>
+              <CurrencyDisplay 
+                value={resultadoMes} 
+                size="display" 
+                showSecondary={false}
+                originalCurrency="USD"
+              />
+              <div className="text-body text-text-secondary text-center mt-4" style={{ opacity: 0.5 }}>
+                {selectedMonth}
+              </div>
+            </div>
+          </RadialCard>
+          <div className="w-full max-w-4xl">
+            {monthState === 'ABIERTO' && !isClosing && (
+              <MonthOpenView
+                mes={selectedMonth}
+                eventos={eventos}
+                onToggleEstado={handleToggleEstado}
+                onEditMonto={handleEditMonto}
+                onUpdateEvent={handleUpdateEvent}
+                onDeleteEvent={handleDeleteEvent}
+                onAddEvent={handleAddEvent}
+                promedioMensual={promedioMensual}
+                concepts={apiConcepts.map(c => ({
+                  id: c.id,
+                  nombre: c.name,
+                  categoria: c.nature as 'fijo' | 'variable' | 'extraordinario',
+                }))}
+              />
+            )}
+            {isClosing && monthState === 'EN_CIERRE' && (
+              <MonthClosingView
+                mes={selectedMonth}
+                eventos={eventosMes}
+                promedioMensual={promedioMensual}
+                onConfirmClose={handleConfirmClose}
+                onCancel={handleCancelClosing}
+              />
+            )}
+            {monthState === 'CERRADO' && (
+              <MonthClosedView
+                mes={selectedMonth}
+                eventos={eventosMes}
+                promedioMensual={promedioMensual}
+                onAddCorrection={handleAddCorrection}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

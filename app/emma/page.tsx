@@ -149,6 +149,96 @@ export default function EmmaPage() {
     }
   }, [activeDomain, loading, hasMovements, showInitForm, showContributionForm, setDomainContent]);
 
-  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
-  return null;
+  // Renderizar contenido directamente - el Ring es decorativo pero el contenido debe ser visible
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-body text-text-secondary">Cargando...</div>
+        </div>
+      );
+    }
+    if (!hasMovements && !showInitForm) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <RadialCard className="p-12">
+            <div className="text-center">
+              <div className="text-body-large text-text-primary mb-4">
+                Fondo Emma no iniciado
+              </div>
+              <button
+                onClick={() => setShowInitForm(true)}
+                className="px-8 py-3 rounded-full text-body-large font-medium transition-all duration-300"
+                style={{
+                  backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                  backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                  border: '1px solid rgba(181, 154, 106, 0.4)',
+                  color: '#F5F2EC',
+                  backdropFilter: 'blur(8px)',
+                }}
+              >
+                Iniciar fondo
+              </button>
+            </div>
+          </RadialCard>
+        </div>
+      );
+    }
+    if (showInitForm) {
+      return (
+        <div className="p-8">
+          <EmmaInitForm
+            onComplete={() => {
+              setShowInitForm(false);
+              window.location.reload();
+            }}
+            onCancel={() => setShowInitForm(false)}
+          />
+        </div>
+      );
+    }
+    if (showContributionForm) {
+      return (
+        <div className="p-8">
+          <EmmaContributionForm
+            onComplete={() => {
+              setShowContributionForm(false);
+              window.location.reload();
+            }}
+            onCancel={() => setShowContributionForm(false)}
+          />
+        </div>
+      );
+    }
+    return (
+      <div className="p-8">
+        <div className="relative min-h-[60vh] flex flex-col items-center justify-center">
+          <div className="mb-16">
+            <EmmaCurrentState />
+          </div>
+          <div className="w-full max-w-2xl">
+            <EmmaMovementsList />
+          </div>
+        </div>
+        <div className="fixed bottom-8 right-8 z-[200]">
+          <button
+            onClick={() => setShowContributionForm(true)}
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{
+              backgroundColor: 'rgba(181, 154, 106, 0.25)',
+              backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
+              border: '2px solid rgba(181, 154, 106, 0.4)',
+              color: '#F5F2EC',
+              backdropFilter: 'blur(12px)',
+            }}
+            title="Agregar aporte"
+          >
+            <span className="text-2xl">+</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  return <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>{renderContent()}</div>;
 }

@@ -360,7 +360,163 @@ export default function ActivosPage() {
     }
   }, [activeDomain, activos, loading, error, showAddForm, selectedAsset, patrimonioNeto, totalActivos, totalPasivos, setDomainContent]);
 
-  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
-  return null;
+  // Renderizar contenido directamente - el Ring es decorativo pero el contenido debe ser visible
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-body text-text-secondary">Cargando activos...</div>
+        </div>
+      );
+    }
+    if (error) {
+      return (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-body text-red-400">Error: {error}</div>
+        </div>
+      );
+    }
+    if (showAddForm) {
+      return (
+        <div className="p-8">
+          <AddAssetForm
+            onSave={handleAddAsset}
+            onClose={() => setShowAddForm(false)}
+          />
+        </div>
+      );
+    }
+    return (
+      <div className="p-8">
+        <div className="relative min-h-[60vh] flex flex-col items-center">
+          <RadialCard className="mb-12" padding="large">
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
+                PATRIMONIO NETO ACTIVOS
+              </div>
+              <CurrencyDisplay 
+                value={patrimonioNeto} 
+                size="display" 
+                showSecondary={true}
+                originalCurrency="USD"
+              />
+              <div className="text-body text-text-secondary text-center mt-4" style={{ opacity: 0.5 }}>
+                {activos.length} {activos.length === 1 ? 'activo' : 'activos'}
+              </div>
+              {totalPasivos > 0 && (
+                <div className="flex items-center justify-center gap-16 mt-8" style={{ opacity: 0.6 }}>
+                  <div className="flex flex-col items-center">
+                    <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
+                      VALOR BRUTO
+                    </div>
+                    <CurrencyDisplay 
+                      value={totalActivos} 
+                      size="regular" 
+                      showSecondary={false}
+                      originalCurrency="USD"
+                    />
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
+                      SALDO PENDIENTE
+                    </div>
+                    <CurrencyDisplay 
+                      value={totalPasivos} 
+                      size="regular" 
+                      showSecondary={false}
+                      originalCurrency="USD"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </RadialCard>
+          {activos.length === 0 ? (
+            <RadialCard className="mt-8">
+              <div className="text-center py-8">
+                <div className="text-body text-text-secondary mb-2" style={{ opacity: 0.6 }}>
+                  No hay activos registrados
+                </div>
+                <button
+                  onClick={() => {
+                    setShowAddForm(true);
+                    setSelectedAsset(null);
+                  }}
+                  className="mt-4 px-6 py-3 rounded-full text-body font-medium transition-all duration-300"
+                  style={{
+                    backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                    backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                    border: '1px solid rgba(181, 154, 106, 0.4)',
+                    color: '#F5F2EC',
+                    backdropFilter: 'blur(8px)',
+                  }}
+                >
+                  Agregar primer activo
+                </button>
+              </div>
+            </RadialCard>
+          ) : (
+            <RadialList
+              items={activos.map((activo, index) => {
+                const angle = (index * 360) / activos.length;
+                const radius = 200 + (index % 3) * 50;
+                return {
+                  id: activo.id,
+                  angle,
+                  radius,
+                  size: 140,
+                  isActive: selectedAsset?.id === activo.id,
+                  onClick: () => handleSelectAsset(activo),
+                  label: activo.nombre,
+                  content: (
+                    <div className="text-center">
+                      <CurrencyDisplay 
+                        value={getPatrimonioNetoActivo(activo)} 
+                        size="regular" 
+                        showSecondary={false}
+                        originalCurrency="USD"
+                      />
+                    </div>
+                  ),
+                };
+              })}
+              centerRadius={180}
+            />
+          )}
+        </div>
+        <div className="fixed bottom-8 right-8 z-[200]">
+          <button
+            onClick={() => {
+              setShowAddForm(true);
+              setSelectedAsset(null);
+            }}
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+            style={{
+              backgroundColor: 'rgba(181, 154, 106, 0.25)',
+              backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
+              border: '2px solid rgba(181, 154, 106, 0.4)',
+              color: '#F5F2EC',
+              backdropFilter: 'blur(12px)',
+              boxShadow: `
+                inset 0 0 20px rgba(181, 154, 106, 0.2),
+                0 0 30px rgba(181, 154, 106, 0.25),
+                0 4px 12px rgba(0, 0, 0, 0.3)
+              `,
+            }}
+          >
+            <span className="text-2xl">+</span>
+          </button>
+        </div>
+        <AssetEditPanel
+          activo={selectedAsset}
+          onClose={handleClosePanel}
+          onUpdateAsset={handleUpdateAsset}
+          onDeleteAsset={handleDeleteAsset}
+        />
+      </div>
+    );
+  };
+
+  return <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>{renderContent()}</div>;
 }
 

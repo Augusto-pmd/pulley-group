@@ -32,8 +32,8 @@ export default function RootLayout({
               <CommandPalette />
               <CommandPaletteHint />
               <Ring />
-              {/* El main solo existe para Next.js routing, pero no renderiza contenido visible */}
-              <main className="relative z-10 min-h-screen" style={{ pointerEvents: 'none' }}>
+              {/* Contenido principal - debe renderizar siempre */}
+              <main className="relative z-10 min-h-screen">
                 {children}
               </main>
             </div>
