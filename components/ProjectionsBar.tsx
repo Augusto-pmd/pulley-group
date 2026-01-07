@@ -42,7 +42,7 @@ export default function ProjectionsBar() {
 
   return (
     <>
-      <div className="fixed top-16 left-0 right-0 h-14 z-[99]">
+      <div className="fixed top-0 left-0 right-0 h-14 z-[99]">
         <div 
           className="h-full flex items-center px-8 max-w-[1920px] mx-4 mt-2 rounded-capsule"
           style={{
@@ -143,7 +143,7 @@ export default function ProjectionsBar() {
       {/* Panel de Detalles (hover/click) */}
       {showDetails && (
         <div 
-          className="fixed top-[72px] left-0 right-0 z-[98] px-4"
+          className="fixed top-[56px] left-0 right-0 z-[98] px-4"
           onMouseEnter={() => setShowDetails(true)}
           onMouseLeave={() => setShowDetails(false)}
         >

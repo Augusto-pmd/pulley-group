@@ -218,29 +218,42 @@ export default function Dashboard() {
   try {
     return (
       <>
-        {/* CAPA 1: ACCIÓN - Pendientes y acciones principales */}
-        <div className="mb-10">
-          <DashboardActions />
-        </div>
-
-        {/* CAPA 2: CONTEXTO - Estado patrimonial y distribución */}
-        <div className="mb-10">
+        {/* PLACA CENTRAL DOMINANTE - Estado patrimonial único */}
+        <div className="mb-16">
           <PatrimonialState data={patrimonialStateData} />
         </div>
 
-        {/* Distribución y Emma - Grid 2 columnas */}
-        <div className="grid grid-cols-2 gap-5 mb-10">
-          <Distribution 
-            data={distributionData} 
-            total={totalPatrimony || 0} 
-            activosNetos={patrimonioNetoActivos || 0} 
-          />
-          <EmmaFund data={emmaFundData} />
-        </div>
+        {/* ELEMENTOS SECUNDARIOS - Solo 2-3 visibles, mucho aire */}
+        <div className="space-y-12">
+          {/* Distribución - Secundario discreto */}
+          {totalPatrimony > 0 && (
+            <div>
+              <Distribution 
+                data={distributionData} 
+                total={totalPatrimony || 0} 
+                activosNetos={patrimonioNetoActivos || 0} 
+              />
+            </div>
+          )}
 
-        {/* CAPA 3: DETALLE / HISTORIAL - Ranking y alertas */}
-        <div className="mb-10">
-          <InvestmentsRanking investments={investmentsForRanking} />
+          {/* Emma - Secundario discreto */}
+          {emmaFundData.currentCapital > 0 && (
+            <div>
+              <EmmaFund data={emmaFundData} />
+            </div>
+          )}
+
+          {/* Ranking - Secundario discreto */}
+          {investmentsForRanking.length > 0 && (
+            <div>
+              <InvestmentsRanking investments={investmentsForRanking} />
+            </div>
+          )}
+
+          {/* Acciones - Secundario discreto */}
+          <div>
+            <DashboardActions />
+          </div>
         </div>
       </>
     );

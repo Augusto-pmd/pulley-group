@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-01-02T22:29:14.621Z",
+  "timestamp": "2026-01-07T00:30:16.105Z",
   "baseUrl": "https://pulley-group.vercel.app",
   "tests": [
     {
       "name": "GET /api/concepts",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:15.646Z",
+      "timestamp": "2026-01-07T00:30:17.762Z",
       "endpoint": "/api/concepts",
       "method": "GET",
       "statusCode": 200,
@@ -15,7 +15,7 @@
     {
       "name": "GET /api/months",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:16.162Z",
+      "timestamp": "2026-01-07T00:30:17.973Z",
       "endpoint": "/api/months",
       "method": "GET",
       "statusCode": 200,
@@ -24,18 +24,18 @@
     {
       "name": "GET /api/months/2026/01",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:16.605Z",
+      "timestamp": "2026-01-07T00:30:18.262Z",
       "endpoint": "/api/months/2026/01",
       "method": "GET",
       "statusCode": 200,
       "year": 2026,
       "month": "01",
-      "responseSize": 3210
+      "responseSize": 3450
     },
     {
       "name": "POST /api/movements",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:17.885Z",
+      "timestamp": "2026-01-07T00:30:19.127Z",
       "endpoint": "/api/movements",
       "method": "POST",
       "statusCode": 201,
@@ -44,7 +44,7 @@
         "amountUSD": 1000,
         "currencyOriginal": "USD",
         "conceptId": "cmjx6qhdi00027sfgjd2fjqhp",
-        "date": "2026-01-02",
+        "date": "2026-01-07",
         "monthId": "cmjx6e5lc001nq8f20y2ffj5n"
       },
       "responseSize": 239
@@ -52,17 +52,17 @@
     {
       "name": "GET /api/movements",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:18.187Z",
+      "timestamp": "2026-01-07T00:30:19.466Z",
       "endpoint": "/api/movements",
       "method": "GET",
       "statusCode": 200,
-      "responseSize": 6842,
+      "responseSize": 7331,
       "isArray": true
     },
     {
       "name": "POST /api/investments",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:18.523Z",
+      "timestamp": "2026-01-07T00:30:19.661Z",
       "endpoint": "/api/investments",
       "method": "POST",
       "statusCode": 201,
@@ -70,24 +70,24 @@
         "name": "QA Test Investment",
         "type": "financiera",
         "targetAmountUSD": 10000,
-        "startDate": "2026-01-02"
+        "startDate": "2026-01-07"
       },
       "responseSize": 145
     },
     {
       "name": "GET /api/investments",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:18.734Z",
+      "timestamp": "2026-01-07T00:30:19.940Z",
       "endpoint": "/api/investments",
       "method": "GET",
       "statusCode": 200,
-      "responseSize": 3005,
+      "responseSize": 2998,
       "isArray": true
     },
     {
       "name": "POST /api/assets",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:19.076Z",
+      "timestamp": "2026-01-07T00:30:20.141Z",
       "endpoint": "/api/assets",
       "method": "POST",
       "statusCode": 201,
@@ -101,11 +101,11 @@
     {
       "name": "GET /api/assets",
       "status": "PASS",
-      "timestamp": "2026-01-02T22:29:19.307Z",
+      "timestamp": "2026-01-07T00:30:20.372Z",
       "endpoint": "/api/assets",
       "method": "GET",
       "statusCode": 200,
-      "responseSize": 4110,
+      "responseSize": 4510,
       "isArray": true
     }
   ],

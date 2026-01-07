@@ -55,40 +55,34 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
   return (
     <SlideTransition isVisible={true} direction="up" duration={300}>
       <Card padding="large">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div>
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-1">
+        <div className="flex flex-col items-center text-center py-8">
+          {/* Mes - Protagonista absoluto */}
+          <div className="mb-8">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
               {isCurrentMonth ? 'MES ACTUAL' : 'MES SELECCIONADO'}
             </div>
             <div className="text-display-3 text-text-primary">
               {formatMonth(mes)}
             </div>
           </div>
-          
-          <div className="h-10 w-px" style={{ backgroundColor: 'rgba(142, 142, 138, 0.2)' }} />
-          
-          <div>
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-1">
-              ESTADO
-            </div>
-            <div className={`text-heading-2 font-semibold ${getStatusColor()}`}>
+
+          {/* Estado - Secundario discreto */}
+          <div className="mb-8">
+            <div className={`text-heading-3 font-medium ${getStatusColor()}`}>
               {getStatusLabel()}
             </div>
             {fechaApertura && estado === 'ABIERTO' && (
-              <div className="text-body-small text-text-secondary mt-1">
-                Abierto automáticamente el {formatDate(fechaApertura)}
+              <div className="text-body-small text-text-secondary mt-2 opacity-60">
+                Abierto el {formatDate(fechaApertura)}
               </div>
             )}
           </div>
-        </div>
 
-        {/* CTA según estado */}
-        <div>
+          {/* CTA según estado - Discreto */}
           {estado === 'ABIERTO' && onStartClosing && (
             <button
               onClick={onStartClosing}
-              className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
+              className="px-6 py-2.5 text-body font-medium rounded-button transition-colors duration-fast"
               style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
@@ -99,7 +93,7 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
           {estado === 'EN_CIERRE' && onCloseMonth && (
             <button
               onClick={onCloseMonth}
-              className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
+              className="px-6 py-2.5 text-body font-medium rounded-button transition-colors duration-fast"
               style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
@@ -107,13 +101,7 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
               Confirmar cierre
             </button>
           )}
-          {estado === 'CERRADO' && (
-            <div className="text-body text-text-secondary">
-              Este mes está cerrado
-            </div>
-          )}
         </div>
-      </div>
       </Card>
     </SlideTransition>
   );

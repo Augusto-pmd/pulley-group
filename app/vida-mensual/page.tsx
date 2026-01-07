@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import DiscreteNav from '@/components/DiscreteNav';
 import MonthSelector from '@/components/vida-mensual/MonthSelector';
 import MonthStatus from '@/components/vida-mensual/MonthStatus';
 import MonthOpenView from '@/components/vida-mensual/MonthOpenView';
@@ -371,27 +372,11 @@ export default function VidaMensualPage() {
 
   return (
     <>
-      {/* CAPA 1: NAVEGACIÓN - Selector de mes siempre visible */}
-      <div className="mb-6">
-        <MonthSelector
-          selectedMonth={selectedMonth}
-          onMonthChange={setSelectedMonth}
-          availableMonths={availableMonths}
-        />
-      </div>
+      {/* Navegación discreta */}
+      <DiscreteNav />
 
-      {/* Alerta de meses atrasados (solo si no estamos viendo uno de ellos) */}
-      {mesesAtrasados.length > 0 && !mesesAtrasados.some(m => m.mes === selectedMonth) && (
-        <div className="mb-6">
-          <UnclosedMonthsAlert 
-            mesesAtrasados={mesesAtrasados}
-            onSelectMonth={(mes) => setSelectedMonth(mes)}
-          />
-        </div>
-      )}
-
-      {/* CAPA 2: ACCIÓN - Estado del mes seleccionado */}
-      <div className="mb-6">
+      {/* PLACA CENTRAL DOMINANTE - Estado del mes */}
+      <div className="mb-16">
         <MonthStatus
           mes={selectedMonth}
           estado={monthState}
@@ -401,7 +386,26 @@ export default function VidaMensualPage() {
         />
       </div>
 
-      {/* CAPA 3: CONTENIDO - Vista según estado del mes seleccionado */}
+      {/* Selector de mes - discreto */}
+      <div className="mb-8">
+        <MonthSelector
+          selectedMonth={selectedMonth}
+          onMonthChange={setSelectedMonth}
+          availableMonths={availableMonths}
+        />
+      </div>
+
+      {/* Alerta de meses atrasados - discreto */}
+      {mesesAtrasados.length > 0 && !mesesAtrasados.some(m => m.mes === selectedMonth) && (
+        <div className="mb-8">
+          <UnclosedMonthsAlert 
+            mesesAtrasados={mesesAtrasados}
+            onSelectMonth={(mes) => setSelectedMonth(mes)}
+          />
+        </div>
+      )}
+
+      {/* CONTENIDO - Vista según estado del mes seleccionado */}
       {monthState === 'ABIERTO' && !isClosing && (
         <MonthOpenView
           mes={selectedMonth}

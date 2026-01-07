@@ -59,51 +59,41 @@ export default function EmmaCurrentState() {
 
   return (
     <Card padding="large">
-      <div className="grid grid-cols-2 gap-12">
-        {/* Fila 1: Capital Acumulado y Aporte Mensual */}
-        <div>
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-2">
+      <div className="flex flex-col items-center text-center py-8">
+        {/* Capital Acumulado - Protagonista absoluto */}
+        <div className="mb-12">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
             CAPITAL ACUMULADO
           </div>
           <CurrencyDisplay 
             value={state.currentCapital} 
-            size="large" 
-            showSecondary={true}
+            size="display" 
+            showSecondary={false}
             originalCurrency="USD"
           />
         </div>
 
-        <div>
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-            APORTE MENSUAL PROMEDIO
+        {/* Secundarios discretos */}
+        <div className="flex items-center justify-center gap-16">
+          <div className="flex flex-col items-center">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+              APORTE MENSUAL
+            </div>
+            <CurrencyDisplay 
+              value={state.monthlyContribution} 
+              size="regular" 
+              showSecondary={false}
+              originalCurrency="USD"
+            />
           </div>
-          <CurrencyDisplay 
-            value={state.monthlyContribution} 
-            size="medium" 
-            showSecondary={true}
-            originalCurrency="USD"
-          />
-        </div>
 
-        {/* Fila 2: Aporte Inicial y Tiempo Transcurrido */}
-        <div className="mt-8">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-            APORTE INICIAL
-          </div>
-          <CurrencyDisplay 
-            value={state.initialContribution} 
-            size="regular" 
-            showSecondary={true}
-            originalCurrency="USD"
-          />
-        </div>
-
-        <div className="mt-8">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-2">
-            TIEMPO TRANSCURRIDO
-          </div>
-          <div className="text-[24px] font-semibold font-mono-numbers text-text-primary leading-[1.2]">
-            {formatTimeElapsed()}
+          <div className="flex flex-col items-center">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+              TIEMPO TRANSCURRIDO
+            </div>
+            <div className="text-heading-3 font-medium text-text-primary">
+              {formatTimeElapsed()}
+            </div>
           </div>
         </div>
       </div>

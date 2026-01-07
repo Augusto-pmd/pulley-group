@@ -48,38 +48,38 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-6">
-      {/* Resumen del Mes */}
-      <Card padding="normal">
-        <div className="mb-4">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
+    <Card padding="large">
+      <div className="flex flex-col items-center text-center py-8">
+        {/* Resultado del Mes - Protagonista absoluto */}
+        <div className="mb-12">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
             RESULTADO DEL MES
           </div>
-          <CurrencyDisplay value={resultadoMes} size="large" showSecondary={false} />
+          <CurrencyDisplay value={resultadoMes} size="display" showSecondary={false} />
         </div>
 
-        {/* Ingresos y Egresos */}
-        <div className="pt-4 border-t space-y-3" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
-          <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+        {/* Ingresos y Egresos - Secundarios discretos */}
+        <div className="flex items-center justify-center gap-16 mb-12">
+          <div className="flex flex-col items-center">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
               INGRESOS
             </div>
-            <CurrencyDisplay value={totalIngresos} size="medium" showSecondary={false} />
+            <CurrencyDisplay value={totalIngresos} size="regular" showSecondary={false} />
           </div>
-          <div>
-            <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
+          <div className="flex flex-col items-center">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
               EGRESOS
             </div>
-            <CurrencyDisplay value={totalEgresos} size="medium" showSecondary={false} />
+            <CurrencyDisplay value={totalEgresos} size="regular" showSecondary={false} />
           </div>
         </div>
 
-        {/* Distribución por Tipo */}
-        <div className="pt-4 border-t" style={{ borderColor: 'rgba(142, 142, 138, 0.2)' }}>
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-3">
+        {/* Distribución por Tipo - Secundario discreto */}
+        <div className="w-full max-w-md">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
             POR TIPO
           </div>
-          <div className="space-y-2">
+          <div className="space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-body text-text-secondary">Fijos</span>
               <div className="flex items-center gap-3">
@@ -109,35 +109,8 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
             </div>
           </div>
         </div>
-      </Card>
-
-      {/* Top Conceptos */}
-      <Card padding="normal">
-        <div className="mb-4">
-          <div className="text-caption text-gray-text-disabled uppercase tracking-wider mb-1.5">
-            POR CONCEPTO
-          </div>
-        </div>
-        <div className="space-y-2 max-h-[200px] overflow-y-auto">
-          {conceptosOrdenados.map((item) => {
-            const porcentaje = totalEgresosParaPorcentaje > 0 ? (item.montoUsd / totalEgresosParaPorcentaje) * 100 : 0;
-            return (
-              <div key={item.nombre} className="flex items-center justify-between">
-                <span className="text-body text-text-secondary flex-1 truncate mr-2">
-                  {item.nombre}
-                </span>
-                <div className="flex items-center gap-3">
-                  <CurrencyDisplay value={item.montoUsd} size="regular" showSecondary={false} />
-                  <span className="text-body-small text-text-secondary w-12 text-right">
-                    {formatPercentage(porcentaje)}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
-    </div>
+      </div>
+    </Card>
   );
 }
 

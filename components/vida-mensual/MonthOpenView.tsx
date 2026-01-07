@@ -166,28 +166,30 @@ export default function MonthOpenView({
   };
 
   return (
-    <div className="space-y-6">
-      {/* Zona de carga rápida */}
-      <FadeIn delay={0} duration={300}>
-        <QuickAddForm onAdd={handleQuickAdd} />
-      </FadeIn>
-
-      {/* Planilla viva del mes (protagonista) */}
-      <FadeIn delay={100} duration={300}>
-        <MonthTable
-          eventos={eventosMes}
-          onSelectEvent={handleSelectEvent}
-          onToggleEstado={onToggleEstado}
-          selectedEventId={selectedEvent?.id}
-        />
-      </FadeIn>
-
-      {/* Resúmenes con porcentajes */}
+    <div className="space-y-12">
+      {/* PLACA CENTRAL DOMINANTE - Resumen del mes */}
       {eventosMes.length > 0 && (
-        <FadeIn delay={200} duration={300}>
+        <FadeIn delay={0} duration={300}>
           <MonthSummary eventos={eventosMes} />
         </FadeIn>
       )}
+
+      {/* Movimientos - Secundario discreto, no planilla */}
+      {eventosMes.length > 0 && (
+        <FadeIn delay={100} duration={300}>
+          <MonthTable
+            eventos={eventosMes}
+            onSelectEvent={handleSelectEvent}
+            onToggleEstado={onToggleEstado}
+            selectedEventId={selectedEvent?.id}
+          />
+        </FadeIn>
+      )}
+
+      {/* Zona de carga rápida - Discreta */}
+      <FadeIn delay={200} duration={300}>
+        <QuickAddForm onAdd={handleQuickAdd} />
+      </FadeIn>
 
       {/* Panel lateral de edición */}
       <EventEditPanel

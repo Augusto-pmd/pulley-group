@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ModuleHeader from '@/components/ModuleHeader';
+import DiscreteNav from '@/components/DiscreteNav';
 import Card from '@/components/Card';
 import EmmaCurrentState from '@/components/emma/EmmaCurrentState';
 import EmmaInitForm from '@/components/emma/EmmaInitForm';
@@ -48,40 +48,43 @@ export default function EmmaPage() {
   // Si no hay movimientos, mostrar estado vacío con botón de inicio
   if (!hasMovements && !showInitForm) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card padding="large">
-          <div className="text-center">
-            <h2 className="text-heading-2 text-text-primary mb-4">
-              Este fondo aún no fue iniciado
-            </h2>
-            <p className="text-body text-text-secondary mb-6">
-              Configura los supuestos del fondo y registra el capital inicial para comenzar.
-            </p>
-            <button
-              onClick={() => setShowInitForm(true)}
-              className="px-6 py-2.5 rounded-button text-body font-medium transition-colors duration-fast"
-              style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
-            >
-              Iniciar fondo
-            </button>
-          </div>
-        </Card>
-      </div>
+      <>
+        <DiscreteNav />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Card padding="large">
+            <div className="text-center py-12">
+              <div className="mb-8">
+                <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
+                  FONDO EMMA
+                </div>
+                <h2 className="text-display-3 text-text-primary mb-6">
+                  Este fondo aún no fue iniciado
+                </h2>
+                <p className="text-body text-text-secondary mb-8 opacity-80">
+                  Configura los supuestos del fondo y registra el capital inicial para comenzar.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowInitForm(true)}
+                className="px-8 py-3 rounded-button text-body-large font-medium transition-colors duration-fast"
+                style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
+              >
+                Iniciar fondo
+              </button>
+            </div>
+          </Card>
+        </div>
+      </>
     );
   }
 
   // Si se está mostrando el formulario de inicio
   if (showInitForm) {
     return (
-      <div>
-        <div className="mb-8">
-          <ModuleHeader
-            title="Fondo Emma"
-            description="Proyecto patrimonial de largo plazo basado en interés compuesto"
-          />
-        </div>
+      <>
+        <DiscreteNav />
         <EmmaInitForm
           onComplete={() => {
             setShowInitForm(false);
@@ -90,20 +93,15 @@ export default function EmmaPage() {
           }}
           onCancel={() => setShowInitForm(false)}
         />
-      </div>
+      </>
     );
   }
 
   // Si se está mostrando el formulario de aportes
   if (showContributionForm) {
     return (
-      <div>
-        <div className="mb-8">
-          <ModuleHeader
-            title="Fondo Emma"
-            description="Proyecto patrimonial de largo plazo basado en interés compuesto"
-          />
-        </div>
+      <>
+        <DiscreteNav />
         <EmmaContributionForm
           onComplete={() => {
             setShowContributionForm(false);
@@ -112,39 +110,22 @@ export default function EmmaPage() {
           }}
           onCancel={() => setShowContributionForm(false)}
         />
-      </div>
+      </>
     );
   }
 
   // Emma está iniciado, mostrar estado normal
   return (
     <>
-      {/* CAPA 1: ACCIÓN - Estado y acción principal */}
-      <div className="mb-8">
-        <ModuleHeader
-          title="Fondo Emma"
-          description="Proyecto patrimonial de largo plazo basado en interés compuesto"
-          status={{
-            label: 'Estado',
-            value: 'Activo',
-            color: 'success',
-          }}
-          primaryAction={{
-            label: 'Agregar aporte',
-            onClick: () => {
-              setShowContributionForm(true);
-            },
-          }}
-        />
-      </div>
-
-      {/* CAPA 2: CONTENIDO - Estado actual */}
-      <div className="mb-10">
+      <DiscreteNav />
+      
+      {/* PLACA CENTRAL DOMINANTE - Estado actual */}
+      <div className="mb-16">
         <EmmaCurrentState />
       </div>
 
-      {/* CAPA 3: MOVIMIENTOS - Lista editable */}
-      <div className="mb-10">
+      {/* MOVIMIENTOS - Secundario discreto */}
+      <div className="mb-12">
         <EmmaMovementsList />
       </div>
     </>

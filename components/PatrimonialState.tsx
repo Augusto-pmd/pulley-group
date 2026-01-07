@@ -66,29 +66,30 @@ export default function PatrimonialState({ data }: PatrimonialStateProps) {
 
   return (
     <Card padding="large">
-      <div className="grid grid-cols-3 gap-8">
-        {/* Patrimonio Total - Principal */}
-        <div className="flex flex-col">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
+      <div className="flex flex-col items-center text-center py-8">
+        {/* Patrimonio Total - Protagonista absoluto */}
+        <div className="mb-12">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4">
             PATRIMONIO TOTAL
           </div>
           <CurrencyDisplay value={totalPatrimony} size="display" showSecondary={false} />
         </div>
 
-        {/* Ingresos del Mes - Secundario */}
-        <div className="flex flex-col">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
-            INGRESOS DEL MES
+        {/* Ingresos y Resultado - Secundarios discretos */}
+        <div className="flex items-center justify-center gap-16">
+          <div className="flex flex-col items-center">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+              INGRESOS DEL MES
+            </div>
+            <CurrencyDisplay value={ingresosMes} size="regular" showSecondary={false} />
           </div>
-          <CurrencyDisplay value={ingresosMes} size="large" showSecondary={false} />
-        </div>
 
-        {/* Resultado del Mes - Secundario */}
-        <div className="flex flex-col">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-1.5">
-            RESULTADO DEL MES
+          <div className="flex flex-col items-center">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+              RESULTADO DEL MES
+            </div>
+            <CurrencyDisplaySigned value={resultadoMes} size="regular" showSecondary={false} />
           </div>
-          <CurrencyDisplaySigned value={resultadoMes} size="large" showSecondary={false} />
         </div>
       </div>
     </Card>
