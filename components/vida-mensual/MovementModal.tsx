@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { formatCurrency } from '@/utils/number-format';
+import { formatCurrency, parseNumberAR } from '@/utils/number-format';
 import type { MonthlyMovement, Concept, MovementType, MovementCategory } from '@/mock/data';
 
 interface MovementModalProps {
@@ -27,6 +27,7 @@ export default function MovementModal({
   const [note, setNote] = useState(movement?.note || '');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [filteredConcepts, setFilteredConcepts] = useState<Concept[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -53,10 +54,34 @@ export default function MovementModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    
+    // Validación JS
+    if (!concept || concept.trim() === '') {
+      setError('El concepto es obligatorio');
+      return;
+    }
+    
+    if (!amount || amount.trim() === '') {
+      setError('El monto es obligatorio');
+      return;
+    }
+
+    const amountNum = parseNumberAR(amount);
+    if (amountNum === null || isNaN(amountNum) || amountNum <= 0) {
+      setError('El monto debe ser un número válido mayor a 0');
+      return;
+    }
+    
+    if (!date || date.trim() === '') {
+      setError('La fecha es obligatoria');
+      return;
+    }
+    
     onSave({
       type,
       concept,
-      amount: parseFloat(amount) || 0,
+      amount: amountNum,
       date,
       category,
       isRecurrent,
@@ -77,7 +102,13 @@ export default function MovementModal({
           {movement ? 'Editar' : 'Agregar'} {type === 'ingreso' ? 'Ingreso' : 'Egreso'}
         </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-body text-red-600">{error}</p>
+          </div>
+        )}
+
+        <form noValidate onSubmit={handleSubmit} className="space-y-6">
           {/* Concepto con autocompletado */}
           <div className="relative">
             <label className="block text-body text-gray-text-primary mb-2">Concepto</label>
@@ -90,7 +121,6 @@ export default function MovementModal({
                 if (filteredConcepts.length > 0) setShowSuggestions(true);
               }}
               className="w-full px-4 py-2 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600"
-              required
             />
             {showSuggestions && filteredConcepts.length > 0 && (
               <div className="absolute z-10 w-full mt-1 bg-white border border-gray-border rounded-card shadow-card max-h-48 overflow-y-auto">
@@ -117,13 +147,12 @@ export default function MovementModal({
           <div>
             <label className="block text-body text-gray-text-primary mb-2">Monto</label>
             <input
-              type="number"
+              type="text"
+              inputMode="decimal"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               className="w-full px-4 py-2 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600"
-              required
-              min="0"
-              step="0.01"
+              placeholder="0"
             />
           </div>
 
@@ -135,7 +164,6 @@ export default function MovementModal({
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="w-full px-4 py-2 border border-gray-border rounded-input text-body text-gray-text-primary focus:outline-none focus:border-blue-600"
-              required
             />
           </div>
 
