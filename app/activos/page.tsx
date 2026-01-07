@@ -303,7 +303,7 @@ export default function ActivosPage() {
                           <div className="text-center">
                             <CurrencyDisplay 
                               value={getPatrimonioNetoActivo(activo)} 
-                              size="small" 
+                              size="regular" 
                               showSecondary={false}
                               originalCurrency="USD"
                             />
