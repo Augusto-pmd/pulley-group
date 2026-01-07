@@ -3,25 +3,29 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMode } from '@/contexts/ModeContext';
 import { useRingData } from '@/contexts/RingDataContext';
+import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
 import { useRouter, usePathname } from 'next/navigation';
 import CurrencyDisplay from './CurrencyDisplay';
+import CircularDomain from './circular/CircularDomain';
 
-// Opciones de navegación radial (fijas)
-const radialOptions = [
+// Dominios del sistema - cada uno es un subcírculo que orbita el núcleo
+const systemDomains = [
   { id: 'estado', label: 'Estado', icon: '○', path: '/' },
   { id: 'mes', label: 'Mes', icon: '◐', path: '/vida-mensual' },
   { id: 'fondo', label: 'Fondo', icon: '◑', path: '/emma' },
-  { id: 'detalle', label: 'Detalle', icon: '◒', path: '/activos' },
+  { id: 'activos', label: 'Activos', icon: '◒', path: '/activos' },
+  { id: 'inversiones', label: 'Inversiones', icon: '◉', path: '/investments' },
   { id: 'comando', label: 'Comando', icon: '⌘', path: null }, // Abre command palette
 ];
 
 export default function Ring() {
   const { mode, setMode } = useMode();
   const { ringData } = useRingData();
+  const { activeDomain, setActiveDomain, domainContent } = useCircularNavigation();
   const router = useRouter();
   const pathname = usePathname();
   const [isPulsing, setIsPulsing] = useState(false);
-  const [showRadialNav, setShowRadialNav] = useState(false);
+  const [showDomains, setShowDomains] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
@@ -80,15 +84,18 @@ export default function Ring() {
     }
   };
 
-  // Manejar activación de navegación radial
+  // Manejar activación de dominios
   const handleRingClick = () => {
-    setShowRadialNav(!showRadialNav);
+    setShowDomains(!showDomains);
+    if (showDomains) {
+      setActiveDomain(null);
+    }
   };
 
-  // Hover prolongado para activar navegación
+  // Hover prolongado para activar dominios
   const handleRingMouseEnter = () => {
     hoverTimeoutRef.current = setTimeout(() => {
-      setShowRadialNav(true);
+      setShowDomains(true);
     }, 500); // 500ms de hover para activar
   };
 
@@ -97,38 +104,48 @@ export default function Ring() {
       clearTimeout(hoverTimeoutRef.current);
       hoverTimeoutRef.current = null;
     }
-    // No cerrar inmediatamente, solo si no hay hover sobre opciones radiales
+    // No cerrar inmediatamente, solo si no hay hover sobre dominios
   };
 
-  // Seleccionar opción radial
-  const handleSelectRadialOption = (option: typeof radialOptions[0]) => {
-    if (option.id === 'comando') {
+  // Seleccionar dominio
+  const handleSelectDomain = (domain: typeof systemDomains[0]) => {
+    if (domain.id === 'comando') {
       // Abrir command palette mediante evento personalizado
       const event = new CustomEvent('open-command-palette');
       window.dispatchEvent(event);
-    } else if (option.path) {
-      setMode(option.id as 'estado' | 'mes' | 'fondo' | 'detalle');
-      router.push(option.path);
+      setShowDomains(false);
+    } else {
+      // Activar dominio - el contenido emerge desde el círculo
+      setActiveDomain(domain.id);
+      setMode(domain.id as 'estado' | 'mes' | 'fondo' | 'detalle');
+      // PROHIBIDO navegar a otra pantalla - el contenido SIEMPRE emerge desde el núcleo
+      // El contenido se inyecta desde las páginas usando el contexto
+      // NO usar router.push() - el sistema es circular, no lineal
     }
-    setShowRadialNav(false);
   };
 
-  // Cerrar navegación radial al hacer click fuera
+  // Cerrar contenido de dominio
+  const handleCloseDomainContent = () => {
+    setActiveDomain(null);
+    setShowDomains(false);
+  };
+
+  // Cerrar dominios al hacer click fuera
   useEffect(() => {
-    if (showRadialNav) {
+    if (showDomains && !activeDomain) {
       const handleClickOutside = (e: MouseEvent) => {
         if (ringRef.current && !ringRef.current.contains(e.target as Node)) {
-          setShowRadialNav(false);
+          setShowDomains(false);
         }
       };
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [showRadialNav]);
+  }, [showDomains, activeDomain]);
 
   // Determinar si el Ring debe interceptar eventos
-  // Solo en modo estado o cuando la navegación radial está activa
-  const shouldInterceptEvents = mode === 'estado' || showRadialNav;
+  // Solo en modo estado o cuando los dominios están activos
+  const shouldInterceptEvents = mode === 'estado' || showDomains || activeDomain !== null;
 
   return (
     <div
@@ -230,64 +247,29 @@ export default function Ring() {
         </div>
       </div>
 
-      {/* Navegación radial - aparece solo por intención */}
-      {showRadialNav && (
+      {/* Dominios del sistema - subcírculos que orbitan el núcleo */}
+      {showDomains && (
         <>
-          {/* Opciones radiales alrededor del anillo */}
-          {radialOptions.map((option, index) => {
-            const angle = (index * 360) / radialOptions.length - 90; // Empezar arriba
-            const radius = 140; // Distancia desde el centro del anillo
-            const x = Math.cos((angle * Math.PI) / 180) * radius;
-            const y = Math.sin((angle * Math.PI) / 180) * radius;
-            const isActive = mode === option.id;
+          {systemDomains.map((domain, index) => {
+            const angle = (index * 360) / systemDomains.length - 90; // Empezar arriba
+            const radius = 180; // Distancia desde el centro del anillo
+            const isActive = activeDomain === domain.id;
 
             return (
-              <button
-                key={option.id}
-                onClick={() => handleSelectRadialOption(option)}
-                className="absolute w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 pointer-events-auto"
-                style={{
-                  left: `calc(50% + ${x}px - 1.5rem)`,
-                  top: `calc(50% + ${y}px - 1.5rem)`,
-                  // Material translúcido - opacidad baja, sin fondo sólido
-                  backgroundColor: isActive 
-                    ? 'rgba(181, 154, 106, 0.15)' 
-                    : 'rgba(31, 42, 51, 0.6)',
-                  backgroundImage: isActive
-                    ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.2) 0%, transparent 70%)'
-                    : 'none',
-                  border: `1px solid ${isActive ? 'rgba(181, 154, 106, 0.4)' : 'rgba(181, 154, 106, 0.15)'}`,
-                  color: '#F5F2EC',
-                  backdropFilter: 'blur(8px)',
-                  boxShadow: isActive
-                    ? 'inset 0 0 10px rgba(181, 154, 106, 0.1), 0 0 20px rgba(181, 154, 106, 0.15)'
-                    : 'inset 0 0 5px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.2)',
-                  opacity: showRadialNav ? 1 : 0,
-                  transform: showRadialNav ? 'scale(1)' : 'scale(0.8)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
-                  e.currentTarget.style.backgroundImage = 'radial-gradient(circle at center, rgba(181, 154, 106, 0.25) 0%, transparent 70%)';
-                  e.currentTarget.style.borderColor = 'rgba(181, 154, 106, 0.5)';
-                  e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 0 25px rgba(181, 154, 106, 0.2)';
-                  e.currentTarget.style.transform = 'scale(1.1)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = isActive 
-                    ? 'rgba(181, 154, 106, 0.15)' 
-                    : 'rgba(31, 42, 51, 0.6)';
-                  e.currentTarget.style.backgroundImage = isActive
-                    ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.2) 0%, transparent 70%)'
-                    : 'none';
-                  e.currentTarget.style.borderColor = isActive ? 'rgba(181, 154, 106, 0.4)' : 'rgba(181, 154, 106, 0.15)';
-                  e.currentTarget.style.boxShadow = isActive
-                    ? 'inset 0 0 10px rgba(181, 154, 106, 0.1), 0 0 20px rgba(181, 154, 106, 0.15)'
-                    : 'inset 0 0 5px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(0, 0, 0, 0.2)';
-                  e.currentTarget.style.transform = 'scale(1)';
-                }}
+              <CircularDomain
+                key={domain.id}
+                id={domain.id}
+                label={domain.label}
+                icon={domain.icon}
+                angle={angle}
+                radius={radius}
+                isActive={isActive}
+                onClick={() => handleSelectDomain(domain)}
+                onContentClose={handleCloseDomainContent}
               >
-                <div className="text-lg" style={{ opacity: 0.9 }}>{option.icon}</div>
-              </button>
+                {/* El contenido emerge desde el dominio - se inyecta desde el contexto */}
+                {isActive && domainContent.get(domain.id)}
+              </CircularDomain>
             );
           })}
         </>

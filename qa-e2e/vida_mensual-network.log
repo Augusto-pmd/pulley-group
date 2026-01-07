@@ -3,66 +3,66 @@
     "method": "GET",
     "url": "http://localhost:3000/api/concepts",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:31.856Z"
+    "timestamp": "2026-01-07T13:27:20.925Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/concepts",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:31.856Z"
+    "timestamp": "2026-01-07T13:27:20.925Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/months",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:31.856Z"
+    "timestamp": "2026-01-07T13:27:20.925Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/concepts",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:31.857Z"
+    "timestamp": "2026-01-07T13:27:20.926Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/concepts",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:31.857Z"
+    "timestamp": "2026-01-07T13:27:20.926Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/months",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:31.857Z"
+    "timestamp": "2026-01-07T13:27:20.926Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/concepts",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:32.021Z"
-  },
-  {
-    "method": "GET",
-    "url": "http://localhost:3000/api/movements?year=2026&month=1",
-    "status": 200,
-    "timestamp": "2026-01-07T13:18:32.186Z"
+    "timestamp": "2026-01-07T13:27:22.238Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/concepts",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:32.325Z"
+    "timestamp": "2026-01-07T13:27:22.335Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/movements?year=2026&month=1",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:32.499Z"
+    "timestamp": "2026-01-07T13:27:22.541Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/movements?year=2026&month=1",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:32.990Z"
+    "timestamp": "2026-01-07T13:27:22.645Z"
+  },
+  {
+    "method": "GET",
+    "url": "http://localhost:3000/api/movements?year=2026&month=1",
+    "status": 200,
+    "timestamp": "2026-01-07T13:27:23.754Z"
   }
 ]

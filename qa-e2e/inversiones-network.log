@@ -3,24 +3,24 @@
     "method": "GET",
     "url": "http://localhost:3000/api/investments",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:20.010Z"
+    "timestamp": "2026-01-07T13:27:09.430Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/investments",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:20.010Z"
+    "timestamp": "2026-01-07T13:27:09.430Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/investments",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:20.324Z"
+    "timestamp": "2026-01-07T13:27:09.741Z"
   },
   {
     "method": "GET",
     "url": "http://localhost:3000/api/investments",
     "status": 200,
-    "timestamp": "2026-01-07T13:18:20.336Z"
+    "timestamp": "2026-01-07T13:27:09.751Z"
   }
 ]

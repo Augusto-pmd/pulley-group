@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
-import Card from '@/components/Card';
+import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import RadialCard from '@/components/circular/RadialCard';
 import EmmaInitForm from '@/components/emma/EmmaInitForm';
 import EmmaContributionForm from '@/components/emma/EmmaContributionForm';
 import EmmaMovementsList from '@/components/emma/EmmaMovementsList';
@@ -13,6 +14,7 @@ import { getEmmaMovements, getEmmaState, getEmma } from '@/lib/api';
 export default function EmmaPage() {
   useModeFromPath();
   const { setRingData } = useRingData();
+  const { activeDomain, setDomainContent } = useCircularNavigation();
   const [hasMovements, setHasMovements] = useState<boolean | null>(null);
   const [showInitForm, setShowInitForm] = useState(false);
   const [showContributionForm, setShowContributionForm] = useState(false);
@@ -52,99 +54,101 @@ export default function EmmaPage() {
     checkEmmaStatus();
   }, [showInitForm, showContributionForm, setRingData]);
 
-  // Si está cargando, mostrar loading
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Card padding="large">
-          <div className="text-center text-body text-text-secondary">
-            Cargando...
-          </div>
-        </Card>
-      </div>
-    );
-  }
+  // Inyectar contenido en el contexto circular cuando el dominio está activo
+  useEffect(() => {
+    if (activeDomain === 'fondo') {
+      const content = (
+        <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>
+          {loading ? (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-body text-text-secondary">Cargando...</div>
+            </div>
+          ) : !hasMovements && !showInitForm ? (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <RadialCard className="p-12">
+                <div className="text-center">
+                  <div className="text-body-large text-text-primary mb-4">
+                    Fondo Emma no iniciado
+                  </div>
+                  <button
+                    onClick={() => setShowInitForm(true)}
+                    className="px-8 py-3 rounded-full text-body-large font-medium transition-all duration-300"
+                    style={{
+                      backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                      backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                      border: '1px solid rgba(181, 154, 106, 0.4)',
+                      color: '#F5F2EC',
+                      backdropFilter: 'blur(8px)',
+                    }}
+                  >
+                    Iniciar fondo
+                  </button>
+                </div>
+              </RadialCard>
+            </div>
+          ) : showInitForm ? (
+            <div className="p-8">
+              <EmmaInitForm
+                onComplete={() => {
+                  setShowInitForm(false);
+                  window.location.reload();
+                }}
+                onCancel={() => setShowInitForm(false)}
+              />
+            </div>
+          ) : showContributionForm ? (
+            <div className="p-8">
+              <EmmaContributionForm
+                onComplete={() => {
+                  setShowContributionForm(false);
+                  window.location.reload();
+                }}
+                onCancel={() => setShowContributionForm(false)}
+              />
+            </div>
+          ) : (
+            <div className="p-8">
+              {/* ESTRUCTURA RADIAL: El capital es el centro, movimientos orbitan */}
+              <div className="relative min-h-[60vh] flex flex-col items-center justify-center">
+                {/* CENTRO: Capital acumulado - Núcleo circular */}
+                <div className="mb-16">
+                  <EmmaCurrentState />
+                </div>
 
-  // MODO FONDO: Si no iniciado, anillo apagado, solo botón
-  if (!hasMovements && !showInitForm) {
-    return (
-      <div className="flex items-center justify-center min-h-screen relative z-30">
-        <div className="text-center relative z-30">
-          <button
-            onClick={() => setShowInitForm(true)}
-            className="px-8 py-3 rounded-button text-body-large font-medium transition-all duration-300 relative z-30"
-            style={{
-              backgroundColor: 'rgba(181, 154, 106, 0.2)',
-              backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
-              border: '1px solid rgba(181, 154, 106, 0.4)',
-              color: '#F5F2EC',
-              backdropFilter: 'blur(8px)',
-              boxShadow: 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.25)';
-              e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.35) 0%, rgba(181, 154, 106, 0.2) 40%, transparent 70%)';
-              e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(181, 154, 106, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 30px rgba(181, 154, 106, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
-              e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)';
-              e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)';
-            }}
-          >
-            Iniciar fondo
-          </button>
+                {/* ORBITA: Movimientos alrededor del centro */}
+                <div className="w-full max-w-2xl">
+                  <EmmaMovementsList />
+                </div>
+              </div>
+
+              {/* Botón flotante para agregar aporte */}
+              <div className="fixed bottom-8 right-8 z-[200]">
+                <button
+                  onClick={() => setShowContributionForm(true)}
+                  className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+                  style={{
+                    backgroundColor: 'rgba(181, 154, 106, 0.25)',
+                    backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
+                    border: '2px solid rgba(181, 154, 106, 0.4)',
+                    color: '#F5F2EC',
+                    backdropFilter: 'blur(12px)',
+                  }}
+                  title="Agregar aporte"
+                >
+                  <span className="text-2xl">+</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    );
-  }
+      );
+      
+      setDomainContent('fondo', content);
+    } else {
+      setDomainContent('fondo', null);
+    }
+  }, [activeDomain, loading, hasMovements, showInitForm, showContributionForm, setDomainContent]);
 
-  // Si se está mostrando el formulario de inicio
-  if (showInitForm) {
-    return (
-      <div className="max-w-2xl mx-auto pt-32">
-        <EmmaInitForm
-          onComplete={() => {
-            setShowInitForm(false);
-            // Refrescar página para mostrar estado actualizado
-            window.location.reload();
-          }}
-          onCancel={() => setShowInitForm(false)}
-        />
-      </div>
-    );
-  }
-
-  // Si se está mostrando el formulario de aportes
-  if (showContributionForm) {
-    return (
-      <div className="max-w-2xl mx-auto pt-32">
-        <EmmaContributionForm
-          onComplete={() => {
-            setShowContributionForm(false);
-            // Refrescar página para mostrar estado actualizado
-            window.location.reload();
-          }}
-          onCancel={() => setShowContributionForm(false)}
-        />
-      </div>
-    );
-  }
-
-  // MODO FONDO: Anillo con pulso lento, contenido mínimo
-  // Sin proyecciones gritadas, simboliza largo plazo
-  // ESTRUCTURA RADIAL: El capital es el centro, movimientos orbitan
-  return (
-    <div className="relative min-h-[70vh] flex flex-col items-center justify-center pt-32">
-      {/* CENTRO: Capital acumulado - Núcleo del anillo */}
-      <div className="mb-16">
-        <EmmaCurrentState />
-      </div>
-
-      {/* ORBITA: Movimientos alrededor del centro */}
-      <div className="w-full max-w-2xl">
-        <EmmaMovementsList />
-      </div>
-    </div>
-  );
+  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
+  return null;
 }

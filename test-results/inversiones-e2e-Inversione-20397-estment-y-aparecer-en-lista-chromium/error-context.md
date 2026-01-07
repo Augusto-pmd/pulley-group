@@ -17,7 +17,7 @@
             - paragraph [ref=e21]: Proyectos de inversión con objetivo, plazo y criterio de evaluación
           - generic [ref=e23]:
             - generic [ref=e24]: ESTADO
-            - generic [ref=e25]: 35 inversiones activas
+            - generic [ref=e25]: 36 inversiones activas
         - generic [ref=e26]:
           - button "Registrar evento" [ref=e27] [cursor=pointer]
           - button "Crear inversión" [ref=e29] [cursor=pointer]

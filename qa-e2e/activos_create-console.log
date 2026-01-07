@@ -2,31 +2,31 @@
   {
     "type": "info",
     "text": "%cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold",
-    "timestamp": "2026-01-07T13:17:44.187Z"
+    "timestamp": "2026-01-07T13:26:33.359Z"
   },
   {
     "type": "log",
-    "text": "[Activos] SUBMIT_HANDLER_CALLED {nombre: Activo-1767791863617-99, valorInicial: 50000, tipo: otro, fechaValuacion: 2026-01-07, estadoFiscal: no_declarado}",
-    "timestamp": "2026-01-07T13:17:48.239Z"
+    "text": "[Activos] SUBMIT_HANDLER_CALLED {nombre: Activo-1767792392820-429, valorInicial: 50000, tipo: otro, fechaValuacion: 2026-01-07, estadoFiscal: no_declarado}",
+    "timestamp": "2026-01-07T13:26:37.734Z"
   },
   {
     "type": "log",
-    "text": "[Activos] PRE_API_CALL: onSave {id: , nombre: Activo-1767791863617-99, tipo: otro, valorActualUsd: 50000, fechaUltimaValuacion: 2026-01-07}",
-    "timestamp": "2026-01-07T13:17:48.241Z"
+    "text": "[Activos] PRE_API_CALL: onSave {id: , nombre: Activo-1767792392820-429, tipo: otro, valorActualUsd: 50000, fechaUltimaValuacion: 2026-01-07}",
+    "timestamp": "2026-01-07T13:26:37.735Z"
   },
   {
     "type": "log",
-    "text": "[Activos] handleAddAsset CALLED {id: , nombre: Activo-1767791863617-99, tipo: otro, valorActualUsd: 50000, fechaUltimaValuacion: 2026-01-07}",
-    "timestamp": "2026-01-07T13:17:48.242Z"
+    "text": "[Activos] handleAddAsset CALLED {id: , nombre: Activo-1767792392820-429, tipo: otro, valorActualUsd: 50000, fechaUltimaValuacion: 2026-01-07}",
+    "timestamp": "2026-01-07T13:26:37.736Z"
   },
   {
     "type": "log",
-    "text": "[Activos] POST_API_CALL: createAsset {name: Activo-1767791863617-99, type: otro, fiscalStatus: no_declarado}",
-    "timestamp": "2026-01-07T13:17:48.242Z"
+    "text": "[Activos] POST_API_CALL: createAsset {name: Activo-1767792392820-429, type: otro, fiscalStatus: no_declarado}",
+    "timestamp": "2026-01-07T13:26:37.736Z"
   },
   {
     "type": "log",
-    "text": "[Activos] POST_API_RESPONSE {id: cmk41mvdo00001tw6quzw35ee, name: Activo-1767791863617-99, type: otro, fiscalStatus: no_declarado}",
-    "timestamp": "2026-01-07T13:17:48.562Z"
+    "text": "[Activos] POST_API_RESPONSE {id: cmk41y7xu0000q9sbz5xi2cul, name: Activo-1767792392820-429, type: otro, fiscalStatus: no_declarado}",
+    "timestamp": "2026-01-07T13:26:38.045Z"
   }
 ]

@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ModuleHeader from '@/components/ModuleHeader';
+import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
 import AssetList from '@/components/activos/AssetList';
 import AssetEditPanel from '@/components/activos/AssetEditPanel';
 import AddAssetForm from '@/components/activos/AddAssetForm';
-import { type Activo, type Pasivo, type ValuacionActivo } from '@/mock/activos';
+import RadialCard from '@/components/circular/RadialCard';
+import RadialList from '@/components/circular/RadialList';
+import CurrencyDisplay from '@/components/CurrencyDisplay';
+import { type Activo, type Pasivo, type ValuacionActivo, getPatrimonioNetoActivo } from '@/mock/activos';
 import {
   getAssets,
   createAsset,
@@ -63,6 +66,7 @@ function apiValuationToValuacionActivo(apiValuation: ApiAssetValuation): Valuaci
 }
 
 export default function ActivosPage() {
+  const { activeDomain, setDomainContent } = useCircularNavigation();
   const [activos, setActivos] = useState<Activo[]>([]);
   const [selectedAsset, setSelectedAsset] = useState<Activo | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -184,81 +188,179 @@ export default function ActivosPage() {
   };
 
   const totalActivos = activos.reduce((sum, a) => sum + a.valorActualUsd, 0);
+  const patrimonioNeto = activos.reduce((sum, activo) => sum + getPatrimonioNetoActivo(activo), 0);
+  const totalPasivos = activos.reduce((sum, activo) => sum + (activo.pasivo?.saldoPendienteUsd || 0), 0);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-body text-gray-text-tertiary">Cargando activos...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-body text-red-600">Error: {error}</div>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {/* CAPA 1: ACCIÓN - Estado y acción principal */}
-      <div className="mb-8">
-        <ModuleHeader
-          title="Activos"
-          description="Bienes patrimoniales con valor económico"
-          status={{
-            label: 'Total',
-            value: `${activos.length} activos`,
-            color: 'info',
-          }}
-          primaryAction={{
-            label: 'Agregar activo',
-            onClick: () => {
-              setShowAddForm(true);
-              setSelectedAsset(null);
-            },
-          }}
-        />
-      </div>
-
-      {/* CAPA 2: ZONA DE EDICIÓN (CLARA Y GUIADA) - Mostrar directamente al accionar */}
-      {showAddForm && (
-        <div className="mb-10">
-          <AddAssetForm
-            onSave={handleAddAsset}
-            onClose={() => setShowAddForm(false)}
-          />
-        </div>
-      )}
-
-      {/* CAPA 3: CONTEXTO Y RESULTADO - Solo cuando no se está editando */}
-      {!showAddForm && (
-        <>
-          {/* ESTRUCTURA RADIAL: Patrimonio neto en el centro, activos orbitan */}
-          <div className="relative min-h-[60vh] flex flex-col items-center">
-            {/* CENTRO: Patrimonio neto total - Núcleo del anillo */}
-            <div className="mb-12 w-full max-w-2xl">
-              <AssetList
-                activos={activos}
-                totalUsd={totalActivos}
-                onSelectAsset={handleSelectAsset}
-                selectedAssetId={selectedAsset?.id || null}
+  // Inyectar contenido en el contexto circular cuando el dominio está activo
+  useEffect(() => {
+    if (activeDomain === 'activos') {
+      const content = (
+        <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>
+          {loading ? (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-body text-text-secondary">Cargando activos...</div>
+            </div>
+          ) : error ? (
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="text-body text-red-400">Error: {error}</div>
+            </div>
+          ) : showAddForm ? (
+            <div className="p-8">
+              <AddAssetForm
+                onSave={handleAddAsset}
+                onClose={() => setShowAddForm(false)}
               />
             </div>
-          </div>
+          ) : (
+            <div className="p-8">
+              {/* ESTRUCTURA RADIAL: Patrimonio neto en el centro, activos orbitan */}
+              <div className="relative min-h-[60vh] flex flex-col items-center">
+                {/* CENTRO: Patrimonio neto total - Núcleo circular */}
+                <RadialCard className="mb-12" padding="large">
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
+                      PATRIMONIO NETO ACTIVOS
+                    </div>
+                    <CurrencyDisplay 
+                      value={patrimonioNeto} 
+                      size="display" 
+                      showSecondary={true}
+                      originalCurrency="USD"
+                    />
+                    <div className="text-body text-text-secondary text-center mt-4" style={{ opacity: 0.5 }}>
+                      {activos.length} {activos.length === 1 ? 'activo' : 'activos'}
+                    </div>
+                    
+                    {/* Primera órbita: Valor bruto y saldo pendiente */}
+                    {totalPasivos > 0 && (
+                      <div className="flex items-center justify-center gap-16 mt-8" style={{ opacity: 0.6 }}>
+                        <div className="flex flex-col items-center">
+                          <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
+                            VALOR BRUTO
+                          </div>
+                          <CurrencyDisplay 
+                            value={totalActivos} 
+                            size="regular" 
+                            showSecondary={false}
+                            originalCurrency="USD"
+                          />
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
+                            SALDO PENDIENTE
+                          </div>
+                          <CurrencyDisplay 
+                            value={totalPasivos} 
+                            size="regular" 
+                            showSecondary={false}
+                            originalCurrency="USD"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </RadialCard>
 
-          {/* Panel Lateral de Edición (fijo) */}
-          <AssetEditPanel
-            activo={selectedAsset}
-            onClose={handleClosePanel}
-            onUpdateAsset={handleUpdateAsset}
-            onDeleteAsset={handleDeleteAsset}
-          />
-        </>
-      )}
-    </>
-  );
+                {/* Segunda órbita: Lista de activos - Orbitan alrededor del centro */}
+                {activos.length === 0 ? (
+                  <RadialCard className="mt-8">
+                    <div className="text-center py-8">
+                      <div className="text-body text-text-secondary mb-2" style={{ opacity: 0.6 }}>
+                        No hay activos registrados
+                      </div>
+                      <button
+                        onClick={() => {
+                          setShowAddForm(true);
+                          setSelectedAsset(null);
+                        }}
+                        className="mt-4 px-6 py-3 rounded-full text-body font-medium transition-all duration-300"
+                        style={{
+                          backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                          backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                          border: '1px solid rgba(181, 154, 106, 0.4)',
+                          color: '#F5F2EC',
+                          backdropFilter: 'blur(8px)',
+                        }}
+                      >
+                        Agregar primer activo
+                      </button>
+                    </div>
+                  </RadialCard>
+                ) : (
+                  <RadialList
+                    items={activos.map((activo, index) => {
+                      const angle = (index * 360) / activos.length;
+                      const radius = 200 + (index % 3) * 50; // Variar radio para crear espiral
+                      return {
+                        id: activo.id,
+                        angle,
+                        radius,
+                        size: 140,
+                        isActive: selectedAsset?.id === activo.id,
+                        onClick: () => handleSelectAsset(activo),
+                        label: activo.nombre,
+                        content: (
+                          <div className="text-center">
+                            <CurrencyDisplay 
+                              value={getPatrimonioNetoActivo(activo)} 
+                              size="small" 
+                              showSecondary={false}
+                              originalCurrency="USD"
+                            />
+                          </div>
+                        ),
+                      };
+                    })}
+                    centerRadius={180}
+                  />
+                )}
+              </div>
+
+              {/* Botón flotante para agregar activo */}
+              <div className="fixed bottom-8 right-8 z-[200]">
+                <button
+                  onClick={() => {
+                    setShowAddForm(true);
+                    setSelectedAsset(null);
+                  }}
+                  className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300"
+                  style={{
+                    backgroundColor: 'rgba(181, 154, 106, 0.25)',
+                    backgroundImage: 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)',
+                    border: '2px solid rgba(181, 154, 106, 0.4)',
+                    color: '#F5F2EC',
+                    backdropFilter: 'blur(12px)',
+                    boxShadow: `
+                      inset 0 0 20px rgba(181, 154, 106, 0.2),
+                      0 0 30px rgba(181, 154, 106, 0.25),
+                      0 4px 12px rgba(0, 0, 0, 0.3)
+                    `,
+                  }}
+                >
+                  <span className="text-2xl">+</span>
+                </button>
+              </div>
+
+              {/* Panel de Edición (fijo) */}
+              <AssetEditPanel
+                activo={selectedAsset}
+                onClose={handleClosePanel}
+                onUpdateAsset={handleUpdateAsset}
+                onDeleteAsset={handleDeleteAsset}
+              />
+            </div>
+          )}
+        </div>
+      );
+      
+      setDomainContent('activos', content);
+    } else {
+      // Limpiar contenido cuando el dominio no está activo
+      setDomainContent('activos', null);
+    }
+  }, [activeDomain, activos, loading, error, showAddForm, selectedAsset, patrimonioNeto, totalActivos, totalPasivos, setDomainContent]);
+
+  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
+  return null;
 }
 

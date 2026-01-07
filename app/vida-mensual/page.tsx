@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
+import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
+import RadialCard from '@/components/circular/RadialCard';
 import MonthSelector from '@/components/vida-mensual/MonthSelector';
 import MonthOpenView from '@/components/vida-mensual/MonthOpenView';
 import MonthClosingView from '@/components/vida-mensual/MonthClosingView';
 import MonthClosedView from '@/components/vida-mensual/MonthClosedView';
 import UnclosedMonthsAlert from '@/components/vida-mensual/UnclosedMonthsAlert';
+import CurrencyDisplay from '@/components/CurrencyDisplay';
 import { getMonths, getMovements, createMovement, getOrCreateMonth, closeMonth as closeMonthAPI, updateMovement, deleteMovement, getConcepts, createConcept, type ApiMonth, type ApiMovement, type ApiConcept } from '@/lib/api';
 import type { EventoMensual, MonthStateType, MonthStatusType } from '@/types/vida-mensual';
 
@@ -62,6 +65,7 @@ function apiMonthToMonthState(apiMonth: ApiMonth): MonthStateType {
 export default function VidaMensualPage() {
   useModeFromPath();
   const { setRingData } = useRingData();
+  const { activeDomain, setDomainContent } = useCircularNavigation();
   const [eventos, setEventos] = useState<EventoMensual[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiMonths, setApiMonths] = useState<ApiMonth[]>([]);
@@ -395,67 +399,101 @@ export default function VidaMensualPage() {
   const monthState = monthStateData?.estado || 'ABIERTO';
   const fechaApertura = monthStateData?.fechaApertura;
 
-  // MODO MES: Anillo arriba muestra resultado, contenido mínimo abajo
-  return (
-    <div className="pt-32">
-      {/* Selector de mes - discreto arriba */}
-      <div className="mb-8 flex justify-center">
-        <MonthSelector
-          selectedMonth={selectedMonth}
-          onMonthChange={setSelectedMonth}
-          availableMonths={availableMonths}
-        />
-      </div>
+  // Inyectar contenido en el contexto circular cuando el dominio está activo
+  useEffect(() => {
+    if (activeDomain === 'mes') {
+      const content = (
+        <div className="w-full h-full overflow-y-auto" style={{ maxHeight: '85vh' }}>
+          <div className="p-8">
+            {/* Selector de mes - discreto arriba */}
+            <div className="mb-8 flex justify-center">
+              <MonthSelector
+                selectedMonth={selectedMonth}
+                onMonthChange={setSelectedMonth}
+                availableMonths={availableMonths}
+              />
+            </div>
 
-      {/* Alerta de meses atrasados - discreto */}
-      {mesesAtrasados.length > 0 && !mesesAtrasados.some(m => m.mes === selectedMonth) && (
-        <div className="mb-8 flex justify-center">
-          <UnclosedMonthsAlert 
-            mesesAtrasados={mesesAtrasados}
-            onSelectMonth={(mes) => setSelectedMonth(mes)}
-          />
+            {/* Alerta de meses atrasados - discreto */}
+            {mesesAtrasados.length > 0 && !mesesAtrasados.some(m => m.mes === selectedMonth) && (
+              <div className="mb-8 flex justify-center">
+                <UnclosedMonthsAlert 
+                  mesesAtrasados={mesesAtrasados}
+                  onSelectMonth={(mes) => setSelectedMonth(mes)}
+                />
+              </div>
+            )}
+
+            {/* ESTRUCTURA RADIAL: Resultado del mes en el centro, eventos orbitan */}
+            <div className="relative min-h-[60vh] flex flex-col items-center">
+              {/* CENTRO: Resultado del mes - Núcleo circular */}
+              <RadialCard className="mb-12" padding="large">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 text-center" style={{ opacity: 0.4 }}>
+                    RESULTADO DEL MES
+                  </div>
+                  <CurrencyDisplay 
+                    value={resultadoMes} 
+                    size="display" 
+                    showSecondary={false}
+                    originalCurrency="USD"
+                  />
+                  <div className="text-body text-text-secondary text-center mt-4" style={{ opacity: 0.5 }}>
+                    {selectedMonth}
+                  </div>
+                </div>
+              </RadialCard>
+
+              {/* ORBITA: Contenido del mes - Vista según estado */}
+              <div className="w-full max-w-4xl">
+                {monthState === 'ABIERTO' && !isClosing && (
+                  <MonthOpenView
+                    mes={selectedMonth}
+                    eventos={eventos}
+                    onToggleEstado={handleToggleEstado}
+                    onEditMonto={handleEditMonto}
+                    onUpdateEvent={handleUpdateEvent}
+                    onDeleteEvent={handleDeleteEvent}
+                    onAddEvent={handleAddEvent}
+                    promedioMensual={promedioMensual}
+                    concepts={apiConcepts.map(c => ({
+                      id: c.id,
+                      nombre: c.name,
+                      categoria: c.nature as 'fijo' | 'variable' | 'extraordinario',
+                    }))}
+                  />
+                )}
+
+                {isClosing && monthState === 'EN_CIERRE' && (
+                  <MonthClosingView
+                    mes={selectedMonth}
+                    eventos={eventosMes}
+                    promedioMensual={promedioMensual}
+                    onConfirmClose={handleConfirmClose}
+                    onCancel={handleCancelClosing}
+                  />
+                )}
+
+                {monthState === 'CERRADO' && (
+                  <MonthClosedView
+                    mes={selectedMonth}
+                    eventos={eventosMes}
+                    promedioMensual={promedioMensual}
+                    onAddCorrection={handleAddCorrection}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      );
+      
+      setDomainContent('mes', content);
+    } else {
+      setDomainContent('mes', null);
+    }
+  }, [activeDomain, selectedMonth, eventos, monthState, isClosing, resultadoMes, promedioMensual, apiConcepts, mesesAtrasados, setDomainContent]);
 
-      {/* CONTENIDO - Vista según estado del mes seleccionado - Centrado, mínimo */}
-      <div className="max-w-4xl mx-auto">
-      {monthState === 'ABIERTO' && !isClosing && (
-        <MonthOpenView
-          mes={selectedMonth}
-          eventos={eventos}
-          onToggleEstado={handleToggleEstado}
-          onEditMonto={handleEditMonto}
-          onUpdateEvent={handleUpdateEvent}
-          onDeleteEvent={handleDeleteEvent}
-          onAddEvent={handleAddEvent}
-          promedioMensual={promedioMensual}
-          concepts={apiConcepts.map(c => ({
-            id: c.id,
-            nombre: c.name,
-            categoria: c.nature as 'fijo' | 'variable' | 'extraordinario',
-          }))}
-        />
-      )}
-
-      {isClosing && monthState === 'EN_CIERRE' && (
-        <MonthClosingView
-          mes={selectedMonth}
-          eventos={eventosMes}
-          promedioMensual={promedioMensual}
-          onConfirmClose={handleConfirmClose}
-          onCancel={handleCancelClosing}
-        />
-      )}
-
-      {monthState === 'CERRADO' && (
-        <MonthClosedView
-          mes={selectedMonth}
-          eventos={eventosMes}
-          promedioMensual={promedioMensual}
-          onAddCorrection={handleAddCorrection}
-        />
-      )}
-      </div>
-    </div>
-  );
+  // La página no renderiza nada directamente - todo se inyecta en el contexto circular
+  return null;
 }
