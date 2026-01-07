@@ -33,7 +33,6 @@ export default function FloatingNav() {
       <div className="fixed bottom-8 right-8 z-[150]">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          onMouseEnter={() => setIsOpen(true)}
           className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-fast shadow-lg"
           style={{
             backgroundColor: isOpen ? '#B59A6A' : 'rgba(31, 42, 51, 0.9)',
@@ -42,6 +41,7 @@ export default function FloatingNav() {
             backdropFilter: 'blur(10px)',
           }}
           onMouseEnter={(e) => {
+            setIsOpen(true);
             e.currentTarget.style.backgroundColor = '#B59A6A';
           }}
           onMouseLeave={(e) => {

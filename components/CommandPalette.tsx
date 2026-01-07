@@ -183,7 +183,6 @@ export default function CommandPalette() {
                         key={cmd.id}
                         data-command-index={globalIndex}
                         onClick={() => handleSelect(cmd)}
-                        onMouseEnter={() => setSelectedIndex(globalIndex)}
                         className="w-full text-left px-4 py-2.5 rounded-button text-body transition-colors duration-fast"
                         style={{
                           backgroundColor: isSelected 
@@ -194,6 +193,7 @@ export default function CommandPalette() {
                           color: '#F5F2EC',
                         }}
                         onMouseEnter={(e) => {
+                          setSelectedIndex(globalIndex);
                           if (!isSelected) {
                             e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.1)';
                           }
