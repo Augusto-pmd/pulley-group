@@ -50,33 +50,33 @@ export default function MonthSummary({ eventos }: MonthSummaryProps) {
   return (
     <Card padding="large">
       <div className="flex flex-col items-center text-center py-8">
-        {/* Resultado del Mes - Protagonista absoluto */}
+        {/* Resultado del Mes - Protagonista absoluto - Plano focal */}
         <div className="mb-12">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
             RESULTADO DEL MES
           </div>
           <CurrencyDisplay value={resultadoMes} size="display" showSecondary={false} />
         </div>
 
-        {/* Ingresos y Egresos - Secundarios discretos */}
-        <div className="flex items-center justify-center gap-16 mb-12">
+        {/* Ingresos y Egresos - Secundarios discretos - Plano secundario */}
+        <div className="flex items-center justify-center gap-16 mb-12" style={{ opacity: 0.7 }}>
           <div className="flex flex-col items-center">
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               INGRESOS
             </div>
             <CurrencyDisplay value={totalIngresos} size="regular" showSecondary={false} />
           </div>
           <div className="flex flex-col items-center">
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               EGRESOS
             </div>
             <CurrencyDisplay value={totalEgresos} size="regular" showSecondary={false} />
           </div>
         </div>
 
-        {/* Distribución por Tipo - Secundario discreto */}
-        <div className="w-full max-w-md">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
+        {/* Distribución por Tipo - Secundario discreto - Plano terciario */}
+        <div className="w-full max-w-md" style={{ opacity: 0.6 }}>
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
             POR TIPO
           </div>
           <div className="space-y-3">

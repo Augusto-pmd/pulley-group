@@ -44,16 +44,27 @@ export default function MonthTable({
             onClick={() => onSelectEvent(evento)}
             className="w-full grid grid-cols-[2fr_1fr_1.5fr_120px_100px] gap-4 py-2.5 px-2 rounded-lg transition-all duration-fast text-left"
             style={{ 
-              backgroundColor: selectedEventId === evento.id ? 'rgba(31, 42, 51, 0.15)' : 'transparent',
+              // Materialidad con luz cálida en selección
+              backgroundColor: selectedEventId === evento.id 
+                ? 'rgba(181, 154, 106, 0.1)' 
+                : 'transparent',
+              backgroundImage: selectedEventId === evento.id
+                ? 'radial-gradient(circle at left, rgba(181, 154, 106, 0.12) 0%, transparent 50%)'
+                : 'none',
+              border: selectedEventId === evento.id
+                ? '1px solid rgba(181, 154, 106, 0.2)'
+                : '1px solid transparent',
             }}
             onMouseEnter={(e) => {
               if (selectedEventId !== evento.id) {
-                e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.08)';
+                e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.05)';
+                e.currentTarget.style.backgroundImage = 'radial-gradient(circle at left, rgba(181, 154, 106, 0.06) 0%, transparent 50%)';
               }
             }}
             onMouseLeave={(e) => {
               if (selectedEventId !== evento.id) {
                 e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.backgroundImage = 'none';
               }
             }}
           >

@@ -60,9 +60,9 @@ export default function EmmaCurrentState() {
   return (
     <Card padding="large">
       <div className="flex flex-col items-center text-center py-8">
-        {/* Capital Acumulado - Protagonista absoluto */}
+        {/* Capital Acumulado - Protagonista absoluto - Plano focal */}
         <div className="mb-12">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4 opacity-60">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
             CAPITAL ACUMULADO
           </div>
           <CurrencyDisplay 
@@ -73,10 +73,10 @@ export default function EmmaCurrentState() {
           />
         </div>
 
-        {/* Secundarios discretos */}
-        <div className="flex items-center justify-center gap-16">
+        {/* Secundarios discretos - Plano secundario */}
+        <div className="flex items-center justify-center gap-16" style={{ opacity: 0.7 }}>
           <div className="flex flex-col items-center">
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               APORTE MENSUAL
             </div>
             <CurrencyDisplay 
@@ -88,7 +88,7 @@ export default function EmmaCurrentState() {
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               TIEMPO TRANSCURRIDO
             </div>
             <div className="text-heading-3 font-medium text-text-primary">

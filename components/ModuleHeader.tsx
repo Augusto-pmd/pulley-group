@@ -76,20 +76,50 @@ export default function ModuleHeader({
               {primaryAction.href ? (
                 <Link
                   href={primaryAction.href}
-                  className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
-                  style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
+                  className="px-4 py-2 text-body font-medium rounded-button transition-all duration-300 relative"
+                  style={{
+                    backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                    backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                    border: '1px solid rgba(181, 154, 106, 0.4)',
+                    color: '#F5F2EC',
+                    backdropFilter: 'blur(8px)',
+                    boxShadow: 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.25)';
+                    e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.35) 0%, rgba(181, 154, 106, 0.2) 40%, transparent 70%)';
+                    e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(181, 154, 106, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 30px rgba(181, 154, 106, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
+                    e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)';
+                    e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)';
+                  }}
                 >
                   {primaryAction.label}
                 </Link>
               ) : (
                 <button
                   onClick={primaryAction.onClick}
-                  className="px-4 py-2 text-body font-medium rounded-button transition-colors duration-fast"
-                  style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
+                  className="px-4 py-2 text-body font-medium rounded-button transition-all duration-300 relative"
+                  style={{
+                    backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                    backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                    border: '1px solid rgba(181, 154, 106, 0.4)',
+                    color: '#F5F2EC',
+                    backdropFilter: 'blur(8px)',
+                    boxShadow: 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.25)';
+                    e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.35) 0%, rgba(181, 154, 106, 0.2) 40%, transparent 70%)';
+                    e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(181, 154, 106, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 30px rgba(181, 154, 106, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
+                    e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)';
+                    e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)';
+                  }}
                 >
                   {primaryAction.label}
                 </button>

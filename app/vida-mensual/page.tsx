@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import DiscreteNav from '@/components/DiscreteNav';
+import { useModeFromPath } from '@/hooks/useModeFromPath';
+import { useRingData } from '@/contexts/RingDataContext';
 import MonthSelector from '@/components/vida-mensual/MonthSelector';
-import MonthStatus from '@/components/vida-mensual/MonthStatus';
 import MonthOpenView from '@/components/vida-mensual/MonthOpenView';
 import MonthClosingView from '@/components/vida-mensual/MonthClosingView';
 import MonthClosedView from '@/components/vida-mensual/MonthClosedView';
@@ -60,6 +60,8 @@ function apiMonthToMonthState(apiMonth: ApiMonth): MonthStateType {
 }
 
 export default function VidaMensualPage() {
+  useModeFromPath();
+  const { setRingData } = useRingData();
   const [eventos, setEventos] = useState<EventoMensual[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiMonths, setApiMonths] = useState<ApiMonth[]>([]);
@@ -355,8 +357,20 @@ export default function VidaMensualPage() {
     alert('Agregar corrección como evento nuevo');
   };
 
-  // Calcular promedio mensual en USD (mock)
+  // Calcular resultado del mes
   const eventosMes = eventos.filter((e) => e.mes === selectedMonth);
+  const resultadoMes = eventosMes.reduce((sum, e) => {
+    return sum + (e.tipo === 'ingreso' ? e.montoUsd : -e.montoUsd);
+  }, 0);
+
+  // Actualizar datos del Ring
+  useEffect(() => {
+    setRingData({
+      mesResultado: resultadoMes,
+    });
+  }, [resultadoMes, setRingData]);
+
+  // Calcular promedio mensual en USD (mock)
   const todosLosMeses = Array.from(new Set(eventos.map((e) => e.mes)));
   // Promedio mensual solo de egresos (para comparación)
   const promedioMensual = todosLosMeses.length > 0
@@ -370,24 +384,11 @@ export default function VidaMensualPage() {
   const monthState = monthStateData?.estado || 'ABIERTO';
   const fechaApertura = monthStateData?.fechaApertura;
 
+  // MODO MES: Anillo arriba muestra resultado, contenido mínimo abajo
   return (
-    <>
-      {/* Navegación discreta */}
-      <DiscreteNav />
-
-      {/* PLACA CENTRAL DOMINANTE - Estado del mes */}
-      <div className="mb-16">
-        <MonthStatus
-          mes={selectedMonth}
-          estado={monthState}
-          fechaApertura={fechaApertura}
-          onStartClosing={handleStartClosing}
-          onCloseMonth={handleConfirmClose}
-        />
-      </div>
-
-      {/* Selector de mes - discreto */}
-      <div className="mb-8">
+    <div className="pt-32">
+      {/* Selector de mes - discreto arriba */}
+      <div className="mb-8 flex justify-center">
         <MonthSelector
           selectedMonth={selectedMonth}
           onMonthChange={setSelectedMonth}
@@ -397,7 +398,7 @@ export default function VidaMensualPage() {
 
       {/* Alerta de meses atrasados - discreto */}
       {mesesAtrasados.length > 0 && !mesesAtrasados.some(m => m.mes === selectedMonth) && (
-        <div className="mb-8">
+        <div className="mb-8 flex justify-center">
           <UnclosedMonthsAlert 
             mesesAtrasados={mesesAtrasados}
             onSelectMonth={(mes) => setSelectedMonth(mes)}
@@ -405,7 +406,8 @@ export default function VidaMensualPage() {
         </div>
       )}
 
-      {/* CONTENIDO - Vista según estado del mes seleccionado */}
+      {/* CONTENIDO - Vista según estado del mes seleccionado - Centrado, mínimo */}
+      <div className="max-w-4xl mx-auto">
       {monthState === 'ABIERTO' && !isClosing && (
         <MonthOpenView
           mes={selectedMonth}
@@ -442,6 +444,7 @@ export default function VidaMensualPage() {
           onAddCorrection={handleAddCorrection}
         />
       )}
-    </>
+      </div>
+    </div>
   );
 }

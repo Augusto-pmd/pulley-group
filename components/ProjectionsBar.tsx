@@ -46,8 +46,21 @@ export default function ProjectionsBar() {
         <div 
           className="h-full flex items-center px-8 max-w-[1920px] mx-4 mt-2 rounded-capsule"
           style={{
-            backgroundColor: '#1F2A33', // Azul petróleo muy oscuro - fondo técnico/headers
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.3)',
+            // Capa translúcida - plano base oscuro
+            backgroundColor: 'rgba(31, 42, 51, 0.85)',
+            backgroundImage: `
+              linear-gradient(to bottom, 
+                rgba(31, 42, 51, 0.9) 0%,
+                rgba(31, 42, 51, 0.8) 100%
+              )
+            `,
+            border: '1px solid rgba(181, 154, 106, 0.1)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: `
+              inset 0 0 10px rgba(0, 0, 0, 0.3),
+              0 2px 8px rgba(0, 0, 0, 0.3),
+              0 0 0 1px rgba(181, 154, 106, 0.05)
+            `,
           }}
         >
           {/* Selector de Escenario */}

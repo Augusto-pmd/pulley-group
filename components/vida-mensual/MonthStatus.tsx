@@ -78,14 +78,29 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
             )}
           </div>
 
-          {/* CTA según estado - Discreto */}
+          {/* CTA según estado - Discreto con materialidad */}
           {estado === 'ABIERTO' && onStartClosing && (
             <button
               onClick={onStartClosing}
-              className="px-6 py-2.5 text-body font-medium rounded-button transition-colors duration-fast"
-              style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
+              className="px-6 py-2.5 text-body font-medium rounded-button transition-all duration-300"
+              style={{
+                backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                border: '1px solid rgba(181, 154, 106, 0.4)',
+                color: '#F5F2EC',
+                backdropFilter: 'blur(8px)',
+                boxShadow: 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.25)';
+                e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.35) 0%, rgba(181, 154, 106, 0.2) 40%, transparent 70%)';
+                e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(181, 154, 106, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 30px rgba(181, 154, 106, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
+                e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)';
+                e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)';
+              }}
             >
               Cerrar mes
             </button>
@@ -93,10 +108,25 @@ export default function MonthStatus({ mes, estado, fechaApertura, onCloseMonth, 
           {estado === 'EN_CIERRE' && onCloseMonth && (
             <button
               onClick={onCloseMonth}
-              className="px-6 py-2.5 text-body font-medium rounded-button transition-colors duration-fast"
-              style={{ backgroundColor: '#B59A6A', color: '#F5F2EC' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#A0885A'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B59A6A'}
+              className="px-6 py-2.5 text-body font-medium rounded-button transition-all duration-300"
+              style={{
+                backgroundColor: 'rgba(181, 154, 106, 0.2)',
+                backgroundImage: 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)',
+                border: '1px solid rgba(181, 154, 106, 0.4)',
+                color: '#F5F2EC',
+                backdropFilter: 'blur(8px)',
+                boxShadow: 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.25)';
+                e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.35) 0%, rgba(181, 154, 106, 0.2) 40%, transparent 70%)';
+                e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(181, 154, 106, 0.2), 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 30px rgba(181, 154, 106, 0.15)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.2)';
+                e.currentTarget.style.backgroundImage = 'radial-gradient(circle at 30% 30%, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 40%, transparent 70%)';
+                e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(181, 154, 106, 0.15), 0 4px 12px rgba(0, 0, 0, 0.3)';
+              }}
             >
               Confirmar cierre
             </button>

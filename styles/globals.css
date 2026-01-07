@@ -43,6 +43,17 @@
       background-position: 100% 50%;
     }
   }
+
+  @keyframes pulse-slow {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 20px rgba(181, 154, 106, 0.3), 0 0 40px rgba(181, 154, 106, 0.1);
+    }
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 0 30px rgba(181, 154, 106, 0.4), 0 0 60px rgba(181, 154, 106, 0.15);
+    }
+  }
   
   /* Scrollbar sutil */
   ::-webkit-scrollbar {

@@ -1,8 +1,12 @@
 import type { Metadata } from 'next';
+import { ModeProvider } from '@/contexts/ModeContext';
+import { RingDataProvider } from '@/contexts/RingDataContext';
 import ProjectionsBar from '@/components/ProjectionsBar';
 import CommandPalette from '@/components/CommandPalette';
 import FloatingNav from '@/components/FloatingNav';
 import CommandPaletteHint from '@/components/CommandPaletteHint';
+import Ring from '@/components/Ring';
+import ModeSelector from '@/components/ModeSelector';
 import BackgroundBlobs from '@/components/BackgroundBlobs';
 import '@/styles/globals.css';
 
@@ -19,22 +23,25 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className="antialiased">
-        {/* Fondo vivo con blobs flotantes */}
-        <BackgroundBlobs />
-        
-        {/* Contenedor principal flotante */}
-        <div className="relative z-10 min-h-screen">
-          <ProjectionsBar />
-          <CommandPalette />
-          <FloatingNav />
-          <CommandPaletteHint />
-          <main className="pt-20 relative z-10">
-            {/* Marco Espacial Maestro - Contenedor único para todas las páginas */}
-            <div className="w-full max-w-[1200px] mx-auto px-12 pb-24">
+        <ModeProvider>
+          <RingDataProvider>
+            {/* Fondo vivo con blobs flotantes */}
+            <BackgroundBlobs />
+          
+          {/* Contenedor principal flotante */}
+          <div className="relative z-10 min-h-screen">
+            <ProjectionsBar />
+            <CommandPalette />
+            <FloatingNav />
+            <CommandPaletteHint />
+            <Ring />
+            <ModeSelector />
+            <main className="relative z-10 min-h-screen">
               {children}
-            </div>
-          </main>
-        </div>
+            </main>
+          </div>
+          </RingDataProvider>
+        </ModeProvider>
       </body>
     </html>
   );

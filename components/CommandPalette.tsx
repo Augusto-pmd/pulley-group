@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useMode } from '@/contexts/ModeContext';
 import Card from './Card';
 
 interface Command {
@@ -10,14 +11,15 @@ interface Command {
   href: string;
   category: string;
   keywords: string[];
+  mode?: 'estado' | 'mes' | 'fondo' | 'detalle';
 }
 
 const commands: Command[] = [
-  { id: 'dashboard', label: 'Dashboard', href: '/', category: 'Principal', keywords: ['dashboard', 'inicio', 'home', 'principal'] },
-  { id: 'vida-mensual', label: 'Vida Mensual', href: '/vida-mensual', category: 'Principal', keywords: ['vida', 'mensual', 'mes', 'gastos', 'ingresos'] },
-  { id: 'activos', label: 'Activos', href: '/activos', category: 'Principal', keywords: ['activos', 'bienes', 'propiedades'] },
-  { id: 'investments', label: 'Inversiones', href: '/investments', category: 'Principal', keywords: ['inversiones', 'inversión', 'portfolio'] },
-  { id: 'emma', label: 'Emma', href: '/emma', category: 'Principal', keywords: ['emma', 'fondo', 'ahorro'] },
+  { id: 'estado', label: 'Estado', href: '/', category: 'Modos', keywords: ['estado', 'patrimonio', 'total'], mode: 'estado' },
+  { id: 'mes', label: 'Mes', href: '/vida-mensual', category: 'Modos', keywords: ['mes', 'mensual', 'vida', 'gastos', 'ingresos'], mode: 'mes' },
+  { id: 'fondo', label: 'Fondo', href: '/emma', category: 'Modos', keywords: ['fondo', 'emma', 'ahorro'], mode: 'fondo' },
+  { id: 'detalle-activos', label: 'Detalle - Activos', href: '/activos', category: 'Modos', keywords: ['activos', 'bienes', 'propiedades'], mode: 'detalle' },
+  { id: 'detalle-inversiones', label: 'Detalle - Inversiones', href: '/investments', category: 'Modos', keywords: ['inversiones', 'inversión', 'portfolio'], mode: 'detalle' },
   { id: 'projections', label: 'Proyecciones', href: '/projections', category: 'Análisis', keywords: ['proyecciones', 'futuro', 'simulación'] },
   { id: 'futurologia', label: 'Futurología', href: '/futurologia', category: 'Análisis', keywords: ['futurología', 'escenarios'] },
   { id: 'flows', label: 'Flujos', href: '/flows', category: 'Análisis', keywords: ['flujos', 'movimientos', 'dinero'] },
@@ -32,6 +34,7 @@ export default function CommandPalette() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
+  const { setMode, setDetailTarget } = useMode();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -107,6 +110,14 @@ export default function CommandPalette() {
   }, [selectedIndex]);
 
   const handleSelect = (cmd: Command) => {
+    if (cmd.mode) {
+      setMode(cmd.mode);
+      if (cmd.id === 'detalle-activos') {
+        setDetailTarget('activos');
+      } else if (cmd.id === 'detalle-inversiones') {
+        setDetailTarget('inversiones');
+      }
+    }
     router.push(cmd.href);
     setIsOpen(false);
     setSearch('');
@@ -117,9 +128,13 @@ export default function CommandPalette() {
 
   return (
     <>
-      {/* Overlay */}
+      {/* Overlay - capa base oscura */}
       <div 
-        className="fixed inset-0 z-[200] bg-black/40 backdrop-blur-sm"
+        className="fixed inset-0 z-[200] backdrop-blur-md transition-opacity duration-300"
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(8px)',
+        }}
         onClick={() => {
           setIsOpen(false);
           setSearch('');
@@ -185,22 +200,37 @@ export default function CommandPalette() {
                         onClick={() => handleSelect(cmd)}
                         className="w-full text-left px-4 py-2.5 rounded-button text-body transition-colors duration-fast"
                         style={{
+                          // Capa translúcida con luz cálida en foco
                           backgroundColor: isSelected 
-                            ? 'rgba(181, 154, 106, 0.15)' 
+                            ? 'rgba(181, 154, 106, 0.12)' 
                             : isActive
-                            ? 'rgba(181, 154, 106, 0.08)'
+                            ? 'rgba(181, 154, 106, 0.06)'
                             : 'transparent',
+                          backgroundImage: isSelected 
+                            ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.15) 0%, transparent 70%)'
+                            : 'none',
                           color: '#F5F2EC',
+                          border: isSelected 
+                            ? '1px solid rgba(181, 154, 106, 0.3)'
+                            : '1px solid transparent',
+                          backdropFilter: isSelected ? 'blur(10px)' : 'none',
+                          boxShadow: isSelected
+                            ? 'inset 0 0 10px rgba(181, 154, 106, 0.1), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                            : 'none',
                         }}
                         onMouseEnter={(e) => {
                           setSelectedIndex(globalIndex);
                           if (!isSelected) {
-                            e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.1)';
+                            e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.08)';
+                            e.currentTarget.style.backgroundImage = 'radial-gradient(circle at center, rgba(181, 154, 106, 0.1) 0%, transparent 70%)';
+                            e.currentTarget.style.borderColor = 'rgba(181, 154, 106, 0.2)';
                           }
                         }}
                         onMouseLeave={(e) => {
                           if (!isSelected) {
-                            e.currentTarget.style.backgroundColor = isActive ? 'rgba(181, 154, 106, 0.08)' : 'transparent';
+                            e.currentTarget.style.backgroundColor = isActive ? 'rgba(181, 154, 106, 0.06)' : 'transparent';
+                            e.currentTarget.style.backgroundImage = 'none';
+                            e.currentTarget.style.borderColor = 'transparent';
                           }
                         }}
                       >

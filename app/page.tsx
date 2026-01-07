@@ -1,16 +1,14 @@
 'use client';
 
 import { useMemo, useEffect, useState } from 'react';
-import PatrimonialState from '@/components/PatrimonialState';
-import Distribution from '@/components/Distribution';
-import EmmaFund from '@/components/EmmaFund';
-import InvestmentsRanking from '@/components/InvestmentsRanking';
-import Alerts from '@/components/Alerts';
-import DashboardActions from '@/components/DashboardActions';
+import { useModeFromPath } from '@/hooks/useModeFromPath';
+import { useRingData } from '@/contexts/RingDataContext';
 import { getAssets, getInvestments, getMovements, getMonths, type ApiAsset, type ApiInvestment, type ApiMovement } from '@/lib/api';
 import { getCurrentMonth } from '@/mock/month-status';
 
 export default function Dashboard() {
+  useModeFromPath();
+  const { setRingData } = useRingData();
   const [assets, setAssets] = useState<ApiAsset[]>([]);
   const [investments, setInvestments] = useState<ApiInvestment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -127,13 +125,12 @@ export default function Dashboard() {
       }, 0);
   }, [allMovements, currentYear]);
 
-  // Datos para PatrimonialState
-  const patrimonialStateData = useMemo(() => ({
-    total: totalPatrimony,
-    monthlyResult,
-    annualResult,
-    liquidity: 0, // Por ahora 0, se puede calcular desde movimientos pendientes
-  }), [totalPatrimony, monthlyResult, annualResult]);
+  // Actualizar datos del Ring
+  useEffect(() => {
+    setRingData({
+      patrimonioTotal: totalPatrimony,
+    });
+  }, [totalPatrimony, setRingData]);
 
   // Datos para Distribution
   const distributionData = useMemo(() => ({
@@ -215,57 +212,8 @@ export default function Dashboard() {
   const hasAnyData = totalPatrimony > 0 || monthlyResult !== 0 || annualResult !== 0 || 
                      assets.length > 0 || investments.length > 0;
 
-  try {
-    return (
-      <>
-        {/* PLACA CENTRAL DOMINANTE - Estado patrimonial único */}
-        <div className="mb-16">
-          <PatrimonialState data={patrimonialStateData} />
-        </div>
-
-        {/* ELEMENTOS SECUNDARIOS - Solo 2-3 visibles, mucho aire */}
-        <div className="space-y-12">
-          {/* Distribución - Secundario discreto */}
-          {totalPatrimony > 0 && (
-            <div>
-              <Distribution 
-                data={distributionData} 
-                total={totalPatrimony || 0} 
-                activosNetos={patrimonioNetoActivos || 0} 
-              />
-            </div>
-          )}
-
-          {/* Emma - Secundario discreto */}
-          {emmaFundData.currentCapital > 0 && (
-            <div>
-              <EmmaFund data={emmaFundData} />
-            </div>
-          )}
-
-          {/* Ranking - Secundario discreto */}
-          {investmentsForRanking.length > 0 && (
-            <div>
-              <InvestmentsRanking investments={investmentsForRanking} />
-            </div>
-          )}
-
-          {/* Acciones - Secundario discreto */}
-          <div>
-            <DashboardActions />
-          </div>
-        </div>
-      </>
-    );
-  } catch (error) {
-    console.error('Error rendering Dashboard:', error);
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-body text-red-600">
-          Error al cargar el dashboard. Por favor, recarga la página.
-        </div>
-      </div>
-    );
-  }
+  // MODO ESTADO: Solo el anillo, nada más visible
+  // El sistema "respira" - contenido mínimo, máximo espacio
+  return null;
 }
 

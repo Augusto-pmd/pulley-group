@@ -67,25 +67,25 @@ export default function PatrimonialState({ data }: PatrimonialStateProps) {
   return (
     <Card padding="large">
       <div className="flex flex-col items-center text-center py-8">
-        {/* Patrimonio Total - Protagonista absoluto */}
+        {/* Patrimonio Total - Protagonista absoluto - Plano focal */}
         <div className="mb-12">
-          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4">
+          <div className="text-caption text-text-secondary uppercase tracking-wider mb-4" style={{ opacity: 0.5 }}>
             PATRIMONIO TOTAL
           </div>
           <CurrencyDisplay value={totalPatrimony} size="display" showSecondary={false} />
         </div>
 
-        {/* Ingresos y Resultado - Secundarios discretos */}
-        <div className="flex items-center justify-center gap-16">
+        {/* Ingresos y Resultado - Secundarios discretos - Plano secundario */}
+        <div className="flex items-center justify-center gap-16" style={{ opacity: 0.7 }}>
           <div className="flex flex-col items-center">
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               INGRESOS DEL MES
             </div>
             <CurrencyDisplay value={ingresosMes} size="regular" showSecondary={false} />
           </div>
 
           <div className="flex flex-col items-center">
-            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2 opacity-60">
+            <div className="text-caption text-text-secondary uppercase tracking-wider mb-2" style={{ opacity: 0.5 }}>
               RESULTADO DEL MES
             </div>
             <CurrencyDisplaySigned value={resultadoMes} size="regular" showSecondary={false} />

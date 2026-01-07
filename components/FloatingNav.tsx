@@ -33,20 +33,47 @@ export default function FloatingNav() {
       <div className="fixed bottom-8 right-8 z-[150]">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-fast shadow-lg"
+          className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-fast shadow-lg relative"
           style={{
-            backgroundColor: isOpen ? '#B59A6A' : 'rgba(31, 42, 51, 0.9)',
+            // Material translúcido con luz cálida en interacción
+            backgroundColor: isOpen 
+              ? 'rgba(181, 154, 106, 0.25)' 
+              : 'rgba(31, 42, 51, 0.85)',
+            backgroundImage: isOpen
+              ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)'
+              : 'none',
             border: '1px solid rgba(181, 154, 106, 0.3)',
             color: '#F5F2EC',
-            backdropFilter: 'blur(10px)',
+            backdropFilter: 'blur(12px)',
+            boxShadow: isOpen
+              ? `
+                inset 0 0 20px rgba(181, 154, 106, 0.2),
+                0 0 30px rgba(181, 154, 106, 0.25),
+                0 4px 12px rgba(0, 0, 0, 0.3)
+              `
+              : `
+                inset 0 0 10px rgba(0, 0, 0, 0.2),
+                0 2px 8px rgba(0, 0, 0, 0.25)
+              `,
           }}
           onMouseEnter={(e) => {
             setIsOpen(true);
-            e.currentTarget.style.backgroundColor = '#B59A6A';
+            e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.25)';
+            e.currentTarget.style.backgroundImage = 'radial-gradient(circle at center, rgba(181, 154, 106, 0.3) 0%, rgba(181, 154, 106, 0.15) 50%, transparent 100%)';
+            e.currentTarget.style.boxShadow = `
+              inset 0 0 25px rgba(181, 154, 106, 0.25),
+              0 0 40px rgba(181, 154, 106, 0.3),
+              0 4px 12px rgba(0, 0, 0, 0.3)
+            `;
           }}
           onMouseLeave={(e) => {
             if (!isOpen) {
-              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.9)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.85)';
+              e.currentTarget.style.backgroundImage = 'none';
+              e.currentTarget.style.boxShadow = `
+                inset 0 0 10px rgba(0, 0, 0, 0.2),
+                0 2px 8px rgba(0, 0, 0, 0.25)
+              `;
             }
           }}
         >
@@ -64,10 +91,21 @@ export default function FloatingNav() {
           <div 
             className="rounded-container p-4 space-y-2 min-w-[200px]"
             style={{
-              backgroundColor: 'rgba(31, 42, 51, 0.95)',
-              border: '1px solid rgba(181, 154, 106, 0.3)',
-              backdropFilter: 'blur(10px)',
-              boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.4)',
+              // Capa translúcida con profundidad
+              backgroundColor: 'rgba(31, 42, 51, 0.9)',
+              backgroundImage: `
+                radial-gradient(circle at top left, 
+                  rgba(181, 154, 106, 0.05) 0%,
+                  transparent 50%
+                )
+              `,
+              border: '1px solid rgba(181, 154, 106, 0.2)',
+              backdropFilter: 'blur(16px)',
+              boxShadow: `
+                inset 0 0 20px rgba(0, 0, 0, 0.3),
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(181, 154, 106, 0.1)
+              `,
             }}
           >
             {navItems.map((item) => {
@@ -80,19 +118,30 @@ export default function FloatingNav() {
                   onClick={() => setIsOpen(false)}
                   className="block px-4 py-2.5 rounded-button text-body transition-colors duration-fast"
                   style={{
+                    // Material con luz cálida en foco activo
                     backgroundColor: isActive 
-                      ? 'rgba(181, 154, 106, 0.2)' 
+                      ? 'rgba(181, 154, 106, 0.15)' 
                       : 'transparent',
+                    backgroundImage: isActive
+                      ? 'radial-gradient(circle at center, rgba(181, 154, 106, 0.2) 0%, transparent 70%)'
+                      : 'none',
                     color: '#F5F2EC',
+                    border: isActive 
+                      ? '1px solid rgba(181, 154, 106, 0.25)'
+                      : '1px solid transparent',
                   }}
                   onMouseEnter={(e) => {
                     if (!isActive) {
-                      e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.1)';
+                      e.currentTarget.style.backgroundColor = 'rgba(181, 154, 106, 0.08)';
+                      e.currentTarget.style.backgroundImage = 'radial-gradient(circle at center, rgba(181, 154, 106, 0.1) 0%, transparent 70%)';
+                      e.currentTarget.style.borderColor = 'rgba(181, 154, 106, 0.15)';
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!isActive) {
                       e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.backgroundImage = 'none';
+                      e.currentTarget.style.borderColor = 'transparent';
                     }
                   }}
                 >

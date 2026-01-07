@@ -302,8 +302,11 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
               backgroundColor: 'rgba(31, 42, 51, 0.1)',
             }}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor = '#B59A6A';
-              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              // Materialidad en foco - luz cálida filtrada
+              e.currentTarget.style.borderColor = 'rgba(181, 154, 106, 0.5)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.2)';
+              e.currentTarget.style.backgroundImage = 'radial-gradient(circle at top left, rgba(181, 154, 106, 0.1) 0%, transparent 50%)';
+              e.currentTarget.style.boxShadow = 'inset 0 0 10px rgba(181, 154, 106, 0.1), 0 0 20px rgba(181, 154, 106, 0.15)';
               if (filteredConcepts.length > 0 && concepto.length >= 2) {
                 setShowSuggestions(true);
               }
@@ -311,6 +314,8 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
             onBlur={(e) => {
               e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
               e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              e.currentTarget.style.backgroundImage = 'none';
+              e.currentTarget.style.boxShadow = 'none';
               handleConceptBlur();
             }}
             placeholder="Escribe el concepto o busca uno existente..."
@@ -319,9 +324,12 @@ export default function QuickAddForm({ onAdd }: QuickAddFormProps) {
           {/* Sugerencias livianas - No bloquean escritura */}
           {showSuggestions && filteredConcepts.length > 0 && (
             <div className="absolute z-10 w-full mt-1 rounded-card max-h-48 overflow-y-auto" style={{
-              backgroundColor: '#1F2A33',
-              border: '1px solid rgba(142, 142, 138, 0.2)',
-              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)',
+              // Capa translúcida - plano de información secundaria
+              backgroundColor: 'rgba(31, 42, 51, 0.9)',
+              backgroundImage: 'radial-gradient(circle at top left, rgba(181, 154, 106, 0.05) 0%, transparent 50%)',
+              border: '1px solid rgba(181, 154, 106, 0.15)',
+              backdropFilter: 'blur(12px)',
+              boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3)',
             }}>
               {filteredConcepts.slice(0, 5).map((c) => (
                 <button
