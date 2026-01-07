@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-01-07T16:21:48.706Z",
+  "timestamp": "2026-01-07T17:13:44.896Z",
   "baseUrl": "https://pulley-group.vercel.app",
   "tests": [
     {
       "name": "GET /api/concepts",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:49.366Z",
+      "timestamp": "2026-01-07T17:13:45.531Z",
       "endpoint": "/api/concepts",
       "method": "GET",
       "statusCode": 200,
@@ -15,7 +15,7 @@
     {
       "name": "GET /api/months",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:49.566Z",
+      "timestamp": "2026-01-07T17:13:45.755Z",
       "endpoint": "/api/months",
       "method": "GET",
       "statusCode": 200,
@@ -24,18 +24,18 @@
     {
       "name": "GET /api/months/2026/01",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:49.875Z",
+      "timestamp": "2026-01-07T17:13:46.043Z",
       "endpoint": "/api/months/2026/01",
       "method": "GET",
       "statusCode": 200,
       "year": 2026,
       "month": "01",
-      "responseSize": 9248
+      "responseSize": 9484
     },
     {
       "name": "POST /api/movements",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:50.755Z",
+      "timestamp": "2026-01-07T17:13:46.916Z",
       "endpoint": "/api/movements",
       "method": "POST",
       "statusCode": 201,
@@ -52,17 +52,17 @@
     {
       "name": "GET /api/movements",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:51.064Z",
+      "timestamp": "2026-01-07T17:13:47.230Z",
       "endpoint": "/api/movements",
       "method": "GET",
       "statusCode": 200,
-      "responseSize": 19704,
+      "responseSize": 20170,
       "isArray": true
     },
     {
       "name": "POST /api/investments",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:51.262Z",
+      "timestamp": "2026-01-07T17:13:47.444Z",
       "endpoint": "/api/investments",
       "method": "POST",
       "statusCode": 201,
@@ -77,17 +77,17 @@
     {
       "name": "GET /api/investments",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:51.514Z",
+      "timestamp": "2026-01-07T17:13:47.654Z",
       "endpoint": "/api/investments",
       "method": "GET",
       "statusCode": 200,
-      "responseSize": 6632,
+      "responseSize": 6948,
       "isArray": true
     },
     {
       "name": "POST /api/assets",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:51.719Z",
+      "timestamp": "2026-01-07T17:13:47.885Z",
       "endpoint": "/api/assets",
       "method": "POST",
       "statusCode": 201,
@@ -101,11 +101,11 @@
     {
       "name": "GET /api/assets",
       "status": "PASS",
-      "timestamp": "2026-01-07T16:21:51.963Z",
+      "timestamp": "2026-01-07T17:13:48.149Z",
       "endpoint": "/api/assets",
       "method": "GET",
       "statusCode": 200,
-      "responseSize": 9025,
+      "responseSize": 9303,
       "isArray": true
     }
   ],

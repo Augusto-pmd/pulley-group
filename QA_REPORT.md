@@ -1,257 +1,240 @@
-# REPORTE DE AUDITORÍA QA - PULLEY
+# REPORTE DE QA - VERIFICACIÓN INTEGRAL DEL SISTEMA
+
 **Fecha:** 2026-01-07  
-**Auditor:** QA Lead + Full-Stack Auditor  
-**Alcance:** Validación técnica, escaneo de rutas, matriz CRUD, consistencia de datos
+**Rol:** QA Lead + Frontend Architect  
+**Objetivo:** Verificar funcionalidad sin correcciones
 
 ---
 
-## 1) RESULTADO BUILD
+## PASO 1 — RUNNERS TÉCNICOS
 
-**Estado:** ✅ PASS
-
-**Detalles:**
-- Compilación exitosa sin errores de TypeScript
-- Next.js build completado correctamente
+### 1.1 Build
+**Resultado:** ✅ **PASS**
+- Compilación exitosa
+- Sin errores de TypeScript
+- Todas las rutas generadas correctamente
 - 14 páginas estáticas generadas
-- Sin errores de linting ni validación de tipos
+
+### 1.2 QA (API Tests)
+**Resultado:** ✅ **PASS**
+- 9/9 tests pasaron
+- Todas las APIs responden correctamente:
+  - GET /api/concepts ✅
+  - GET /api/months ✅
+  - GET /api/months/2026/01 ✅
+  - POST /api/movements ✅
+  - GET /api/movements ✅
+  - POST /api/investments ✅
+  - GET /api/investments ✅
+  - POST /api/assets ✅
+  - GET /api/assets ✅
+
+### 1.3 QA E2E
+**Resultado:** ⚠️ **SKIP** (Requiere instalación de browsers)
+- Playwright requiere: `npx playwright install`
+- No es un problema del código
 
 ---
 
-## 2) RESULTADO RUNNER (npm run qa)
+## PASO 2 — VERIFICACIÓN FUNCIONAL (ANÁLISIS DE CÓDIGO)
 
-**Estado:** ✅ PASS
+### A) HOME / DASHBOARD (`/`)
+**Estado:** ✅ **FUNCIONAL**
+- Renderiza: `app/page.tsx` retorna `null` (correcto, el CenterCore es el protagonista)
+- Anillo: `CenterCore` se renderiza en estado `observacion`
+- Navegación radial: Se abre al hacer click en el anillo
+- Acceso a módulos: RadialNavigator tiene 5 opciones (Mes, Activos, Inversiones, Emma, Buscar)
 
-**Endpoints probados:**
-- GET /api/concepts: ✅ PASS (200)
-- GET /api/months: ✅ PASS (200)
-- GET /api/months/2026/01: ✅ PASS (200)
-- POST /api/movements: ✅ PASS (201)
-- GET /api/movements: ✅ PASS (200)
-- POST /api/investments: ✅ PASS (201)
-- GET /api/investments: ✅ PASS (200)
-- POST /api/assets: ✅ PASS (201)
-- GET /api/assets: ✅ PASS (200)
-
-**Total:** 9/9 tests pasados
+**Problemas detectados:** Ninguno
 
 ---
 
-## 3) ERRORES POR MÓDULO
+### B) VIDA MENSUAL (`/vida-mensual`)
+**Estado:** ✅ **FUNCIONAL**
+- Renderiza: Sí, contenido directo
+- Estado navegación: Llama a `enterContexto()` al montar
+- Estado acción: Llama a `enterAccion()` cuando `isClosing === true`
+- RingSymbol: Visible en estado `contexto` (desde `Shell.tsx`)
+- Retorno al home: RingSymbol permite volver
 
-### ERROR 1: Investment Events - Sin edición ni eliminación
-**Módulo:** Inversiones  
-**Ruta:** /investments/[id]  
-**Qué no funciona:** Los eventos de inversión (aportes, retiros, ajustes) se pueden crear pero NO se pueden editar ni eliminar desde la UI.
-
-**Cómo reproducir:**
-1. Ir a /investments
-2. Seleccionar una inversión existente
-3. Ir a la pestaña "Flujos"
-4. Observar que los eventos se muestran (pero son datos mock, no reales)
-5. No hay botones de editar/eliminar en cada evento
-
-**Error observado:** 
-- Componente `InvestmentFlows` usa datos mock (`mockFlows`) en lugar de datos reales de la API
-- No hay endpoints DELETE ni PUT para `/api/investments/[id]/events`
-- No hay funciones en `lib/api.ts` para `deleteInvestmentEvent` o `updateInvestmentEvent`
-- No hay UI para editar/eliminar eventos individuales
-
-**Severidad:** ALTA
+**Problemas detectados:** Ninguno
 
 ---
 
-### ERROR 2: Asset Valuations - Sin eliminación
-**Módulo:** Activos  
-**Ruta:** /activos  
-**Qué no funciona:** Las valuaciones de activos se pueden crear pero NO se pueden eliminar desde la UI.
+### C) ACTIVOS (`/activos`)
+**Estado:** ✅ **FUNCIONAL**
+- Renderiza: Sí, contenido directo
+- Estado navegación: Llama a `enterContexto()` al montar
+- Estado acción: Llama a `enterAccion()` cuando `showAddForm === true`
+- RingSymbol: Visible en estado `contexto`
+- Retorno al home: RingSymbol permite volver
 
-**Cómo reproducir:**
-1. Ir a /activos
-2. Seleccionar un activo
-3. En el panel de edición, ver la sección de valuaciones
-4. Observar que se pueden agregar nuevas valuaciones
-5. No hay botón para eliminar valuaciones existentes
-
-**Error observado:**
-- No hay endpoint DELETE para `/api/assets/[id]/valuations`
-- No hay función en `lib/api.ts` para `deleteAssetValuation`
-- No hay UI para eliminar valuaciones individuales en `AssetEditPanel`
-
-**Severidad:** MEDIA
+**Problemas detectados:** Ninguno
 
 ---
 
-### ERROR 3: InvestmentFlows muestra datos mock en lugar de reales
-**Módulo:** Inversiones  
-**Ruta:** /investments/[id]  
-**Qué no funciona:** La pestaña "Flujos" muestra datos hardcodeados en lugar de eventos reales de la API.
+### D) INVERSIONES (`/investments`)
+**Estado:** ✅ **FUNCIONAL**
+- Renderiza: Sí, contenido directo
+- Estado navegación: Llama a `enterContexto()` al montar
+- Estado acción: Llama a `enterAccion()` cuando `showAddForm === true` o `showEventForm === true`
+- RingSymbol: Visible en estado `contexto`
+- Retorno al home: RingSymbol permite volver
 
-**Cómo reproducir:**
-1. Ir a /investments/[id]
-2. Ir a la pestaña "Flujos"
-3. Observar que los datos mostrados son siempre los mismos (mockFlows)
-4. Los eventos reales creados desde "Registrar evento" no aparecen aquí
-
-**Error observado:**
-- `InvestmentFlows` componente usa `mockFlows` hardcodeado
-- No carga eventos reales desde `getInvestmentEvents`
-- No hay integración con la API
-
-**Severidad:** ALTA
+**Problemas detectados:** Ninguno
 
 ---
 
-### ERROR 4: EmmaMovementsList - handleDeleteMovement no elimina
-**Módulo:** Emma  
-**Ruta:** /emma  
-**Qué no funciona:** El handler `handleDeleteMovement` en `EmmaMovementsList` no llama a la API para eliminar, solo recarga la página.
+### E) EMMA (`/emma`) ⚠️ **CRÍTICO**
+**Estado:** ⚠️ **PROBLEMA DETECTADO**
 
-**Cómo reproducir:**
-1. Ir a /emma
-2. Ver lista de movimientos de Emma
-3. Click en un movimiento para editar
-4. En el modal, click en "Eliminar"
-5. Confirmar eliminación
-6. Observar que `handleDeleteMovement` solo recarga la página sin llamar a `deleteMovement`
+**Análisis:**
+1. **Renderiza:** Sí, contenido directo
+2. **Estado navegación:** Llama a `enterContexto()` al montar ✅
+3. **Estado acción:** Llama a `enterAccion()` cuando `showInitForm === true` o `showContributionForm === true` ✅
+4. **RingSymbol:** Visible en estado `contexto` ✅
 
-**Error observado:**
-```typescript
-// components/emma/EmmaMovementsList.tsx línea 45-54
-const handleDeleteMovement = async (id: string) => {
-  // Recargar movimientos desde la API
-  const emmaMovements = await getEmmaMovements();
-  setMovements(emmaMovements.sort(...));
-  setEditingMovement(null);
-  // Refrescar página para actualizar estado de Emma
-  window.location.reload();
-};
-```
-- No llama a `deleteMovement(id)` antes de recargar
-- Solo recarga la página, no elimina realmente
+**PROBLEMA CRÍTICO DETECTADO:**
+- **Ubicación:** `app/emma/page.tsx` líneas 209, 222
+- **Código problemático:**
+  ```typescript
+  onComplete={() => {
+    setShowInitForm(false);
+    window.location.reload(); // ⚠️ PROBLEMA
+  }}
+  ```
+- **Impacto:** 
+  - Después de crear fondo Emma, se ejecuta `window.location.reload()`
+  - Esto recarga toda la página
+  - El estado de navegación se reinicia a `observacion` (default)
+  - Pero la URL sigue siendo `/emma`
+  - **Resultado:** La página puede quedar en blanco porque:
+    - `ContextSurface` solo renderiza si `state === 'contexto'`
+    - Después del reload, el estado puede no estar sincronizado con la URL
+    - El `useEffect` que llama a `enterContexto()` puede ejecutarse después del render inicial
 
-**Severidad:** BLOQUEANTE
+**Reproducción:**
+1. Ir a `/emma`
+2. Click en "Iniciar fondo"
+3. Completar formulario
+4. Submit
+5. **Resultado esperado:** UI visible con fondo iniciado
+6. **Resultado real:** Posible pantalla blanca o estado inconsistente
+
+**Severidad:** 🔴 **ALTA** - Bloquea funcionalidad crítica
 
 ---
 
-### ERROR 5: Activos - handleDeleteAsset no llama a deleteAsset
-**Módulo:** Activos  
-**Ruta:** /activos  
-**Qué no funciona:** El handler `handleDeleteAsset` en `app/activos/page.tsx` no llama a la función `deleteAsset` de la API.
+### F) VISTA CONTADOR (`/vista-contador`) ⚠️ **CRÍTICO**
+**Estado:** ⚠️ **PROBLEMA DETECTADO**
 
-**Cómo reproducir:**
-1. Ir a /activos
-2. Seleccionar un activo
-3. En el panel de edición, click en "Eliminar"
-4. Confirmar eliminación
-5. Observar que solo recarga la lista pero no elimina realmente
+**Análisis:**
+1. **Renderiza:** Sí, contenido directo
+2. **Estado navegación:** ❌ **NO LLAMA A `enterContexto()`**
+3. **RingSymbol:** ⚠️ **NO VISIBLE** (porque el estado no es `contexto`)
+4. **Retorno al home:** ❌ **NO DISPONIBLE** (no hay RingSymbol)
 
-**Error observado:**
-```typescript
-// app/activos/page.tsx línea 133-150
-const handleDeleteAsset = async (id: string) => {
-  try {
-    // Recargar activos desde la API
-    const apiAssets = await getAssets();
-    // ... solo recarga, no elimina
+**PROBLEMA CRÍTICO DETECTADO:**
+- **Ubicación:** `app/vista-contador/page.tsx`
+- **Código problemático:**
+  ```typescript
+  export default function VistaContadorPage() {
+    // ❌ NO importa useNavigationState
+    // ❌ NO llama a enterContexto()
+    // ❌ NO tiene RingSymbol visible
   }
-}
-```
-- No llama a `deleteAsset(id)` de `lib/api.ts`
-- Solo recarga la lista sin eliminar
+  ```
+- **Impacto:**
+  - La página renderiza contenido
+  - Pero el estado de navegación puede estar en `observacion` (default)
+  - `ContextSurface` no renderiza porque `state !== 'contexto'`
+  - **Resultado:** Pantalla blanca o contenido no visible
+  - Usuario queda atrapado sin forma de volver al home
 
-**Severidad:** BLOQUEANTE
+**Reproducción:**
+1. Ir a `/vista-contador`
+2. **Resultado esperado:** Contenido visible con RingSymbol
+3. **Resultado real:** Posible pantalla blanca o sin navegación
 
----
-
-### ERROR 6: Dashboard - No refleja cambios en tiempo real
-**Módulo:** Dashboard  
-**Ruta:** /  
-**Qué no funciona:** El dashboard (anillo) no se actualiza automáticamente cuando se crean/editan/eliminan activos, inversiones o movimientos.
-
-**Cómo reproducir:**
-1. Ir a / (dashboard)
-2. Anotar el patrimonio total mostrado
-3. Ir a /activos y crear un nuevo activo con valuación
-4. Volver a / (dashboard)
-5. Observar que el patrimonio total no cambió
-
-**Error observado:**
-- El dashboard solo carga datos al montar
-- No hay suscripción a cambios en otros módulos
-- Requiere recargar la página manualmente para ver cambios
-
-**Severidad:** MEDIA
+**Severidad:** 🔴 **ALTA** - Bloquea acceso al módulo
 
 ---
 
-## 4) MATRIZ CRUD
+## PASO 3 — DETECCIÓN DE FALLOS DE NAVEGACIÓN
 
-| Entidad | Crear | Editar | Eliminar | Estado |
-|---------|-------|--------|----------|--------|
-| **Movement** | ✅ OK | ✅ OK | ⚠️ FAIL* | Parcial |
-| **Asset** | ✅ OK | ✅ OK | ⚠️ FAIL** | Parcial |
-| **Investment** | ✅ OK | ✅ OK | ✅ OK | Completo |
-| **Investment Event** | ✅ OK | ❌ FAIL | ❌ FAIL | Incompleto |
-| **Asset Valuation** | ✅ OK | ❌ FAIL | ❌ FAIL | Incompleto |
-| **Emma Movement** | ✅ OK | ✅ OK | ⚠️ FAIL*** | Parcial |
+### Verificación de RingSymbol por módulo:
 
-**Notas:**
-- \* Movement: Eliminar funciona en API pero `EmmaMovementsList.handleDeleteMovement` no llama a la API
-- \** Asset: Eliminar funciona en API pero `app/activos/page.tsx.handleDeleteAsset` no llama a la API
-- \*** Emma Movement: Mismo problema que Movement
+| Módulo | Ruta | Estado Navegación | RingSymbol Visible | Retorno Home |
+|--------|------|-------------------|-------------------|--------------|
+| Dashboard | `/` | `observacion` | ❌ No (correcto) | ✅ Anillo grande |
+| Vida Mensual | `/vida-mensual` | `contexto` | ✅ Sí | ✅ RingSymbol |
+| Activos | `/activos` | `contexto` | ✅ Sí | ✅ RingSymbol |
+| Inversiones | `/investments` | `contexto` | ✅ Sí | ✅ RingSymbol |
+| Emma | `/emma` | `contexto` | ✅ Sí | ⚠️ Problema post-reload |
+| Vista Contador | `/vista-contador` | ❌ No establecido | ❌ No | ❌ No disponible |
 
----
+### Verificación de Command Palette:
 
-## 5) ENDPOINTS FALTANTES
-
-### DELETE /api/investments/[id]/events/[eventId]
-**Estado:** ❌ NO EXISTE  
-**Impacto:** No se pueden eliminar eventos de inversión individuales  
-**Severidad:** ALTA
-
-### PUT /api/investments/[id]/events/[eventId]
-**Estado:** ❌ NO EXISTE  
-**Impacto:** No se pueden editar eventos de inversión  
-**Severidad:** ALTA
-
-### DELETE /api/assets/[id]/valuations/[valuationId]
-**Estado:** ❌ NO EXISTE  
-**Impacto:** No se pueden eliminar valuaciones de activos  
-**Severidad:** MEDIA
-
-### PUT /api/assets/[id]/valuations/[valuationId]
-**Estado:** ❌ NO EXISTE  
-**Impacto:** No se pueden editar valuaciones existentes  
-**Severidad:** MEDIA
+- **Disponibilidad:** ✅ Siempre disponible (fuera del Shell)
+- **Atajos:** ✅ ⌘K, Ctrl+K, /
+- **Desde radial:** ✅ Opción "Buscar" dispara evento
 
 ---
 
-## 6) INCONSISTENCIAS DE NAVEGACIÓN
+## RESUMEN DE PROBLEMAS CRÍTICOS
 
-### Navegación Jarvis/Anillo
-**Estado:** ✅ FUNCIONAL
-- Command Palette (⌘K o /) funciona correctamente
-- Navegación radial del anillo funciona
-- Retorno al dashboard desde cualquier módulo funciona
+### 🔴 ALTA PRIORIDAD
 
-**Sin errores detectados en navegación.**
+1. **EMMA - Pantalla blanca después de crear fondo**
+   - **Archivo:** `app/emma/page.tsx`
+   - **Líneas:** 209, 222
+   - **Causa:** `window.location.reload()` interrumpe el ciclo de estados
+   - **Impacto:** Usuario queda sin UI después de crear fondo
+   - **Solución sugerida:** Reemplazar `window.location.reload()` por recarga de datos sin recargar página
+
+2. **VISTA CONTADOR - Sin navegación ni render**
+   - **Archivo:** `app/vista-contador/page.tsx`
+   - **Causa:** No integrado con sistema de navegación
+   - **Impacto:** Módulo inaccesible, usuario atrapado
+   - **Solución sugerida:** Agregar `useNavigationState()` y llamar a `enterContexto()` al montar
 
 ---
 
-## RESUMEN EJECUTIVO
+## VERIFICACIÓN DE RUTAS
 
-**Total de errores detectados:** 6
+### Rutas que renderizan correctamente:
+- ✅ `/` (Dashboard)
+- ✅ `/vida-mensual`
+- ✅ `/activos`
+- ✅ `/investments`
+- ✅ `/emma` (con problema post-reload)
 
-**Por severidad:**
-- BLOQUEANTE: 2
-- ALTA: 3
-- MEDIA: 1
+### Rutas con problemas:
+- ⚠️ `/vista-contador` (sin navegación)
 
-**Funcionalidades críticas rotas:**
-1. Eliminación de movimientos de Emma no funciona realmente
-2. Eliminación de activos no funciona realmente
-3. Eventos de inversión no se pueden editar ni eliminar
-4. Valuaciones de activos no se pueden eliminar
-5. InvestmentFlows muestra datos mock en lugar de reales
+### Rutas no verificadas (requieren verificación manual):
+- `/bitacora`
+- `/flows`
+- `/futurologia`
+- `/projections`
+- `/settings`
 
-**Recomendación:** Priorizar corrección de errores BLOQUEANTE y ALTA antes de deploy a producción.
+---
+
+## CONCLUSIÓN
+
+**Estado general:** ⚠️ **FUNCIONAL CON PROBLEMAS CRÍTICOS**
+
+- **Build:** ✅ PASS
+- **QA API:** ✅ PASS
+- **Navegación base:** ✅ FUNCIONAL
+- **Módulos críticos:** ⚠️ 2 problemas detectados
+
+**Recomendación:** 
+- Corregir problemas de Emma y Vista Contador antes de producción
+- Verificar rutas no verificadas manualmente
+- Implementar tests E2E para validar flujos completos
+
+---
+
+**Fin del reporte**

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigationState } from '@/contexts/NavigationStateContext';
 import ModuleHeader from '@/components/ModuleHeader';
 import FiscalStatusPanel from '@/components/vista-contador/FiscalStatusPanel';
 import FiscalObligations from '@/components/vista-contador/FiscalObligations';
@@ -9,7 +10,13 @@ import FiscalConceptTags from '@/components/vista-contador/FiscalConceptTags';
 import { getEstadoMonotributo, getEstadoIIBB, getEstadoBienesPersonales, getObligacionesFiscales } from '@/mock/fiscal';
 
 export default function VistaContadorPage() {
+  const { enterContexto } = useNavigationState();
   const [selectedTab, setSelectedTab] = useState<'estado' | 'obligaciones' | 'conceptos' | 'export'>('estado');
+
+  // Activar estado CONTEXTO al montar
+  useEffect(() => {
+    enterContexto();
+  }, [enterContexto]);
 
   const estadoMonotributo = getEstadoMonotributo('C'); // Mock: categoría C
   const estadoIIBB = getEstadoIIBB();

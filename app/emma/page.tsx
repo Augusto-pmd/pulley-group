@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useModeFromPath } from '@/hooks/useModeFromPath';
 import { useRingData } from '@/contexts/RingDataContext';
 import { useCircularNavigation } from '@/contexts/CircularNavigationContext';
@@ -34,41 +34,51 @@ export default function EmmaPage() {
       enterContexto();
     }
   }, [showInitForm, showContributionForm, enterAccion, enterContexto]);
+  
   const [loading, setLoading] = useState(true);
   const [emmaState, setEmmaState] = useState<any>(null);
 
-  // Verificar si hay movimientos de Emma y cargar estado
-  useEffect(() => {
-    async function checkEmmaStatus() {
-      try {
-        setLoading(true);
-        const movements = await getEmmaMovements();
-        setHasMovements(movements.length > 0);
-        
-        if (movements.length > 0) {
-          const state = await getEmmaState();
-          setEmmaState(state);
-          // Actualizar datos del Ring
-          setRingData({
-            emmaCapital: state?.currentCapital || 0,
-          });
-        } else {
-          setRingData({
-            emmaCapital: 0,
-          });
-        }
-      } catch (error) {
-        console.error('Error checking Emma status:', error);
-        setHasMovements(false);
+  // Función para recargar datos de Emma
+  const reloadEmmaData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const movements = await getEmmaMovements();
+      setHasMovements(movements.length > 0);
+      
+      if (movements.length > 0) {
+        const state = await getEmmaState();
+        setEmmaState(state);
+        // Actualizar datos del Ring
+        setRingData({
+          emmaCapital: state?.currentCapital || 0,
+        });
+      } else {
         setRingData({
           emmaCapital: 0,
         });
-      } finally {
-        setLoading(false);
       }
+    } catch (error) {
+      console.error('Error checking Emma status:', error);
+      setHasMovements(false);
+      setRingData({
+        emmaCapital: 0,
+      });
+    } finally {
+      setLoading(false);
     }
-    checkEmmaStatus();
-  }, [showInitForm, showContributionForm, setRingData]);
+  }, [setRingData]);
+
+  // Verificar si hay movimientos de Emma y cargar estado
+  useEffect(() => {
+    reloadEmmaData();
+  }, [reloadEmmaData]);
+
+  // Recargar datos cuando se cierra un formulario
+  useEffect(() => {
+    if (!showInitForm && !showContributionForm) {
+      reloadEmmaData();
+    }
+  }, [showInitForm, showContributionForm, reloadEmmaData]);
 
   // Inyectar contenido en el contexto circular cuando el dominio está activo
   useEffect(() => {
@@ -105,9 +115,10 @@ export default function EmmaPage() {
           ) : showInitForm ? (
             <div className="p-8">
               <EmmaInitForm
-                onComplete={() => {
+                onComplete={async () => {
                   setShowInitForm(false);
-                  window.location.reload();
+                  // Recargar datos sin recargar página
+                  await reloadEmmaData();
                 }}
                 onCancel={() => setShowInitForm(false)}
               />
@@ -115,9 +126,10 @@ export default function EmmaPage() {
           ) : showContributionForm ? (
             <div className="p-8">
               <EmmaContributionForm
-                onComplete={() => {
+                onComplete={async () => {
                   setShowContributionForm(false);
-                  window.location.reload();
+                  // Recargar datos sin recargar página
+                  await reloadEmmaData();
                 }}
                 onCancel={() => setShowContributionForm(false)}
               />
@@ -204,9 +216,10 @@ export default function EmmaPage() {
       return (
         <div className="p-8">
           <EmmaInitForm
-            onComplete={() => {
+            onComplete={async () => {
               setShowInitForm(false);
-              window.location.reload();
+              // Recargar datos sin recargar página
+              await reloadEmmaData();
             }}
             onCancel={() => setShowInitForm(false)}
           />
@@ -217,9 +230,10 @@ export default function EmmaPage() {
       return (
         <div className="p-8">
           <EmmaContributionForm
-            onComplete={() => {
+            onComplete={async () => {
               setShowContributionForm(false);
-              window.location.reload();
+              // Recargar datos sin recargar página
+              await reloadEmmaData();
             }}
             onCancel={() => setShowContributionForm(false)}
           />
