@@ -193,21 +193,20 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             onChange={handleCapitalInicialChange}
             placeholder="0"
             required
-            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast
+            className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',
               color: '#F5F2EC',
               backgroundColor: 'rgba(31, 42, 51, 0.1)',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#B59A6A';
-              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
-              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
-            className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
           />
           <p className="mt-1 text-caption text-text-secondary">
             Se creará un movimiento real en Vida Mensual
@@ -224,21 +223,20 @@ export default function EmmaInitForm({ onComplete, onCancel }: EmmaInitFormProps
             value={aportePeriodicoFormatted}
             onChange={handleAportePeriodicoChange}
             placeholder="0"
-            className="w-full px-4 py-2.5 rounded-input text-body transition-colors duration-fast
+            className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
             style={{
               border: '1px solid rgba(142, 142, 138, 0.2)',
               color: '#F5F2EC',
               backgroundColor: 'rgba(31, 42, 51, 0.1)',
             }}
             onFocus={(e) => {
-              e.target.style.borderColor = '#B59A6A';
-              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
+              e.currentTarget.style.borderColor = '#B59A6A';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.15)';
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = 'rgba(142, 142, 138, 0.2)';
-              e.target.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
+              e.currentTarget.style.borderColor = 'rgba(142, 142, 138, 0.2)';
+              e.currentTarget.style.backgroundColor = 'rgba(31, 42, 51, 0.1)';
             }}
-            className="w-full px-4 py-2.5 rounded-input text-body font-mono transition-colors duration-fast"
           />
         </div>
 
